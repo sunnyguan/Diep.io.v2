@@ -83,7 +83,7 @@ html, body, canvas {
 	});
 	
 	
-	var socket = io.connect('http://127.0.0.1:2000');
+	var socket = io.connect();
 	
 	//sign in
 	var signDiv = document.getElementById('signDiv');
@@ -590,6 +590,7 @@ html, body, canvas {
 		for(var i in newTanks){
 			var index = newTanks[i];
 			//console.log((starting + i * 170) + ', ' + height);
+			canvas.rect(starting + i * 170, height, 170, 170);
 			drawMinis(starting + i * 170, height, demoAngle, true, index);
 		}
 	}
