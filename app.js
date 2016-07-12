@@ -104,7 +104,7 @@ var Player = function(id, name){
 	self.bullets = [];
 	self.moveTimer = 0;
 	self.friction = 0.96;
-	self.level = 44;
+	self.level = 1;
 	self.mouseX = 0;
 	self.mouseY = 0;
 	
