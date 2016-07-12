@@ -1,0 +1,1296 @@
+<div id="signDiv">
+	Username: <input id="signDiv-username" type="text"></input><br>
+	Password: <input id="signDiv-password" type="password"></input>
+	<button id="signDiv-signIn">Sign In</button>
+	<button id="signDiv-signUp">Sign Up</button>
+</div>
+<style type="text/css">
+* {
+	-webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
+html, body, canvas {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+#signDiv {
+	position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+ 	border-radius: 3px;
+}
+</style>
+<div id="gameDiv" style="display:none;">
+	<canvas id="ctx" width="1" height="768" style=""></canvas>
+</div>
+<script src="client/CanvasInput.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+	var WIDTH = document.body.clientWidth;
+	var HEIGHT = document.body.clientHeight;
+	
+	var canvas = document.getElementById("ctx");
+	canvas.width = WIDTH;
+	canvas.height = HEIGHT;
+	
+	var focused = false;
+	var input = new CanvasInput({
+		canvas: document.getElementById("ctx"),
+		x: 0,
+		y: HEIGHT - 40,
+		fontSize: 18,
+	  fontFamily: 'Arial',
+	  fontColor: '#212121',
+	  fontWeight: 'bold',
+	  width: 200,
+	  padding: 8,
+	  borderWidth: 1,
+	  borderColor: '#000',
+	  borderRadius: 3,
+	  boxShadow: '1px 1px 0px #fff',
+	  innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+	  placeHolder: 'Enter message here...',
+		onsubmit: function(){
+			//console.log(input.value().length);
+			if(input.value().length > 23){
+				socket.emit('sendMsgToServer', input.value().substring(0, 23));
+			} else socket.emit('sendMsgToServer',input.value());
+			input._hiddenInput.value = '';
+			input._value = '';
+			if(chatMsgs.length > 13){
+				chatMsgs.shift();
+			}
+		},
+		onfocus: function(){
+			focused = true;
+			//console.log(focused);
+		},
+		onblur: function(){
+			focused = false;
+			//console.log(focused);
+		}
+	});
+	
+	
+	var socket = io.connect('http://127.0.0.1:2000');
+	
+	//sign in
+	var signDiv = document.getElementById('signDiv');
+	var signDivUsername = document.getElementById('signDiv-username');
+	var signDivSignIn = document.getElementById('signDiv-signIn');
+	var signDivSignUp = document.getElementById('signDiv-signUp');
+	var signDivPassword = document.getElementById('signDiv-password');
+	
+	signDivSignIn.onclick = function(){
+		socket.emit('signIn',{username:signDivUsername.value,password:signDivPassword.value});
+	}
+	signDivSignUp.onclick = function(){
+		socket.emit('signUp',{username:signDivUsername.value,password:signDivPassword.value});
+	}
+	socket.on('signInResponse',function(data){
+		if(data.success){
+			signDiv.style.display = 'none';
+			gameDiv.style.display = 'inline-block';
+		} else
+			alert("Sign in unsuccessul.");
+	});
+	socket.on('signUpResponse',function(data){
+		if(data.success){
+			alert("Sign up successul.");
+		} else
+			alert("Sign up unsuccessul.");
+	});
+	var ctx = document.getElementById("ctx").getContext("2d");
+	//chat
+	var chatMsgs = [];
+	var chatText = document.getElementById('chat-text');
+	var chatInput = document.getElementById('chat-input');
+	var chatForm = document.getElementById('chat-form');
+	var chatVisible = true;
+	var drawChat = function(){
+		var i = HEIGHT * 38 / 40  - HEIGHT / 40 * chatMsgs.length;
+		ctx.font = '20px Arial';
+		ctx.fillStyle = 'aqua';
+		var padding = 18;
+		var margin = 5;
+		if(chatVisible){
+			for(var msg in chatMsgs){
+			ctx.fillText(chatMsgs[msg], 20, i);
+			i += HEIGHT / 40;
+			}
+			ctx.moveTo(212 + padding, HEIGHT - 23 + margin);
+	    ctx.lineTo(223 + padding, HEIGHT - 12 + margin);
+	    ctx.lineTo(234 + padding, HEIGHT - 23 + margin);
+	    
+	    ctx.moveTo(212 + padding, HEIGHT - 38 + margin);
+	    ctx.lineTo(223 + padding, HEIGHT - 27 + margin);
+	    ctx.lineTo(234 + padding, HEIGHT - 38 + margin);
+			
+			
+			ctx.moveTo(200 + 22 + 42, HEIGHT - 39);
+			ctx.lineTo(200 + 22 + 42, HEIGHT - 389);
+			ctx.lineTo(0, HEIGHT - 389);
+	  }else{
+	  	
+	    ctx.moveTo(212 + padding, HEIGHT - 12 + margin);
+	    ctx.lineTo(223 + padding, HEIGHT - 23 + margin);
+	    ctx.lineTo(234 + padding, HEIGHT - 12 + margin);
+	    
+	    ctx.moveTo(212 + padding, HEIGHT - 25 + margin);
+	    ctx.lineTo(223 + padding, HEIGHT - 36 + margin);
+	    ctx.lineTo(234 + padding, HEIGHT - 25 + margin);
+		}
+		ctx.moveTo(200 + padding + 4, HEIGHT);
+		ctx.lineTo(200 + padding + 4, HEIGHT - 39);
+		
+		ctx.lineTo(200 + padding + 42 + 4, HEIGHT - 39);
+		
+		ctx.lineTo(200 + padding + 42 + 4, HEIGHT);
+		
+		ctx.stroke();
+	}
+	socket.on('addToChat',function(data){
+		//chatText.innerHTML += '<div>' + data + '</div>';
+		chatMsgs.push(data);
+	});
+	socket.on('evalAnswer',function(data){
+		console.log(data);
+	});
+	
+	
+	//game
+	
+	ctx.font = '30px Arial';
+	
+	var my_id = 95555;
+	
+	var Player = function(initPack){
+		var self = {};
+		
+		self.tankType = initPack.tankType;
+		
+		// twin : 1
+		self.id = initPack.id;
+		self.name = initPack.name;
+		self.number = initPack.number;
+		self.x = initPack.x;
+		self.y = initPack.y;
+		self.hp = initPack.hp;
+		self.hpMax = initPack.hpMax;
+		self.score = initPack.score;
+		
+		self.bulletSpeed = 0;
+		self.bulletHp = 0;
+		self.bulletReload = 0;
+		self.movementSpeed = 0;
+		self.level = 1;
+		self.upgrades = 0;
+		self.pMaxHp = 0;
+		self.angle = 0;
+		my_id = self.id;
+		
+		self.draw = function(){	
+			var x = self.x - Player.list[selfId].x + WIDTH/2;
+			var y = self.y - Player.list[selfId].y + HEIGHT/2;
+			//console.log(focused);
+			var hpWidth = 80 * self.hp / self.pMaxHp;
+			//console.log(self.hp + ', ' + self.hpMax);
+			ctx.fillStyle = 'green';
+			ctx.fillRect(x - 40,y + 40,hpWidth,4);
+			ctx.fillStyle = 'red';
+			ctx.fillRect(x - 40 + hpWidth, y + 40, 80 - hpWidth, 4);
+			
+			var name = Player.list[selfId].name;
+			ctx.fillText(name, WIDTH / 2 - ctx.measureText(name).width / 2, HEIGHT / 2 - 60);
+		
+			drawMinis(x, y, self.angle, false, self.tankType);
+		}
+		
+		Player.list[self.id] = self;
+		
+		
+		return self;
+	}
+	Player.list = {};
+
+	var Bullet = function(initPack){
+		var self = {};
+		self.id = initPack.id;
+		self.x = initPack.x;
+		self.y = initPack.y;
+		self.drone = initPack.drone;
+		self.angle = initPack.angle;
+		self.draw = function(){	
+			//ctx.globalAlpha = 1;		
+			var x = self.x - Player.list[selfId].x + WIDTH/2;
+			var y = self.y - Player.list[selfId].y + HEIGHT/2;
+			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
+				if(self.drone){
+					ctx.save();
+					ctx.fillStyle = 'red';
+					ctx.lineWidth = 3;
+					ctx.translate(x,y);
+					ctx.rotate(self.angle * Math.PI / 180);
+					var numberOfSides = 3,
+				    size = 15,
+				    Xcenter = 0,
+				    Ycenter = 0;
+				
+					//ctx.save();
+					ctx.beginPath();
+					ctx.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));          
+					
+					for (var i = 1; i <= numberOfSides;i += 1) {
+					    ctx.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
+					}
+					ctx.fill();
+					ctx.stroke();
+					ctx.restore();
+				}else{
+					ctx.fillStyle = 'red';
+					ctx.lineWidth = 3;
+					ctx.beginPath();
+					ctx.arc(x-10/2,y-10/2,9,0,2*Math.PI);
+					ctx.fill();
+					ctx.stroke();
+				}
+				
+				//console.log('whowhowoh');
+			}
+			
+		}
+		
+		Bullet.list[self.id] = self;		
+		return self;
+	}
+	Bullet.list = {};
+	
+	var Triangle = function(initPack){
+		var self = {};
+		//console.log(initPack);
+		self.id = initPack.id;
+		self.x = initPack.x;
+		self.y = initPack.y;
+		self.hp = initPack.hp;
+		self.maxhp = initPack.maxhp;
+		self.angle = 0;
+		self.rotDeg = Math.random(0.2);
+		self.attacked = false;
+		self.draw = function(){	
+			ctx.globalAlpha = 1;
+			//console.log(self.id);		
+			var x = self.x - Player.list[selfId].x + WIDTH/2;
+			var y = self.y - Player.list[selfId].y + HEIGHT/2;
+			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
+				var hpWidth = 50 * self.hp / self.maxhp;
+				ctx.fillStyle = 'green';
+				ctx.fillRect(x - 25,y + 30,hpWidth,4);
+				ctx.fillStyle = 'red';
+				ctx.fillRect(x - 25 + hpWidth, y + 30, 50 - hpWidth, 4);
+				ctx.stroke();
+				
+				ctx.save();
+				
+				ctx.translate(x,y);
+				ctx.rotate(self.angle/180*Math.PI);
+				self.angle+=self.rotDeg;
+				var numberOfSides = 3,
+				    size = 20,
+				    Xcenter = 0,
+				    Ycenter = 0;
+				
+				//ctx.save();
+				ctx.beginPath();
+				ctx.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));          
+				
+				for (var i = 1; i <= numberOfSides;i += 1) {
+				    ctx.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
+				}
+				
+				ctx.strokeStyle = "#000000";
+				ctx.lineWidth = 3;
+				if(self.attacked)
+					ctx.fillStyle = "#AB5252";
+				else
+					ctx.fillStyle = "red";
+				ctx.fill();
+				ctx.stroke();
+				
+				ctx.restore();
+			}
+		}
+		
+		Triangle.list[self.id] = self;		
+		return self;
+	}
+	Triangle.list = {};
+	
+	var Square = function(initPack){
+		var self = {};
+		//console.log(initPack);
+		self.id = initPack.id;
+		self.x = initPack.x;
+		self.y = initPack.y;
+		self.hp = initPack.hp;
+		self.maxhp = initPack.maxhp;
+		self.angle = 0;
+		self.rotDeg = Math.random(0.2);
+		self.attacked = false;
+		self.draw = function(){	
+			ctx.globalAlpha = 1;
+			//console.log(self.id);		
+			var x = self.x - Player.list[selfId].x + WIDTH/2;
+			var y = self.y - Player.list[selfId].y + HEIGHT/2;
+			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
+				var hpWidth = 50 * self.hp / self.maxhp;
+				ctx.fillStyle = 'green';
+				ctx.fillRect(x - 25,y + 30,hpWidth,4);
+				ctx.fillStyle = 'red';
+				ctx.fillRect(x - 25 + hpWidth, y + 30, 50 - hpWidth, 4);
+				ctx.stroke();
+				
+				ctx.save();
+				ctx.lineWidth = 3;
+				ctx.translate(x,y);
+				ctx.rotate(self.angle/180*Math.PI);
+				self.angle+=self.rotDeg;
+				if(self.attacked)
+					ctx.fillStyle = "red";
+				else
+					ctx.fillStyle = 'yellow';
+				ctx.beginPath();
+				ctx.rect(-32/2,-32/2,32,32);
+				ctx.fill();
+				ctx.stroke();
+				ctx.restore();
+			}
+		}
+		
+		Square.list[self.id] = self;		
+		return self;
+	}
+	Square.list = {};
+	
+	var Pentagon = function(initPack){
+		var self = {};
+		//console.log(initPack);
+		self.id = initPack.id;
+		self.x = initPack.x;
+		self.y = initPack.y;
+		self.hp = initPack.hp;
+		self.maxhp = initPack.maxhp;
+		self.angle = 0;
+		self.rotDeg = Math.random(0.2);
+		self.attacked = false;
+		self.draw = function(){	
+			ctx.globalAlpha = 1;
+			//console.log(self.id);		
+			var x = self.x - Player.list[selfId].x + WIDTH/2;
+			var y = self.y - Player.list[selfId].y + HEIGHT/2;
+			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
+				var hpWidth = 50 * self.hp / self.maxhp;
+				ctx.fillStyle = 'green';
+				ctx.fillRect(x - 25,y + 40,hpWidth,4);
+				ctx.fillStyle = 'red';
+				ctx.fillRect(x - 25 + hpWidth, y + 40, 50 - hpWidth, 4);
+				ctx.stroke();
+				
+				ctx.save();
+				ctx.translate(x,y);
+				ctx.rotate(self.angle/180*Math.PI);
+				self.angle+=self.rotDeg;
+				var numberOfSides = 5,
+				    size = 30,
+				    Xcenter = 0,
+				    Ycenter = 0;
+				
+				//ctx.save();
+				ctx.beginPath();
+				ctx.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));          
+				
+				for (var i = 1; i <= numberOfSides;i += 1) {
+				    ctx.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
+				}
+				
+				ctx.strokeStyle = "#000000";
+				ctx.lineWidth = 3;
+				
+				if(self.attacked){
+					ctx.fillStyle = "red";
+					//console.log('red attacked!');
+				}
+				else{
+					ctx.fillStyle = 'blue';
+				}
+				ctx.fill();
+				ctx.stroke();
+				
+				ctx.restore();
+			}
+		}
+		
+		Pentagon.list[self.id] = self;		
+		return self;
+	}
+	Pentagon.list = {};
+	
+	var selfId = null;
+	
+	socket.on('init',function(data){	
+		if(data.selfId)
+			selfId = data.selfId;
+		//{ player : [{id:123,number:'1',x:0,y:0},{id:1,number:'2',x:0,y:0}], bullet: []}
+		for(var i = 0 ; i < data.player.length; i++){
+			new Player(data.player[i]);
+		}
+		for(var i = 0 ; i < data.bullet.length; i++){
+			new Bullet(data.bullet[i]);
+		}
+		for(var i = 0 ; i < data.square.length; i++){
+			new Square(data.square[i]);
+		}
+		for(var i = 0 ; i < data.pentagon.length; i++){
+			new Pentagon(data.pentagon[i]);
+		}
+		for(var i = 0 ; i < data.triangle.length; i++){
+			new Triangle(data.triangle[i]);
+		}
+	});
+	
+	socket.on('update',function(data){
+		//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
+		for(var i = 0 ; i < data.player.length; i++){
+			var pack = data.player[i];
+			var p = Player.list[pack.id];
+			if(p){
+				if(pack.x !== undefined)
+					p.x = pack.x;
+				if(pack.y !== undefined)
+					p.y = pack.y;
+				if(pack.hp !== undefined)
+					p.hp = pack.hp;
+				if(pack.score !== undefined)
+					p.score = pack.score;
+				if(pack.angle !== undefined)
+					p.angle = pack.angle;
+				if(pack.maxhp !== undefined)
+					p.hpMax = pack.maxhp;
+				if(pack.pMaxHp !== undefined)
+					p.pMaxHp = pack.pMaxHp;
+				if(pack.regen !== undefined)
+					p.regen = pack.regen;
+				if(pack.bulletSpeed !== undefined)
+					p.bulletSpeed = pack.bulletSpeed;
+				if(pack.bulletHp !== undefined)
+					p.bulletHp = pack.bulletHp;
+				if(pack.bulletReload !== undefined)
+					p.bulletReload = pack.bulletReload;
+				if(pack.movementSpeed !== undefined)
+					p.movementSpeed = pack.movementSpeed;
+				if(pack.upgrades !== undefined)
+					p.upgrades = pack.upgrades;
+				if(pack.tankType !== undefined)
+					p.tankType = pack.tankType;
+				if(pack.level !== undefined)
+					p.level = pack.level;
+			}
+		}
+		for(var i = 0 ; i < data.bullet.length; i++){
+			var pack = data.bullet[i];
+			var b = Bullet.list[data.bullet[i].id];
+			if(b){
+				if(pack.x !== undefined)
+					b.x = pack.x;
+				if(pack.y !== undefined)
+					b.y = pack.y;
+			}
+		}
+		for(var i = 0 ; i < data.square.length; i++){
+			var pack = data.square[i];
+			var b = Square.list[data.square[i].id];
+			if(b){
+				if(pack.x !== undefined)
+					b.x = pack.x;
+				if(pack.y !== undefined)
+					b.y = pack.y;
+				if(pack.hp !== undefined)
+					b.hp = pack.hp;
+				if(pack.attacked !== undefined)
+					b.attacked = pack.attacked;
+			}
+		}
+		for(var i = 0 ; i < data.pentagon.length; i++){
+			var pack = data.pentagon[i];
+			var b = Pentagon.list[data.pentagon[i].id];
+			if(b){
+				if(pack.x !== undefined)
+					b.x = pack.x;
+				if(pack.y !== undefined)
+					b.y = pack.y;
+				if(pack.hp !== undefined)
+					b.hp = pack.hp;
+				if(pack.attacked !== undefined)
+					b.attacked = pack.attacked;
+			}
+		}
+		for(var i = 0 ; i < data.triangle.length; i++){
+			var pack = data.triangle[i];
+			var b = Triangle.list[data.triangle[i].id];
+			if(b){
+				if(pack.x !== undefined)
+					b.x = pack.x;
+				if(pack.y !== undefined)
+					b.y = pack.y;
+				if(pack.hp !== undefined)
+					b.hp = pack.hp;
+				if(pack.attacked !== undefined)
+					b.attacked = pack.attacked;
+			}
+		}
+	});
+	
+	socket.on('remove',function(data){
+		//{player:[12323],bullet:[12323,123123]}
+		for(var i = 0 ; i < data.player.length; i++){
+			delete Player.list[data.player[i]];
+		}
+		for(var i = 0 ; i < data.bullet.length; i++){
+			delete Bullet.list[data.bullet[i]];
+		}
+		for(var i = 0 ; i < data.square.length; i++){
+			delete Square.list[data.square[i]];
+		}
+		for(var i = 0 ; i < data.pentagon.length; i++){
+			delete Pentagon.list[data.pentagon[i]];
+		}
+		for(var i = 0 ; i < data.triangle.length; i++){
+			delete Triangle.list[data.triangle[i]];
+		}
+	});
+	
+	socket.on('newTanks', function(data){
+		newTankVisible = true;
+		newTanks = data.tanks;
+		//console.log(newTanks);
+	});
+	var drawTankUpgrades = function(){
+		var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
+		var height = 100;
+		for(var i in newTanks){
+			var index = newTanks[i];
+			//console.log((starting + i * 170) + ', ' + height);
+			drawMinis(starting + i * 170, height, demoAngle, true, index);
+		}
+	}
+	var u = 0;
+	var newTankVisible = false;
+	var newTanks = [];
+	function draw(){
+		requestAnimationFrame(draw);
+		
+		var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
+		var height = 100;
+		
+		
+		WIDTH = document.body.clientWidth;
+		HEIGHT = document.body.clientHeight;
+		
+		if(u % 30 == 0){
+			socket.emit('dimension', {width:WIDTH,height:HEIGHT});
+			u-=30;
+		}
+		u++;
+		
+		canvas.width = WIDTH;
+		canvas.height = HEIGHT;
+		
+		if(!selfId)
+			return;
+		ctx.clearRect(0,0,WIDTH,HEIGHT);
+		
+		drawMap();
+		drawScore();
+		for(var i in Bullet.list)
+			Bullet.list[i].draw();
+		for(var i in Player.list)
+			Player.list[i].draw();
+		for(var i in Square.list)
+			Square.list[i].draw();
+		for(var i in Pentagon.list)
+			Pentagon.list[i].draw();
+		for(var i in Triangle.list)
+			Triangle.list[i].draw();
+		//console.log(Square.list.size());
+		drawLevelUp();
+		if(newTankVisible){
+			drawTankUpgrades();
+		}
+		input.render();
+		//ctx.strokeRect(starting - 100,height - 100,(newTanks.length) * 170,170);
+		drawChat();
+	}
+	draw();
+	
+	var levelUpVisible = false;
+	function drawLevelUp(){
+		
+		var spacing = 30;
+		var initial = 10;
+		var leftSpace = 185;
+		var leftWordSpace = 5;
+		var w = 15;
+		var length = 100;
+		var divider = 6;
+		ctx.font = '20px Verdana';
+		ctx.strokeStyle = 'black';
+		ctx.lineWidth = 1;
+		if(Player.list[selfId].upgrades != 0){
+			ctx.fillStyle = 'red';
+			
+		} else {
+			ctx.fillStyle = 'Gray';
+			ctx.globalAlpha = 0.5;
+		}
+		ctx.moveTo(350, 0);
+    ctx.lineTo(350, 50);
+    ctx.lineTo(300, 50);
+		
+		if(levelUpVisible){
+			ctx.fillText('Health Regen',leftWordSpace, initial+spacing*1-w);
+			ctx.rect(leftSpace, initial+spacing*0, length, 20);
+			
+			ctx.fillText('Max Health',leftWordSpace, initial+spacing*2-w);
+			ctx.rect(leftSpace, initial+spacing*1, length, 20);
+			
+			ctx.fillText('Bullet Speed',leftWordSpace, initial+spacing*3-w);
+			ctx.rect(leftSpace, initial+spacing*2, length, 20);
+			
+			ctx.fillText('Bullet Damage',leftWordSpace, initial+spacing*4-w);
+			ctx.rect(leftSpace, initial+spacing*3, length, 20);
+			
+			ctx.fillText('Bullet Reload',leftWordSpace, initial+spacing*5-w);
+			ctx.rect(leftSpace, initial+spacing*4, length, 20);
+			
+			ctx.fillText('Movement Speed',leftWordSpace, initial+spacing*6-w);
+			ctx.rect(leftSpace, initial+spacing*5, length, 20);
+			
+			ctx.fillRect(leftSpace, initial+spacing*0, Player.list[selfId].regen * 20, 20);
+			ctx.fillRect(leftSpace, initial+spacing*1, Player.list[selfId].hpMax * 20, 20);
+			ctx.fillRect(leftSpace, initial+spacing*2, Player.list[selfId].bulletSpeed * 20, 20);
+	    ctx.fillRect(leftSpace, initial+spacing*3, Player.list[selfId].bulletHp * 20, 20);
+	    ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * 20, 20);
+	    ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * 20, 20);
+	    ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 60, initial + spacing * 7-w);
+	    
+	    ctx.moveTo(300,0);
+	    ctx.lineTo(300,230);
+	    ctx.lineTo(0,230);
+	    
+	  }else{
+	  	ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 85, initial+spacing*1-10);
+			ctx.moveTo(300,0);
+	    ctx.lineTo(300,50);
+	    ctx.lineTo(0,50);
+		}
+		
+		
+		if(levelUpVisible == true){
+			ctx.moveTo(312, 23);
+	    ctx.lineTo(323, 12);
+	    ctx.lineTo(334, 23);
+	    
+	    ctx.moveTo(312, 38);
+	    ctx.lineTo(323, 27);
+	    ctx.lineTo(334, 38);
+		} else {
+    	ctx.moveTo(312, 12);
+	    ctx.lineTo(323, 23);
+	    ctx.lineTo(334, 12);
+	    
+	    ctx.moveTo(312, 25);
+	    ctx.lineTo(323, 36);
+	    ctx.lineTo(334, 25);
+    }
+    
+    
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+	}
+	
+	function drawgrid() {
+		ctx.fillStyle = '#CDCDCD';
+		ctx.fillRect(0,0,WIDTH,HEIGHT);
+		ctx.save();
+		//ctx.globalCompositeOperation='destination-atop';
+     ctx.lineWidth = 0.5;
+     ctx.strokeStyle = '#ADADAD';
+     ctx.beginPath();
+     var sx = WIDTH/2 - Player.list[selfId].x;
+		var sy = HEIGHT/2 - Player.list[selfId].y;
+		//console.log((sx - WIDTH) + ', ' + (sy - HEIGHT));
+		for (var x = sx - WIDTH; x < WIDTH; x += WIDTH / 45) {
+				ctx.moveTo(x, 0);
+        ctx.lineTo(x, HEIGHT);
+    }
+
+    for (var y = sy - HEIGHT ; y < HEIGHT; y += HEIGHT / 40) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(WIDTH, y);
+    }
+
+    ctx.stroke();
+    ctx.restore();
+}
+	
+	var drawMap = function(){
+		drawgrid();
+		//ctx.drawImage(Img.map,x,y, 3000,3000);
+	}
+	var demoAngle = 0;
+	var drawScore = function(){
+		demoAngle+= 1;
+		ctx.fillStyle = 'red';
+		ctx.font = '30px Arial';
+		
+		//roundRect(ctx, WIDTH / 2 - 200, HEIGHT - 50, 400, 15, 12, true, true);
+		//roundRect(ctx, WIDTH / 2 - 200, HEIGHT - 100, 400, 10, 7, true, true);
+		//ctx.fillStyle = 'yellow';
+		//var wlength = Player.list[selfId].score.toString().length * 30;
+		//ctx.fillText(Player.list[selfId].score, WIDTH / 2 - 1 * wlength / 4 - 2, HEIGHT - 125);
+		//wlength = Player.list[selfId].level.toString().length * 30;
+		//ctx.fillText(Player.list[selfId].level, WIDTH / 2 - 1 * wlength / 4 - 2, HEIGHT - 50);
+		
+		ctx.beginPath();
+		ctx.lineWidth = 3;
+		
+		ctx.arc(3 * WIDTH / 4 + 70, HEIGHT, 70, 1 * Math.PI, 1.5 * Math.PI);
+		
+		ctx.moveTo(3 * WIDTH / 4 + 70, HEIGHT - 70);
+		ctx.lineTo(7 * WIDTH / 8, HEIGHT - 70);
+		ctx.moveTo(7 * WIDTH / 8 + 140, HEIGHT - 70);
+		
+		ctx.arc(7 * WIDTH / 8 + 70, HEIGHT - 70, 70, 0 * Math.PI, 2 * Math.PI);
+		
+		ctx.moveTo(7 * WIDTH / 8 + 70, HEIGHT - 70 - 70);
+		ctx.lineTo(WIDTH, HEIGHT - 70 - 70);
+		
+		ctx.moveTo(7 * WIDTH / 8 + 70 + 70, HEIGHT - 70);
+		ctx.lineTo(WIDTH, HEIGHT - 70);
+		
+		//billboard
+		
+		ctx.moveTo(3 * WIDTH / 4 + 80, HEIGHT - 70);
+		ctx.lineTo(3 * WIDTH / 4 + 80, HEIGHT - 70 - 20);
+		
+		ctx.moveTo(3 * WIDTH / 4 + 130, HEIGHT - 70);
+		ctx.lineTo(3 * WIDTH / 4 + 130, HEIGHT - 70 - 20);
+		
+		ctx.moveTo(3 * WIDTH / 4 + 70 - 1.5, HEIGHT - 70 - 20);
+		ctx.lineTo(3 * WIDTH / 4 + 140 + 1.5, HEIGHT - 70 - 20);
+		
+		ctx.moveTo(3 * WIDTH / 4 + 70 - 1.5, HEIGHT - 70 - 20 - 30);
+		ctx.lineTo(3 * WIDTH / 4 + 140 + 1.5, HEIGHT - 70 - 20 - 30);
+		
+		ctx.moveTo(3 * WIDTH / 4 + 70, HEIGHT - 70 - 20);
+		ctx.lineTo(3 * WIDTH / 4 + 70, HEIGHT - 70 - 20 - 30);
+		
+		ctx.moveTo(3 * WIDTH / 4 + 140, HEIGHT - 70 - 20);
+		ctx.lineTo(3 * WIDTH / 4 + 140, HEIGHT - 70 - 20 - 30);
+		
+		var sortable = [];
+		for (var i in Player.list){
+				var player = Player.list[i];
+				sortable.push([player, player.score]);
+		}
+		sortable.sort(
+		    function(a, b) {
+		        return a[1] - b[1]
+		    }
+		);
+		sortable.reverse();
+		var y = 0;
+		for(var i in sortable){
+			if(y > 400) break;
+			var pla = sortable[i][0];
+			ctx.moveTo(WIDTH - 200, 0);
+			ctx.lineTo(WIDTH - 200, 200);
+			ctx.lineTo(WIDTH, 200);
+			ctx.moveTo(WIDTH - 200 + 200 * pla.x / 4500 + 5, 200 * pla.y / 4500);
+			ctx.arc(WIDTH - 200 + 200 * pla.x / 4500, 200 * pla.y / 4500, 5, 0, 2 * Math.PI);
+			var scoreText = (y / 40 + 1) + '. ' + pla.name + ': ' + pla.score;
+			ctx.fillText(scoreText, WIDTH - ctx.measureText(scoreText).width, HEIGHT / 2 - 150 + y);
+			y += 40;
+			//ctx.stroke();
+		}
+		
+		ctx.stroke();
+		
+		var txt = Player.list[selfId].score;
+		if(txt >= 1000) txt = (Math.round(txt / 1000 * 10) / 10).toFixed(2) + 'k';
+		ctx.fillText(txt, 3 * WIDTH / 4 + 105 - ctx.measureText(txt).width / 2, HEIGHT - 20);
+		
+		var lvl = Player.list[selfId].level;
+		ctx.fillText(lvl, 3 * WIDTH / 4 + 105 - ctx.measureText(lvl).width / 2, HEIGHT - 93);
+		
+		ctx.save();
+		var level = 'level';
+		ctx.font = '20px Arial';
+		ctx.fillText(level, 3 * WIDTH / 4 + 105 - ctx.measureText(level).width / 2, HEIGHT - 130);
+		
+		ctx.font = '25px Arial';
+		var score = 'score';
+		ctx.fillText(score, 3 * WIDTH / 4 + 105 - ctx.measureText(score).width / 2, HEIGHT - 52);
+		ctx.restore();
+		
+		// draw mini
+		drawMinis(7 * WIDTH / 8 + 70, HEIGHT - 70, demoAngle, true, Player.list[selfId].tankType);
+	}
+	
+	var drawMinis = function(x, y, angle, text, tankType){
+		var width = 66;
+		var height = 44;
+		//ctx.globalAlpha = 1;
+		ctx.save();
+		//ctx.scale(2,2);
+	 	var rad = 22;
+	 	ctx.lineWidth = 2.5;
+	 	if(tankType == 0){
+	 		//ctx.save();
+	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
+	 		ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -12, 40, 20);
+			ctx.strokeRect(0, -12, 40, 20);
+			ctx.restore(); 
+			if(text){
+				ctx.font = '20px Arial';
+				var text = 'Base Tank';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+		}	else if(tankType == 1){
+	 		rad = 30;
+	 		ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -27, 55, 26);
+			ctx.fillRect(0, 3, 55, 26);
+			ctx.strokeRect(0, -27, 55, 26);
+			ctx.strokeRect(0, 3, 55, 26);
+			ctx.restore(); 
+			if(text){
+				ctx.font = '20px Arial';
+				var text = 'Twin';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	} else if(tankType == 2){
+	 		rad = 31;
+	 		ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+		  
+		  ctx.fillStyle = 'gray';
+			
+			ctx.fillRect(0, -30, 56, 20);
+			ctx.fillRect(0, 5, 56, 20);
+		  
+			ctx.strokeRect(0, -12, 66, 20);
+			ctx.strokeRect(0, -30, 56, 20);
+			ctx.strokeRect(0, 5, 56, 20);
+			ctx.fillRect(0, -12, 66, 20);
+			
+			ctx.restore();
+			if(text){
+				ctx.font = '20px Arial';
+				var text = 'Triplet';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	}else if(tankType == 3){
+	 		rad = 30;
+	 		//ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		
+	 		for(var i = 0; i <= 360; i += 360 / 8){
+	 			ctx.save();
+	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			  ctx.fillStyle = 'gray';
+				ctx.fillRect(0, -12, 55, 24);
+				ctx.strokeRect(0, -12, 55, 24);
+				ctx.restore();
+	 		}
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Octotank';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	}else if(tankType == 4){
+	 		rad = 30;
+	 		ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		for(var i = 0; i <= 360; i+=120){
+	 			ctx.save();
+	 			ctx.fillStyle = 'gray';
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			 	ctx.fillRect(0, -27, 55, 26);
+				ctx.fillRect(0, 3, 55, 26);
+				ctx.strokeRect(0, -27, 55, 26);
+				ctx.strokeRect(0, 3, 55, 26);
+				ctx.restore();
+	 		}
+	 		ctx.strokeColor = 'red';
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Triple Twin';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	
+	 	} else if(tankType == 5){
+	 		rad = 26.5;
+	 		ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		ctx.fillStyle = 'gray';
+	 		for(var i = -150; i <= 150; i+=300){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			 	ctx.fillRect(0, -12, 42, 20);
+				ctx.strokeRect(0, -12, 42, 20);
+				ctx.restore();
+	 		}
+	 		ctx.save();
+	 		ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -12, 48, 20);
+			ctx.strokeRect(0, -12, 48, 20);
+			ctx.restore(); 
+			ctx.strokeColor = 'red';
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Triangle';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	
+	 	
+	 	} else if(tankType == 6){
+	 		rad = 26.5;
+	 		ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		ctx.fillStyle = 'gray';
+	 		for(var i = -150; i <= 150; i+=300){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			 	ctx.fillRect(0, -12, 42, 20);
+				ctx.strokeRect(0, -12, 42, 20);
+				ctx.restore();
+	 		}
+	 		for(var i = -135; i <= 135; i+=270){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			 	ctx.fillRect(0, -12, 42, 20);
+				ctx.strokeRect(0, -12, 42, 20);
+				ctx.restore();
+	 		}
+	 		ctx.save();
+	 		ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -12, 48, 20);
+			ctx.strokeRect(0, -12, 48, 20);
+			ctx.restore(); 
+			ctx.strokeColor = 'red';
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Booster';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	
+	 	
+	 	} else if(tankType == 7){
+	 		rad = 26.5;
+	 		ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		ctx.fillStyle = 'gray';
+	 		for(var i = 0; i <= 180; i+=180){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			 	ctx.fillRect(0, -23, 40, 46);
+				ctx.strokeRect(0, -23, 40, 46);
+				ctx.restore();
+	 		}
+	 		ctx.strokeColor = 'red';
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Overseer';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	
+	 	
+	 	} else if(tankType == 8){
+	 		rad = 30;
+	 		ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		ctx.fillStyle = 'gray';
+	 		for(var i = 0; i <= 360; i+=180){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			 	ctx.fillRect(0, -27, 55, 26);
+				ctx.fillRect(0, 3, 55, 26);
+				ctx.strokeRect(0, -27, 55, 26);
+				ctx.strokeRect(0, 3, 55, 26);
+				ctx.restore();
+	 		}
+	 		ctx.strokeColor = 'red';
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Twin Flank';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	
+	 	
+	 	} else if(tankType == 9){
+	 		rad = 30;
+	 		ctx.strokeStyle = 'black';
+	 		ctx.restore();
+	 		for(var i = 0; i <= 360; i += 360 / 10){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			  ctx.fillStyle = 'gray';
+				ctx.fillRect(0, -12, 55, 24);
+				ctx.strokeRect(0, -12, 55, 24);
+				ctx.restore();
+	 		}
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Decatank';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	}
+		 	
+		
+		
+		//ctx.stroke();
+		ctx.save();
+		//ctx.scale(2,2);
+		ctx.lineWidth = 2.5;
+		ctx.strokeStyle = 'black';
+		ctx.beginPath();
+		ctx.arc(x, y, rad, 0, 2 * Math.PI);
+		ctx.fillStyle = 'DeepSkyBlue';
+		ctx.fill();
+		ctx.closePath();
+		ctx.stroke();
+		ctx.restore();
+	}
+	
+	/**
+	 * Draws a rounded rectangle using the current state of the canvas.
+	 * If you omit the last three params, it will draw a rectangle
+	 * outline with a 5 pixel border radius
+	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {Number} x The top left x coordinate
+	 * @param {Number} y The top left y coordinate
+	 * @param {Number} width The width of the rectangle
+	 * @param {Number} height The height of the rectangle
+	 * @param {Number} [radius = 5] The corner radius; It can also be an object 
+	 *                 to specify different radii for corners
+	 * @param {Number} [radius.tl = 0] Top left
+	 * @param {Number} [radius.tr = 0] Top right
+	 * @param {Number} [radius.br = 0] Bottom right
+	 * @param {Number} [radius.bl = 0] Bottom left
+	 * @param {Boolean} [fill = false] Whether to fill the rectangle.
+	 * @param {Boolean} [stroke = true] Whether to stroke the rectangle.
+	 */
+	function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+	  ctx.fillStyle = 'green';
+	  if (typeof stroke == 'undefined') {
+	    stroke = true;
+	  }
+	  if (typeof radius === 'undefined') {
+	    radius = 5;
+	  }
+	  if (typeof radius === 'number') {
+	    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+	  } else {
+	    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+	    for (var side in defaultRadius) {
+	      radius[side] = radius[side] || defaultRadius[side];
+	    }
+	  }
+	  ctx.beginPath();
+	  ctx.moveTo(x + radius.tl, y);
+	  ctx.lineTo(x + width - radius.tr, y);
+	  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+	  ctx.lineTo(x + width, y + height - radius.br);
+	  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+	  ctx.lineTo(x + radius.bl, y + height);
+	  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+	  ctx.lineTo(x, y + radius.tl);
+	  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+	  ctx.closePath();
+	  if (fill) {
+	    ctx.fill();
+	  }
+	  if (stroke) {
+	    ctx.stroke();
+	  }
+	
+	}
+	
+	document.onkeydown = function(event){
+		
+		if(!focused){
+			if(event.keyCode === 68){	//d
+				if(!(Player.list[selfId].x > 4500)){
+					
+					socket.emit('keyPress',{inputId:'right',state:true});
+				}else{
+					socket.emit('keyPress',{inputId:'right',state:false});
+				}
+			}
+			if(event.keyCode === 83){	//s
+				if(!(Player.list[selfId].y > 4500)){
+					socket.emit('keyPress',{inputId:'down',state:true});
+				}else{
+					socket.emit('keyPress',{inputId:'down',state:false});
+				}
+			}
+			if(event.keyCode === 65){ //a
+				//console.log('hi ' + Player.list[my_id].x);
+				if(!(Player.list[selfId].x < 0)){
+					socket.emit('keyPress',{inputId:'left',state:true});
+				}else{
+					socket.emit('keyPress',{inputId:'left',state:false});
+				}
+			}
+			if(event.keyCode === 87){ // w
+				if(!(Player.list[selfId].y < 0)){
+					//console.log('hi ' + Player.list[my_id].x);
+					socket.emit('keyPress',{inputId:'up',state:true});
+				}else{
+					socket.emit('keyPress',{inputId:'up',state:false});
+				}
+			}
+		}
+	}
+	document.onkeyup = function(event){
+		if(!focused){
+			if(event.keyCode === 68)	//d
+				socket.emit('keyPress',{inputId:'right',state:false});
+			if(event.keyCode === 83)	//s
+				socket.emit('keyPress',{inputId:'down',state:false});
+			if(event.keyCode === 65) //a
+				socket.emit('keyPress',{inputId:'left',state:false});
+			if(event.keyCode === 87) // w
+				socket.emit('keyPress',{inputId:'up',state:false});
+			if(event.keyCode === 69)
+				console.log(Player.list[selfId].x + ', ' + Player.list[my_id].y);
+			if(event.keyCode > 47 && event.keyCode < 58)
+				socket.emit('changeType',{type:event.keyCode - 48});
+		}
+	}
+	
+	function isPointInsideRect(pointX,pointY,rectX,rectY,rectWidth,rectHeight){
+    return  (rectX <= pointX) && (rectX + rectWidth >= pointX) &&
+                 (rectY <= pointY) && (rectY + rectHeight >= pointY);
+	}
+	
+	document.onmousedown = function(event){
+		if(signDiv.style.display == 'none'){
+			var x = event.clientX;
+			var y = event.clientY;
+			var spacing = 30;
+			var initial = 10;
+			var w = 15;
+			var length = 104;
+			var leftSpace = 185;
+			if(newTanks.length != 0){
+				var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
+				var height = 100;
+				if(isPointInsideRect(x,y,starting - 100,height - 100,(newTanks.length) * 170,170)){
+					var clickIndex = Math.round((x - starting) / 170);
+					console.log(clickIndex);
+					var newTankUpgrade = newTanks[clickIndex];
+					console.log(newTankUpgrade);
+					socket.emit('changeType',{type:newTankUpgrade});
+					newTanks = [];
+				}
+			}
+			if(isPointInsideRect(x,y,0,HEIGHT - 40,210,40)){
+				focused = true;
+			}else focused = false;
+			if(isPointInsideRect(x,y,300,0,50,50)){
+				levelUpVisible = !levelUpVisible;
+			}
+			if(isPointInsideRect(x,y,222,HEIGHT - 39,42,42)){
+				chatVisible = !chatVisible;
+			}
+			if(levelUpVisible){
+				if(isPointInsideRect(x,y,leftSpace, initial, length, 20)){
+					socket.emit('regen');
+				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing, length, 20)){
+					socket.emit('maxhealth');
+				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*2, length, 20)){
+					socket.emit('bulletspeed');
+				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*3, length, 20)){
+					socket.emit('bulletHp');
+				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*4, length, 20)){
+					socket.emit('reload');
+				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*5, length, 20)){
+					socket.emit('maxSpd');
+				}else socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
+			}else socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
+		}
+	}
+	document.onmouseup = function(event){
+		socket.emit('keyPress',{inputId:'attack',state:false});
+	}
+	document.onmousemove = function(event){
+		var x = -(WIDTH / 2) + event.clientX - 8;
+		var y = -(HEIGHT / 2) + event.clientY - 8;
+		var angle = Math.atan2(y,x) / Math.PI * 180;
+		//console.log(angle);
+		//if(typeof Player.list[my_id] !== 'undefined') Player.list[my_id].angle = angle;
+		socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
+	}
+	
+	
+	
+	
+</script>
+
+
+
+
+
