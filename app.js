@@ -104,11 +104,11 @@ var Player = function(id, name){
 	self.bullets = [];
 	self.moveTimer = 0;
 	self.friction = 0.96;
-	self.level = 1;
+	self.level = 44;
 	self.mouseX = 0;
 	self.mouseY = 0;
 	
-	self.availableUpgrades = 0;
+	self.availableUpgrades = [0,0,0];
 	var super_update = self.update;
 	self.update = function(){
 		//self.regen();
@@ -163,10 +163,19 @@ var Player = function(id, name){
 	}
 	self.checkForUpgrades = function(){
 		var tanks = [];
-		if(self.level == 15){
+		if(self.level == 15 && !self.availableUpgrades[0])
+			self.availableUpgrades[0] = true;
+		if(self.level == 30 && !self.availableUpgrades[1])
+			self.availableUpgrades[1] = true;
+		if(self.level == 45 && !self.availableUpgrades[2]){
+			self.availableUpgrades[2] = true;
+			console.log(self.availableUpgrades[2]);
+		}
+		
+		if(self.level == 15 && self.availableUpgrades[0]){
 			tanks = [1, 5, 7];
-			//console.log('hereererer');
-		}else if(self.level == 30){
+			
+		}else if(self.level == 30 && self.availableUpgrades[1]){
 			if(self.tankType == 1){
 				tanks = [4, 8];
 			}else if(self.tankType == 5){
@@ -174,7 +183,7 @@ var Player = function(id, name){
 			}else if(self.tankType == 7){
 				tanks = [9];
 			}
-		}else if(self.level == 45){
+		}else if(self.level == 45 && self.availableUpgrades[2]){
 			if(self.tankType == 4){
 				tanks = [3, 9];
 			}else if(self.tankType == 8){
@@ -185,8 +194,9 @@ var Player = function(id, name){
 				tanks = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 			}
 		}
-		if(tanks.length != 0)
+		if(tanks.length != 0){
 			SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
+		}
 	}
 	self.shootBullet = function(angle, x, y){
 		//backward kick
@@ -1048,6 +1058,9 @@ io.sockets.on('connection', function(socket){
 	
 	socket.on('changeType',function(data){
 		var p = Player.list[socket.id];
+		if(p.availableUpgrades[0] == 1) p.availableUpgrades[0] = 0;
+		if(p.availableUpgrades[1] == 1) p.availableUpgrades[1] = 0;
+		if(p.availableUpgrades[2] == 1) p.availableUpgrades[2] = 0;
 		var i = Player.tankProps[data.type];
 		upgradeNewTank(p,i,data.type);
 	});

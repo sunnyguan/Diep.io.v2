@@ -582,15 +582,16 @@ html, body, canvas {
 	socket.on('newTanks', function(data){
 		newTankVisible = true;
 		newTanks = data.tanks;
-		//console.log(newTanks);
+		console.log(newTanks);
 	});
 	var drawTankUpgrades = function(){
-		var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
+		var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170;
 		var height = 100;
 		for(var i in newTanks){
 			var index = newTanks[i];
 			//console.log((starting + i * 170) + ', ' + height);
-			canvas.rect(starting + i * 170, height, 170, 170);
+			ctx.rect(starting + i * 170 - 85, height - 85, 170, 170);
+			ctx.stroke();
 			drawMinis(starting + i * 170, height, demoAngle, true, index);
 		}
 	}
@@ -925,7 +926,7 @@ html, body, canvas {
 			}
 	 	}else if(tankType == 3){
 	 		rad = 30;
-	 		//ctx.restore();
+	 		ctx.restore();
 	 		ctx.strokeStyle = 'black';
 	 		
 	 		for(var i = 0; i <= 360; i += 360 / 8){
@@ -969,9 +970,9 @@ html, body, canvas {
 	 		rad = 26.5;
 	 		ctx.restore();
 	 		ctx.strokeStyle = 'black';
-	 		ctx.fillStyle = 'gray';
 	 		for(var i = -150; i <= 150; i+=300){
 	 			ctx.save();
+	 			ctx.fillStyle = 'gray';
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -12, 42, 20);
@@ -1000,9 +1001,10 @@ html, body, canvas {
 	 		rad = 26.5;
 	 		ctx.restore();
 	 		ctx.strokeStyle = 'black';
-	 		ctx.fillStyle = 'gray';
+	 		
 	 		for(var i = -150; i <= 150; i+=300){
 	 			ctx.save();
+	 			ctx.fillStyle = 'gray';
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -12, 42, 20);
@@ -1011,6 +1013,7 @@ html, body, canvas {
 	 		}
 	 		for(var i = -135; i <= 135; i+=270){
 	 			ctx.save();
+	 			ctx.fillStyle = 'gray';
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -12, 42, 20);
@@ -1039,9 +1042,10 @@ html, body, canvas {
 	 		rad = 26.5;
 	 		ctx.restore();
 	 		ctx.strokeStyle = 'black';
-	 		ctx.fillStyle = 'gray';
+	 		
 	 		for(var i = 0; i <= 180; i+=180){
 	 			ctx.save();
+	 			ctx.fillStyle = 'gray';
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -23, 40, 46);
@@ -1060,9 +1064,10 @@ html, body, canvas {
 	 		rad = 30;
 	 		ctx.restore();
 	 		ctx.strokeStyle = 'black';
-	 		ctx.fillStyle = 'gray';
+	 		
 	 		for(var i = 0; i <= 360; i+=180){
 	 			ctx.save();
+	 			ctx.fillStyle = 'gray';
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -27, 55, 26);
@@ -1237,9 +1242,9 @@ html, body, canvas {
 			var length = 104;
 			var leftSpace = 185;
 			if(newTanks.length != 0){
-				var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
+				var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170;
 				var height = 100;
-				if(isPointInsideRect(x,y,starting - 100,height - 100,(newTanks.length) * 170,170)){
+				if(isPointInsideRect(x,y,starting - 85,height - 85,(newTanks.length) * 170,170)){
 					var clickIndex = Math.round((x - starting) / 170);
 					console.log(clickIndex);
 					var newTankUpgrade = newTanks[clickIndex];
