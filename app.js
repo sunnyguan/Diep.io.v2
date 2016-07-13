@@ -104,7 +104,7 @@ var Player = function(id, name){
 	self.bullets = [];
 	self.moveTimer = 0;
 	self.friction = 0.96;
-	self.level = 1;
+	self.level = 44;
 	self.mouseX = 0;
 	self.mouseY = 0;
 	
@@ -135,7 +135,7 @@ var Player = function(id, name){
 		if(self.pressingAttack && self.timer % Math.round(self.reload) == 0){
 			self.shootBullet(self.mouseAngle,self.mouseX,self.mouseY);
 		}
-		if(self.tankType == 7){
+		if(self.tankType == 7 || self.tankType == 15){
 			if(self.bullets.length != 0){
 				for(var i in self.bullets){
 					var bullet = self.bullets[i];
@@ -204,7 +204,7 @@ var Player = function(id, name){
 				}else if(self.tankType == 5){
 					tanks = [6];
 				}else if(self.tankType == 7){
-					tanks = [];
+					tanks = [15];
 				}
 				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
 				self.sent[2] = true;
@@ -463,6 +463,14 @@ var Player = function(id, name){
 			b2.x = self.x; b2.y = self.y;
 			var b3 = Bullet(self.id,angle + 1 * 360 / 9,self.bulletHp,self.bulletSpeed);
 			b3.x = self.x; b3.y = self.y;
+		} else if (self.tankType === 15) {
+			//console.log(self.bullets.length);
+			if(self.bullets.length < 20){
+				var b = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed / 2,true);
+				b.x = self.x;
+				b.y = self.y;
+				self.bullets.push(b);
+			}
 		} 
 	}
 	self.deathReset = function(){
@@ -566,6 +574,8 @@ Player.tankProps = [
 	{ name: 'quad tank', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
 	{ name: 'triple shot', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
+	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
+	{ name: 'overlord', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
 ];
 Player.onConnect = function(socket,username){

@@ -1209,6 +1209,31 @@ html, body, canvas {
 				var text = 'Triple Shot';
 				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
 			}
+	 	} else if(tankType == 15){
+	 		rad = 26.5;
+	 		
+	 		ctx.restore();
+	 		for(var i = -180; i <= 90; i += 90){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+		 		ctx.rotate((i + angle) * Math.PI / 180);
+			  ctx.strokeStyle = 'black';
+			  ///ctx.lineWidth = 1;
+				ctx.fillStyle = 'gray';
+				ctx.beginPath();
+				ctx.moveTo(5, -12);
+				ctx.lineTo(35, -20);
+				ctx.lineTo(35, 20);
+				ctx.lineTo(-5, 12);
+				ctx.fill();
+				ctx.stroke();
+				ctx.restore(); 
+				if(text){
+					ctx.font = '20px Arial';
+					var text = 'Overlord';
+					ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+				}
+			}
 	 	}
 		 	
 		
