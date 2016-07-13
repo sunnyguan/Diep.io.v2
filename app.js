@@ -713,6 +713,9 @@ Pentagon.list = {};
 Pentagon.update = function(){
 	var pack = [];
 	var a = 0;
+	if(Object.size(Pentagon.list) < 40){
+		var t = new Pentagon();
+	}
 	for(var i in Pentagon.list){
 		a++;
 		var pentagon = Pentagon.list[i];
@@ -786,6 +789,9 @@ Square.list = {};
 Square.update = function(){
 	var pack = [];
 	var a = 0;
+	if(Object.size(Square.list) < 50){
+		var t = new Square();
+	}
 	for(var i in Square.list){
 		a++;
 		var square = Square.list[i];
@@ -857,9 +863,22 @@ var Triangle = function(){
 }
 Triangle.list = {};
 
+// what the heck
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};s
+// ending what the heck
+
 Triangle.update = function(){
 	var pack = [];
 	var a = 0;
+	if(Object.size(Triangle.list) < 50){
+		var t = new Triangle();
+	}
 	for(var i in Triangle.list){
 		a++;
 		var triangle = Triangle.list[i];
@@ -1090,7 +1109,7 @@ io.sockets.on('connection', function(socket){
 		isValidPassword(data,function(res){
 			if(res){
 				Player.onConnect(socket,data.username);
-				for(var i = 0; i < 30; i++){
+				for(var i = 0; i < 20; i++){
 					var a = Square();
 					var b = Pentagon();
 					var c = Triangle();
