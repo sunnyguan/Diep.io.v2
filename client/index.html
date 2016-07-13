@@ -103,13 +103,13 @@ html, body, canvas {
 			signDiv.style.display = 'none';
 			gameDiv.style.display = 'inline-block';
 		} else
-			alert("Sign in unsuccessul.");
+			alert("Sign in unsuccessful.");
 	});
 	socket.on('signUpResponse',function(data){
 		if(data.success){
-			alert("Sign up successul.");
+			alert("Sign up successful.");
 		} else
-			alert("Sign up unsuccessul.");
+			alert("Sign up unsuccessful.");
 	});
 	var ctx = document.getElementById("ctx").getContext("2d");
 	//chat
