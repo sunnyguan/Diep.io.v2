@@ -582,15 +582,30 @@ html, body, canvas {
 	socket.on('newTanks', function(data){
 		newTankVisible = true;
 		newTanks = data.tanks;
-		console.log(newTanks);
+		for(var i in newTanks){
+			var r; var g; var b;
+			r = Math.round(Math.random() * 255);
+			g = Math.round(Math.random() * 255);
+			b = Math.round(Math.random() * 255);
+			newTanks[i] = {type:newTanks[i],r:r,g:g,b:b};
+		}
 	});
 	var drawTankUpgrades = function(){
 		var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170;
-		var height = 100;
+		var height = 133;
 		for(var i in newTanks){
-			var index = newTanks[i];
-			//console.log((starting + i * 170) + ', ' + height);
+			var index = newTanks[i].type;
 			ctx.rect(starting + i * 170 - 85, height - 85, 170, 170);
+			ctx.save();
+			ctx.globalAlpha = 0.5;
+			var r = newTanks[i].r;
+			var g = newTanks[i].g;
+			var b = newTanks[i].b;
+			ctx.fillStyle = 'rgba('+r+', '+g+', '+b+', 1)';
+			ctx.fillRect(starting + i * 170 - 85, height - 85, 170, 85);
+			ctx.fillStyle = 'rgba('+r+', '+g+', '+b+', 0.5)';
+			ctx.fillRect(starting + i * 170 - 85, height, 170, 85);
+			ctx.restore();
 			ctx.stroke();
 			drawMinis(starting + i * 170, height, demoAngle, true, index);
 		}
@@ -735,10 +750,10 @@ html, body, canvas {
 		ctx.fillRect(0,0,WIDTH,HEIGHT);
 		ctx.save();
 		//ctx.globalCompositeOperation='destination-atop';
-     ctx.lineWidth = 0.5;
-     ctx.strokeStyle = '#ADADAD';
-     ctx.beginPath();
-     var sx = WIDTH/2 - Player.list[selfId].x;
+   ctx.lineWidth = 0.5;
+   ctx.strokeStyle = '#ADADAD';
+   ctx.beginPath();
+   var sx = WIDTH/2 - Player.list[selfId].x;
 		var sy = HEIGHT/2 - Player.list[selfId].y;
 		//console.log((sx - WIDTH) + ', ' + (sy - HEIGHT));
 		for (var x = sx - WIDTH; x < WIDTH; x += WIDTH / 45) {
@@ -1040,26 +1055,29 @@ html, body, canvas {
 	 	
 	 	} else if(tankType == 7){
 	 		rad = 26.5;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
 	 		
-	 		for(var i = 0; i <= 180; i+=180){
+	 		ctx.restore();
+	 		for(var i = -180; i <= 0; i += 180){
 	 			ctx.save();
-	 			ctx.fillStyle = 'gray';
 	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			 	ctx.fillRect(0, -23, 40, 46);
-				ctx.strokeRect(0, -23, 40, 46);
-				ctx.restore();
-	 		}
-	 		ctx.strokeColor = 'red';
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Overseer';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+		 		ctx.rotate((i + angle) * Math.PI / 180);
+			  ctx.strokeStyle = 'black';
+			  ///ctx.lineWidth = 1;
+				ctx.fillStyle = 'gray';
+				ctx.beginPath();
+				ctx.moveTo(5, -12);
+				ctx.lineTo(35, -20);
+				ctx.lineTo(35, 20);
+				ctx.lineTo(-5, 12);
+				ctx.fill();
+				ctx.stroke();
+				ctx.restore(); 
+				if(text){
+					ctx.font = '20px Arial';
+					var text = 'Overseer';
+					ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+				}
 			}
-	 	
-	 	
 	 	} else if(tankType == 8){
 	 		rad = 30;
 	 		ctx.restore();
@@ -1100,6 +1118,95 @@ html, body, canvas {
 	 		if(text){
 				ctx.font = '20px Arial';
 				var text = 'Decatank';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	} else if(tankType == 10){
+	 		rad = 23;
+	 		ctx.strokeStyle = 'black';
+	 		ctx.restore();
+	 		for(var i = 0; i <= 360; i += 360 / 2){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			  ctx.fillStyle = 'gray';
+				ctx.fillRect(0, -9, 42, 18);
+				ctx.strokeRect(0, -9, 42, 18);
+				ctx.restore();
+	 		}
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Twin Flank';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			} 
+	 	} else if(tankType == 11){
+			ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			ctx.fillStyle = 'gray';
+			ctx.beginPath();
+			ctx.moveTo(5, -12);
+			ctx.lineTo(35, -20);
+			ctx.lineTo(35, 20);
+			ctx.lineTo(-5, 12);
+			ctx.fill();
+			ctx.stroke();
+			ctx.restore(); 
+			if(text){
+				ctx.font = '20px Arial';
+				var text = 'Machine Gun';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+		} else if(tankType == 12){
+			ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -12, 50, 20);
+			ctx.strokeRect(0, -12, 50, 20);
+			ctx.restore(); 
+			if(text){
+				ctx.font = '20px Arial';
+				var text = 'Sniper';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+		}else if(tankType == 13){
+	 		rad = 30;
+	 		ctx.strokeStyle = 'black';
+	 		ctx.restore();
+	 		for(var i = 0; i <= 360; i += 360 / 4){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			  ctx.fillStyle = 'gray';
+				ctx.fillRect(0, -12, 55, 24);
+				ctx.strokeRect(0, -12, 55, 24);
+				ctx.restore();
+	 		}
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Quad Tank';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	} else if(tankType == 14){
+	 		rad = 30;
+	 		ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		
+	 		for(var i = -360 / 9; i <= 360 / 9; i += 360 / 9){
+	 			ctx.save();
+	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			  ctx.fillStyle = 'gray';
+				ctx.fillRect(0, -12, 55, 24);
+				ctx.strokeRect(0, -12, 55, 24);
+				ctx.restore();
+	 		}
+	 		if(text){
+				ctx.font = '20px Arial';
+				var text = 'Triple Shot';
 				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
 			}
 	 	}
@@ -1221,9 +1328,9 @@ html, body, canvas {
 			if(event.keyCode === 87) // w
 				socket.emit('keyPress',{inputId:'up',state:false});
 			if(event.keyCode === 69)
-				console.log(Player.list[selfId].x + ', ' + Player.list[my_id].y);
+				document.body.style.zoom=0.5;
 			if(event.keyCode > 47 && event.keyCode < 58)
-				socket.emit('changeType',{type:event.keyCode - 48});
+				socket.emit('changeType',{type:{type:event.keyCode - 48,r:1,g:1,b:1}});
 		}
 	}
 	
@@ -1243,7 +1350,7 @@ html, body, canvas {
 			var leftSpace = 185;
 			if(newTanks.length != 0){
 				var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170;
-				var height = 100;
+				var height = 133;
 				if(isPointInsideRect(x,y,starting - 85,height - 85,(newTanks.length) * 170,170)){
 					var clickIndex = Math.round((x - starting) / 170);
 					console.log(clickIndex);

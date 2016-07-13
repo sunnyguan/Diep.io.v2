@@ -109,6 +109,7 @@ var Player = function(id, name){
 	self.mouseY = 0;
 	
 	self.availableUpgrades = [0,0,0];
+	self.sent = [0,0,0];
 	var super_update = self.update;
 	self.update = function(){
 		//self.regen();
@@ -163,40 +164,53 @@ var Player = function(id, name){
 	}
 	self.checkForUpgrades = function(){
 		var tanks = [];
-		if(self.level == 15 && !self.availableUpgrades[0])
-			self.availableUpgrades[0] = true;
-		if(self.level == 30 && !self.availableUpgrades[1])
-			self.availableUpgrades[1] = true;
-		if(self.level == 45 && !self.availableUpgrades[2]){
-			self.availableUpgrades[2] = true;
-			console.log(self.availableUpgrades[2]);
+		if((self.level == 15 && !self.sent[0]) ||
+			(self.level == 30 && !self.sent[1]) ||
+			(self.level == 45 && !self.sent[2])){
+			console.log(self.level + ', ' + self.availableUpgrades[1]);
+			if(self.level == 15 && !self.availableUpgrades[0])
+				self.availableUpgrades[0] = true;
+			if(self.level == 30 && !self.availableUpgrades[1])
+				self.availableUpgrades[1] = true;
+			if(self.level == 45 && !self.availableUpgrades[2])
+				self.availableUpgrades[2] = true;
+			
+			if(self.level == 15 && self.availableUpgrades[0]){
+				tanks = [1, 10, 11, 12];
+				//console.log('wherer');
+				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
+				self.sent[0] = true;
+			}else if(self.level == 30 && self.availableUpgrades[1]){
+				if(self.tankType == 1){
+					tanks = [8, 13, 14];
+				}else if(self.tankType == 10){
+					//console.log('hereererererereer');
+					tanks = [5, 8, 13];
+				}else if(self.tankType == 11){
+					tanks = [14];
+				}else if(self.tankType == 12){
+					tanks = [7];
+				}
+				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
+				self.sent[1] = true;
+			}else if(self.level == 45 && self.availableUpgrades[2]){
+				console.log('454545');
+				if(self.tankType == 8){
+					tanks = [3, 4, 9];
+				}else if(self.tankType == 13){
+					tanks = [3, 4, 9];
+				}else if(self.tankType == 14){
+					tanks = [2];
+				}else if(self.tankType == 5){
+					tanks = [6];
+				}else if(self.tankType == 7){
+					tanks = [];
+				}
+				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
+				self.sent[2] = true;
+			}
 		}
 		
-		if(self.level == 15 && self.availableUpgrades[0]){
-			tanks = [1, 5, 7];
-			
-		}else if(self.level == 30 && self.availableUpgrades[1]){
-			if(self.tankType == 1){
-				tanks = [4, 8];
-			}else if(self.tankType == 5){
-				tanks = [6];
-			}else if(self.tankType == 7){
-				tanks = [9];
-			}
-		}else if(self.level == 45 && self.availableUpgrades[2]){
-			if(self.tankType == 4){
-				tanks = [3, 9];
-			}else if(self.tankType == 8){
-				tanks = [3, 9];
-			}else if(self.tankType == 6){
-				tanks = [9];
-			}else if(self.tankType == 9){
-				tanks = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-			}
-		}
-		if(tanks.length != 0){
-			SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
-		}
 	}
 	self.shootBullet = function(angle, x, y){
 		//backward kick
@@ -400,6 +414,55 @@ var Player = function(id, name){
 				b5.x = self.x; b5.y = self.y;
 				self.reloadNum = 0;
 			}
+		} else if (self.tankType === 10){
+			if(self.reloadNum == 0){
+				self.spdX -= Math.cos(angle/180*Math.PI) * 0.5;
+				self.spdY -= Math.sin(angle/180*Math.PI) * 0.5;
+				var b1 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b1.x = self.x; b1.y = self.y;
+				self.reloadNum = 1;
+			}else if(self.reloadNum == 1){
+				self.spdX += Math.cos(angle/180*Math.PI) * 0.5;
+				self.spdY += Math.sin(angle/180*Math.PI) * 0.5;
+				var b1 = Bullet(self.id,angle - 180,self.bulletHp,self.bulletSpeed);
+				b1.x = self.x; b1.y = self.y;
+				self.reloadNum = 0;
+			}
+		} else if (self.tankType === 11){
+			self.spdX -= Math.cos(angle/180*Math.PI) * 0.5;
+			self.spdY -= Math.sin(angle/180*Math.PI) * 0.5;
+			var b = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+			b.x = self.x;
+			b.y = self.y;
+		} else if (self.tankType === 12){
+			self.spdX -= Math.cos(angle/180*Math.PI) * 0.5;
+			self.spdY -= Math.sin(angle/180*Math.PI) * 0.5;
+			var b = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+			b.x = self.x;
+			b.y = self.y;
+		}else if (self.tankType === 13){
+			if(self.reloadNum == 0){
+				var b1 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b1.x = self.x; b1.y = self.y;
+				var b2 = Bullet(self.id,angle - 2 * 360 / 4,self.bulletHp,self.bulletSpeed);
+				b2.x = self.x; b2.y = self.y;
+				self.reloadNum = 1;
+			}else if(self.reloadNum == 1){
+				var b1 = Bullet(self.id,angle - 1 * 360 / 4,self.bulletHp,self.bulletSpeed);
+				b1.x = self.x; b1.y = self.y;
+				var b2 = Bullet(self.id,angle - 3 * 360 / 4,self.bulletHp,self.bulletSpeed);
+				b2.x = self.x; b2.y = self.y;
+				self.reloadNum = 0;
+			}
+		} else if (self.tankType === 14){
+			self.spdX -= Math.cos(angle/180*Math.PI) * 2;
+			self.spdY -= Math.sin(angle/180*Math.PI) * 2;
+			var b1 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+			b1.x = self.x; b1.y = self.y;
+			var b2 = Bullet(self.id,angle - 1 * 360 / 9,self.bulletHp,self.bulletSpeed);
+			b2.x = self.x; b2.y = self.y;
+			var b3 = Bullet(self.id,angle + 1 * 360 / 9,self.bulletHp,self.bulletSpeed);
+			b3.x = self.x; b3.y = self.y;
 		} 
 	}
 	self.deathReset = function(){
@@ -493,6 +556,16 @@ Player.tankProps = [
 	{ name: 'twin flank', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
 	{ name: 'decatank', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
+	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
+	{ name: 'flank guard', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
+	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
+	{ name: 'machine gun', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
+	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 2, maxReload: 16},
+	{ name: 'sniper', minRegen: 4, maxRegen: 21, minSpeed: 8, maxSpeed: 12, minHp: 100, maxHp: 180, 
+	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 2, maxReload: 16},
+	{ name: 'quad tank', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
+	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
+	{ name: 'triple shot', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
 ];
 Player.onConnect = function(socket,username){
@@ -1061,8 +1134,10 @@ io.sockets.on('connection', function(socket){
 		if(p.availableUpgrades[0] == 1) p.availableUpgrades[0] = 0;
 		if(p.availableUpgrades[1] == 1) p.availableUpgrades[1] = 0;
 		if(p.availableUpgrades[2] == 1) p.availableUpgrades[2] = 0;
-		var i = Player.tankProps[data.type];
-		upgradeNewTank(p,i,data.type);
+		p.level++;//what???
+		console.log(data);
+		var i = Player.tankProps[data.type.type];
+		upgradeNewTank(p,i,data.type.type);
 	});
 	
 	var upgradeNewTank = function(p,i,t){
