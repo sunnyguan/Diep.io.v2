@@ -261,7 +261,16 @@ html, body, canvas {
 					ctx.fillStyle = 'red';
 					ctx.lineWidth = 3;
 					ctx.beginPath();
-					ctx.arc(x-10/2,y-10/2,9,0,2*Math.PI);
+					var rad = 0;
+					var tt = Player.list[selfId].tankType;
+					if(tt == 16){
+						rad = 22;
+					}else if(tt == 17){
+						rad = 6;
+					}else{
+						rad = 9
+					}
+					ctx.arc(x-10/2,y-10/2,rad,0,2*Math.PI);
 					ctx.fill();
 					ctx.stroke();
 				}
@@ -595,9 +604,11 @@ html, body, canvas {
 		var height = 133;
 		for(var i in newTanks){
 			var index = newTanks[i].type;
-			ctx.rect(starting + i * 170 - 85, height - 85, 170, 170);
 			ctx.save();
 			ctx.globalAlpha = 0.5;
+			ctx.rect(starting + i * 170 - 85, height - 85, 170, 170);
+			
+			ctx.globalAlpha = 0.25;
 			var r = newTanks[i].r;
 			var g = newTanks[i].g;
 			var b = newTanks[i].b;
@@ -1234,7 +1245,47 @@ html, body, canvas {
 					ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
 				}
 			}
-	 	}
+	 	} else if(tankType == 16){
+	 		//ctx.save();
+	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
+	 		rad = 27;
+	 		ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -20, 50, 40);
+			ctx.strokeRect(0, -20, 50, 40);
+			ctx.restore(); 
+			if(text){
+				ctx.font = '20px Arial';
+				var text = 'Destroyer';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+		}else if(tankType == 17){
+	 		rad = 30;
+	 		ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -13, 55, 11);
+			ctx.fillRect(0, 0, 55, 11);
+			ctx.strokeRect(0, -13, 55, 11);
+			ctx.strokeRect(0, 0, 55, 11);
+			
+			ctx.fillRect(-12, -26, 55, 11);
+			ctx.fillRect(-12, 13, 55, 11);
+			ctx.strokeRect(-12, 13, 55, 11);
+			ctx.strokeRect(-12, -26, 55, 11);
+			ctx.restore(); 
+			if(text){
+				ctx.font = '20px Arial';
+				var text = 'Gunner';
+				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+			}
+	 	} 
 		 	
 		
 		

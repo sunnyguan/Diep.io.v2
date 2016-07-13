@@ -104,7 +104,7 @@ var Player = function(id, name){
 	self.bullets = [];
 	self.moveTimer = 0;
 	self.friction = 0.96;
-	self.level = 1;
+	self.level = 15;
 	self.mouseX = 0;
 	self.mouseY = 0;
 	
@@ -187,7 +187,7 @@ var Player = function(id, name){
 					//console.log('hereererererereer');
 					tanks = [5, 8, 13];
 				}else if(self.tankType == 11){
-					tanks = [14];
+					tanks = [16, 17];
 				}else if(self.tankType == 12){
 					tanks = [7];
 				}
@@ -471,6 +471,41 @@ var Player = function(id, name){
 				b.y = self.y;
 				self.bullets.push(b);
 			}
+		} else if (self.tankType === 16) {
+			self.spdX -= Math.cos(angle/180*Math.PI) * 3;
+			self.spdY -= Math.sin(angle/180*Math.PI) * 3;
+			var b1 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+			b1.x = self.x - Math.cos(turbAngle*Math.PI/180) * 17;
+			b1.y = self.y - Math.sin(turbAngle*Math.PI/180) * 17;
+		} else if (self.tankType === 17) {
+			
+			turbAngle = -90 + turbAngle;
+			if(self.reloadNum == 0){
+				//console.log("0");
+				self.spdX -= Math.cos(angle/180*Math.PI) * 0.5;
+				self.spdY -= Math.sin(angle/180*Math.PI) * 0.5;
+				var b1 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b1.x = self.x - Math.cos(turbAngle*Math.PI/180) * 10;
+				b1.y = self.y - Math.sin(turbAngle*Math.PI/180) * 10;
+				
+				var b2 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b2.x = self.x + Math.cos(turbAngle*Math.PI/180)* 10;
+				b2.y = self.y + Math.sin(turbAngle*Math.PI/180) * 10;
+				self.reloadNum = 1;
+				//console.log("x: " + Math.sin(turbAngle*Math.PI/180));
+			}else if(self.reloadNum == 1){
+				self.spdX -= Math.cos(angle/180*Math.PI) * 0.5;
+				self.spdY -= Math.sin(angle/180*Math.PI) * 0.5;
+				var b1 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b1.x = self.x - Math.cos(turbAngle*Math.PI/180) * 20;
+				b1.y = self.y - Math.sin(turbAngle*Math.PI/180) * 20;
+				
+				var b2 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b2.x = self.x + Math.cos(turbAngle*Math.PI/180)* 20;
+				b2.y = self.y + Math.sin(turbAngle*Math.PI/180) * 20;
+				self.reloadNum = 0;
+			}
+			//console.log(self.mouseAngle);
 		} 
 	}
 	self.deathReset = function(){
@@ -577,6 +612,10 @@ Player.tankProps = [
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
 	{ name: 'overlord', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21},
+	{ name: 'destroyer', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
+	minBulletHp: 70, maxBulletHp: 170, minBulletSpeed: 8, maxBulletSpeed: 15, minReload: 30, maxReload: 80},
+	{ name: 'gunner', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
+	minBulletHp: 7, maxBulletHp: 30, minBulletSpeed: 19, maxBulletSpeed: 30, minReload: 3, maxReload: 18},
 ];
 Player.onConnect = function(socket,username){
 	var player = Player(socket.id,username);
@@ -589,8 +628,9 @@ Player.onConnect = function(socket,username){
 			player.pressingUp = data.state;
 		else if(data.inputId === 'down')
 			player.pressingDown = data.state;
-		else if(data.inputId === 'attack')
+		else if(data.inputId === 'attack'){
 			player.pressingAttack = data.state;
+		}
 		else if(data.inputId === 'mouseAngle'){
 			player.mouseAngle = data.state;
 			player.mouseX = data.mouseX;
