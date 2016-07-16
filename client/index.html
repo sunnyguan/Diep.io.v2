@@ -745,6 +745,27 @@ html, body, canvas {
 	}
 	draw();
 	
+	var CHINESE_LEVELUP = [
+		'生命恢复',
+		'最大生命',
+		'炮弹速度',
+		'炮弹伤害',
+		'炮弹装填',
+		'移动速度',
+		'撞击伤害',
+	];
+	
+	var ENGLISH_LEVELUP = [
+		'Health Regen',
+		'Max Health',
+		'Bullet Speed',
+		'Bullet Damage',
+		'Bullet Reload',
+		'Movement Speed',
+		'Body Damage',
+		'Upgrades'
+	];
+	
 	var levelUpCount = 8;
 	var levelUpVisible = false;
 	function drawLevelUp(){
@@ -769,26 +790,15 @@ html, body, canvas {
 		
 		
 		if(levelUpVisible){
-			ctx.fillText('Health Regen',leftWordSpace, initial+spacing*1-w);
-			ctx.rect(leftSpace, initial+spacing*0, length, 20);
+			var text = "";
+			var i = 0;
 			
-			ctx.fillText('Max Health',leftWordSpace, initial+spacing*2-w);
-			ctx.rect(leftSpace, initial+spacing*1, length, 20);
-			
-			ctx.fillText('Bullet Speed',leftWordSpace, initial+spacing*3-w);
-			ctx.rect(leftSpace, initial+spacing*2, length, 20);
-			
-			ctx.fillText('Bullet Damage',leftWordSpace, initial+spacing*4-w);
-			ctx.rect(leftSpace, initial+spacing*3, length, 20);
-			
-			ctx.fillText('Bullet Reload',leftWordSpace, initial+spacing*5-w);
-			ctx.rect(leftSpace, initial+spacing*4, length, 20);
-			
-			ctx.fillText('Movement Speed',leftWordSpace, initial+spacing*6-w);
-			ctx.rect(leftSpace, initial+spacing*5, length, 20);
-			
-			ctx.fillText('Body Damage',leftWordSpace, initial+spacing*7-w);
-			ctx.rect(leftSpace, initial+spacing*6, length, 20);
+			for(var j in ENGLISH_LEVELUP){
+				if(ch) text = CHINESE_LEVELUP[j];
+				else text = ENGLISH_LEVEUP[j];
+				ctx.fillText(text,leftWordSpace, initial+spacing*(j+1)-w);
+				ctx.rect(leftSpace, initial+spacing*j, length, 20);
+			}
 			
 			ctx.fillRect(leftSpace, initial+spacing*0, Player.list[selfId].regen * (length / levelUpCount), 20);
 			ctx.fillRect(leftSpace, initial+spacing*1, Player.list[selfId].hpMax * (length / levelUpCount), 20);
@@ -797,26 +807,16 @@ html, body, canvas {
 	    ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * (length / levelUpCount), 20);
 	    ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * (length / levelUpCount), 20);
 	    ctx.fillRect(leftSpace, initial+spacing*6, Player.list[selfId].bodyDamage * (length / levelUpCount), 20);
-	    ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 60, initial + spacing * 8-w);
 	    
-	    //ctx.save();
-	    //ctx.lineWidth = 0.1;
-	    /*for(var j = initial + spacing*0; j <= initial + spacing * 6; j += spacing){
-		    for(var i = leftSpace; i < leftSpace + length; i += length / levelUpCount){
-		    	ctx.moveTo(i, j);
-		    	ctx.lineTo(i, j+20);
-		    }
-		  }*/
-		  //ctx.lineWidth = 1;
-		  //ctx.stroke();
-		  //ctx.restore();
-	    
+	    if(ch) ctx.fillText('升级点数: ' + Player.list[selfId].upgrades, 60, initial + spacing * 8-w);
+	    else ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 60, initial + spacing * 8-w);
 	    ctx.moveTo(350,0);
 	    ctx.lineTo(350,250);
 	    ctx.lineTo(0,250);
 	    
 	  }else{
-	  	ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 85, initial+spacing*1-10);
+	  	if(ch) ctx.fillText('升级点数: ' + Player.list[selfId].upgrades, 60, initial + spacing * 8-w);
+	    else ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 60, initial + spacing * 8-w);
 			ctx.moveTo(350,0);
 	    ctx.lineTo(350,50);
 	    ctx.lineTo(0,50);
@@ -874,6 +874,11 @@ html, body, canvas {
 				ctx.moveTo(x, 0);
         ctx.lineTo(x, HEIGHT);
     }
+console.log((sx - WIDTH) + ', ' + (sy - HEIGHT));
+for (var x = sx - WIDTH; x < WIDTH; x += WIDTH / 45) {
+ctx.moveTo(x, 0);
+ctx.lineTo(x, HEIGHT);
+}
 
     for (var y = sy - HEIGHT ; y < HEIGHT; y += HEIGHT / 40) {
         ctx.moveTo(0, y);
