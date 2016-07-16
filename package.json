@@ -7,8 +7,7 @@
     "express": "*",
     "mongodb": "*",
     "mongojs": "*",
-    "socket.io": "*",
-    "player": "*"
+    "socket.io": "*"
   },
   "devDependencies": {},
   "scripts": {
