@@ -1,3 +1,5 @@
+﻿<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
 <div id="signDiv">
 	Username: <input id="signDiv-username" type="text"></input><br>
 	Password: <input id="signDiv-password" type="password"></input>
@@ -37,6 +39,8 @@ html, body, canvas {
 <script src="client/CanvasInput.min.js"></script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
+	var GAME_DIMENSION = 5000;
+	
 	var WIDTH = document.body.clientWidth;
 	var HEIGHT = document.body.clientHeight;
 	
@@ -44,6 +48,8 @@ html, body, canvas {
 	canvas.width = WIDTH;
 	canvas.height = HEIGHT;
 	
+	
+	//browser.actions().keyDown(protractor.Key.CONTROL).sendKeys('+').perform();
 	var focused = false;
 	var input = new CanvasInput({
 		canvas: document.getElementById("ctx"),
@@ -194,6 +200,7 @@ html, body, canvas {
 		self.bulletHp = 0;
 		self.bulletReload = 0;
 		self.movementSpeed = 0;
+		self.bodyDamage = 0;
 		self.level = 1;
 		self.upgrades = 0;
 		self.pMaxHp = 0;
@@ -258,18 +265,27 @@ html, body, canvas {
 					ctx.stroke();
 					ctx.restore();
 				}else{
-					ctx.fillStyle = 'red';
-					ctx.lineWidth = 3;
-					ctx.beginPath();
-					var rad = 0;
 					var tt = Player.list[selfId].tankType;
+					if(tt == 22)
+						ctx.fillStyle = 'gray';
+					else
+						ctx.fillStyle = 'red';
+					ctx.lineWidth = 3;
+					
+					var rad = 0;
+					
 					if(tt == 16){
 						rad = 22;
+					}else if(tt == 19 || tt == 20){
+						rad = 24;
 					}else if(tt == 17){
 						rad = 6;
+					}else if(tt == 18){
+						rad = 4;
 					}else{
-						rad = 9
+						rad = 9;
 					}
+					ctx.beginPath();
 					ctx.arc(x-10/2,y-10/2,rad,0,2*Math.PI);
 					ctx.fill();
 					ctx.stroke();
@@ -296,6 +312,8 @@ html, body, canvas {
 		self.angle = 0;
 		self.rotDeg = Math.random(0.2);
 		self.attacked = false;
+		self.toRemove = false;
+		self.toRemoveTimer = 0;
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
@@ -312,6 +330,11 @@ html, body, canvas {
 				ctx.save();
 				
 				ctx.translate(x,y);
+				if(self.toRemove){
+					//self.toRemoveTimer+=2;
+					ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+					ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+				}
 				ctx.rotate(self.angle/180*Math.PI);
 				self.angle+=self.rotDeg;
 				var numberOfSides = 3,
@@ -338,6 +361,9 @@ html, body, canvas {
 				
 				ctx.restore();
 			}
+			if(self.toRemove) self.toRemoveTimer+=2;
+			if(self.toRemoveTimer >= 45)
+				delete Triangle.list[self.id];
 		}
 		
 		Triangle.list[self.id] = self;		
@@ -356,6 +382,8 @@ html, body, canvas {
 		self.angle = 0;
 		self.rotDeg = Math.random(0.2);
 		self.attacked = false;
+		self.toRemove = false;
+		self.toRemoveTimer = 0;
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
@@ -372,6 +400,11 @@ html, body, canvas {
 				ctx.save();
 				ctx.lineWidth = 3;
 				ctx.translate(x,y);
+				if(self.toRemove){
+					//self.toRemoveTimer+=2;
+					ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+					ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+				}
 				ctx.rotate(self.angle/180*Math.PI);
 				self.angle+=self.rotDeg;
 				if(self.attacked)
@@ -383,7 +416,12 @@ html, body, canvas {
 				ctx.fill();
 				ctx.stroke();
 				ctx.restore();
+				
+				
 			}
+			if(self.toRemove) self.toRemoveTimer+=2;
+			if(self.toRemoveTimer >= 45)
+				delete Square.list[self.id];
 		}
 		
 		Square.list[self.id] = self;		
@@ -398,29 +436,55 @@ html, body, canvas {
 		self.x = initPack.x;
 		self.y = initPack.y;
 		self.hp = initPack.hp;
+		self.radius = initPack.radius;
+		//console.log(self.radius);
 		self.maxhp = initPack.maxhp;
 		self.angle = 0;
 		self.rotDeg = Math.random(0.2);
 		self.attacked = false;
+		self.toRemove = false;
+		self.toRemoveTimer = 0;
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
-			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
-				var hpWidth = 50 * self.hp / self.maxhp;
-				ctx.fillStyle = 'green';
-				ctx.fillRect(x - 25,y + 40,hpWidth,4);
-				ctx.fillStyle = 'red';
-				ctx.fillRect(x - 25 + hpWidth, y + 40, 50 - hpWidth, 4);
-				ctx.stroke();
+			if(x < WIDTH + 120 && x > -120 && y < HEIGHT + 120 && y > -120){
+				
+				if(self.radius != 30){
+					console.log(self.hp);
+					var width = 200;
+					var hpWidth = width * self.hp / self.maxhp;
+					console.log(self.maxhp);
+					ctx.fillStyle = 'green';
+					ctx.fillRect(x - width / 2,y + width - 80,hpWidth,4);
+					ctx.fillStyle = 'red';
+					ctx.fillRect(x - width / 2 + hpWidth, y + width - 80, width - hpWidth, 4);
+					ctx.stroke();
+				}else{
+					var hpWidth = 50 * self.hp / self.maxhp;
+					ctx.fillStyle = 'green';
+					ctx.fillRect(x - 25,y + 40,hpWidth,4);
+					ctx.fillStyle = 'red';
+					ctx.fillRect(x - 25 + hpWidth, y + 40, 50 - hpWidth, 4);
+					ctx.stroke();
+				}
+				
 				
 				ctx.save();
 				ctx.translate(x,y);
+				if(self.toRemove){
+					//self.toRemoveTimer+=2;
+					ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+					ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+				}
 				ctx.rotate(self.angle/180*Math.PI);
 				self.angle+=self.rotDeg;
+				if(typeof self.radius === undefined){
+					self.radius = 30;
+					console.log('here');				}
 				var numberOfSides = 5,
-				    size = 30,
+				    size = self.radius,
 				    Xcenter = 0,
 				    Ycenter = 0;
 				
@@ -447,6 +511,9 @@ html, body, canvas {
 				
 				ctx.restore();
 			}
+			if(self.toRemove) self.toRemoveTimer+=2;
+			if(self.toRemoveTimer >= 45)
+				delete Pentagon.list[self.id];
 		}
 		
 		Pentagon.list[self.id] = self;		
@@ -507,6 +574,8 @@ html, body, canvas {
 					p.bulletReload = pack.bulletReload;
 				if(pack.movementSpeed !== undefined)
 					p.movementSpeed = pack.movementSpeed;
+				if(pack.bodyDamage !== undefined)
+					p.bodyDamage = pack.bodyDamage;
 				if(pack.upgrades !== undefined)
 					p.upgrades = pack.upgrades;
 				if(pack.tankType !== undefined)
@@ -551,6 +620,8 @@ html, body, canvas {
 					b.hp = pack.hp;
 				if(pack.attacked !== undefined)
 					b.attacked = pack.attacked;
+				if(pack.maxhp !== undefined)
+					b.maxhp = pack.maxhp;
 			}
 		}
 		for(var i = 0 ; i < data.triangle.length; i++){
@@ -578,13 +649,16 @@ html, body, canvas {
 			delete Bullet.list[data.bullet[i]];
 		}
 		for(var i = 0 ; i < data.square.length; i++){
-			delete Square.list[data.square[i]];
+			Square.list[data.square[i]].toRemove = true;
+			//delete Square.list[data.square[i]];
 		}
 		for(var i = 0 ; i < data.pentagon.length; i++){
-			delete Pentagon.list[data.pentagon[i]];
+			Pentagon.list[data.pentagon[i]].toRemove = true;
+			//delete Pentagon.list[data.pentagon[i]];
 		}
 		for(var i = 0 ; i < data.triangle.length; i++){
-			delete Triangle.list[data.triangle[i]];
+			Triangle.list[data.triangle[i]].toRemove = true;
+			//delete Triangle.list[data.triangle[i]];
 		}
 	});
 	
@@ -600,15 +674,15 @@ html, body, canvas {
 		}
 	});
 	var drawTankUpgrades = function(){
-		var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170;
+		var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170 + 50;
 		var height = 133;
 		for(var i in newTanks){
 			var index = newTanks[i].type;
 			ctx.save();
-			ctx.globalAlpha = 0.5;
+			ctx.globalAlpha = 0.3;
 			ctx.rect(starting + i * 170 - 85, height - 85, 170, 170);
 			
-			ctx.globalAlpha = 0.25;
+			ctx.globalAlpha = 0.6;
 			var r = newTanks[i].r;
 			var g = newTanks[i].g;
 			var b = newTanks[i].b;
@@ -667,9 +741,11 @@ html, body, canvas {
 		input.render();
 		//ctx.strokeRect(starting - 100,height - 100,(newTanks.length) * 170,170);
 		drawChat();
+		input.y = HEIGHT - 40;
 	}
 	draw();
 	
+	var levelUpCount = 8;
 	var levelUpVisible = false;
 	function drawLevelUp(){
 		
@@ -678,7 +754,7 @@ html, body, canvas {
 		var leftSpace = 185;
 		var leftWordSpace = 5;
 		var w = 15;
-		var length = 100;
+		var length = 150;
 		var divider = 6;
 		ctx.font = '20px Verdana';
 		ctx.strokeStyle = 'black';
@@ -690,9 +766,7 @@ html, body, canvas {
 			ctx.fillStyle = 'Gray';
 			ctx.globalAlpha = 0.5;
 		}
-		ctx.moveTo(350, 0);
-    ctx.lineTo(350, 50);
-    ctx.lineTo(300, 50);
+		
 		
 		if(levelUpVisible){
 			ctx.fillText('Health Regen',leftWordSpace, initial+spacing*1-w);
@@ -713,42 +787,61 @@ html, body, canvas {
 			ctx.fillText('Movement Speed',leftWordSpace, initial+spacing*6-w);
 			ctx.rect(leftSpace, initial+spacing*5, length, 20);
 			
-			ctx.fillRect(leftSpace, initial+spacing*0, Player.list[selfId].regen * 20, 20);
-			ctx.fillRect(leftSpace, initial+spacing*1, Player.list[selfId].hpMax * 20, 20);
-			ctx.fillRect(leftSpace, initial+spacing*2, Player.list[selfId].bulletSpeed * 20, 20);
-	    ctx.fillRect(leftSpace, initial+spacing*3, Player.list[selfId].bulletHp * 20, 20);
-	    ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * 20, 20);
-	    ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * 20, 20);
-	    ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 60, initial + spacing * 7-w);
+			ctx.fillText('Body Damage',leftWordSpace, initial+spacing*7-w);
+			ctx.rect(leftSpace, initial+spacing*6, length, 20);
+			
+			ctx.fillRect(leftSpace, initial+spacing*0, Player.list[selfId].regen * (length / levelUpCount), 20);
+			ctx.fillRect(leftSpace, initial+spacing*1, Player.list[selfId].hpMax * (length / levelUpCount), 20);
+			ctx.fillRect(leftSpace, initial+spacing*2, Player.list[selfId].bulletSpeed * (length / levelUpCount), 20);
+	    ctx.fillRect(leftSpace, initial+spacing*3, Player.list[selfId].bulletHp * (length / levelUpCount), 20);
+	    ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * (length / levelUpCount), 20);
+	    ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * (length / levelUpCount), 20);
+	    ctx.fillRect(leftSpace, initial+spacing*6, Player.list[selfId].bodyDamage * (length / levelUpCount), 20);
+	    ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 60, initial + spacing * 8-w);
 	    
-	    ctx.moveTo(300,0);
-	    ctx.lineTo(300,230);
-	    ctx.lineTo(0,230);
+	    //ctx.save();
+	    //ctx.lineWidth = 0.1;
+	    /*for(var j = initial + spacing*0; j <= initial + spacing * 6; j += spacing){
+		    for(var i = leftSpace; i < leftSpace + length; i += length / levelUpCount){
+		    	ctx.moveTo(i, j);
+		    	ctx.lineTo(i, j+20);
+		    }
+		  }*/
+		  //ctx.lineWidth = 1;
+		  //ctx.stroke();
+		  //ctx.restore();
+	    
+	    ctx.moveTo(350,0);
+	    ctx.lineTo(350,250);
+	    ctx.lineTo(0,250);
 	    
 	  }else{
 	  	ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 85, initial+spacing*1-10);
-			ctx.moveTo(300,0);
-	    ctx.lineTo(300,50);
+			ctx.moveTo(350,0);
+	    ctx.lineTo(350,50);
 	    ctx.lineTo(0,50);
 		}
 		
-		
+		var prev = 100;
+		ctx.moveTo(400, 0);
+    ctx.lineTo(400, 50);
+    ctx.lineTo(350, 50);
 		if(levelUpVisible == true){
-			ctx.moveTo(312, 23);
-	    ctx.lineTo(323, 12);
-	    ctx.lineTo(334, 23);
+			ctx.moveTo(312 + length - prev, 23);
+	    ctx.lineTo(323 + length - prev, 12);
+	    ctx.lineTo(334 + length - prev, 23);
 	    
-	    ctx.moveTo(312, 38);
-	    ctx.lineTo(323, 27);
-	    ctx.lineTo(334, 38);
+	    ctx.moveTo(312 + length - prev, 38);
+	    ctx.lineTo(323 + length - prev, 27);
+	    ctx.lineTo(334 + length - prev, 38);
 		} else {
-    	ctx.moveTo(312, 12);
-	    ctx.lineTo(323, 23);
-	    ctx.lineTo(334, 12);
+    	ctx.moveTo(312 + length - prev, 12);
+	    ctx.lineTo(323 + length - prev, 23);
+	    ctx.lineTo(334 + length - prev, 12);
 	    
-	    ctx.moveTo(312, 25);
-	    ctx.lineTo(323, 36);
-	    ctx.lineTo(334, 25);
+	    ctx.moveTo(312 + length - prev, 25);
+	    ctx.lineTo(323 + length - prev, 36);
+	    ctx.lineTo(334 + length - prev, 25);
     }
     
     
@@ -757,12 +850,22 @@ html, body, canvas {
 	}
 	
 	function drawgrid() {
-		ctx.fillStyle = '#CDCDCD';
+		if(!blackTheme){
+			ctx.fillStyle = '#CDCDCD';
+		}else{
+			ctx.fillStyle = '#191919';
+		}
 		ctx.fillRect(0,0,WIDTH,HEIGHT);
 		ctx.save();
 		//ctx.globalCompositeOperation='destination-atop';
    ctx.lineWidth = 0.5;
-   ctx.strokeStyle = '#ADADAD';
+		if(!blackTheme){
+			ctx.strokeStyle = '#ADADAD';
+		}else{
+			ctx.strokeStyle = '#4d4d4d';
+		}
+   //ctx.strokeStyle = '#CCCCCC';
+   
    ctx.beginPath();
    var sx = WIDTH/2 - Player.list[selfId].x;
 		var sy = HEIGHT/2 - Player.list[selfId].y;
@@ -780,7 +883,7 @@ html, body, canvas {
     ctx.stroke();
     ctx.restore();
 }
-	
+	var blackTheme = false;
 	var drawMap = function(){
 		drawgrid();
 		//ctx.drawImage(Img.map,x,y, 3000,3000);
@@ -854,8 +957,8 @@ html, body, canvas {
 			ctx.moveTo(WIDTH - 200, 0);
 			ctx.lineTo(WIDTH - 200, 200);
 			ctx.lineTo(WIDTH, 200);
-			ctx.moveTo(WIDTH - 200 + 200 * pla.x / 4500 + 5, 200 * pla.y / 4500);
-			ctx.arc(WIDTH - 200 + 200 * pla.x / 4500, 200 * pla.y / 4500, 5, 0, 2 * Math.PI);
+			ctx.moveTo(WIDTH - 200 + 200 * pla.x / GAME_DIMENSION + 5, 200 * pla.y / GAME_DIMENSION);
+			ctx.arc(WIDTH - 200 + 200 * pla.x / GAME_DIMENSION, 200 * pla.y / GAME_DIMENSION, 5, 0, 2 * Math.PI);
 			var scoreText = (y / 40 + 1) + '. ' + pla.name + ': ' + pla.score;
 			ctx.fillText(scoreText, WIDTH - ctx.measureText(scoreText).width, HEIGHT / 2 - 150 + y);
 			y += 40;
@@ -904,11 +1007,7 @@ html, body, canvas {
 			ctx.fillRect(0, -12, 40, 20);
 			ctx.strokeRect(0, -12, 40, 20);
 			ctx.restore(); 
-			if(text){
-				ctx.font = '20px Arial';
-				var text = 'Base Tank';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+			
 		}	else if(tankType == 1){
 	 		rad = 30;
 	 		ctx.translate(x,y);
@@ -922,11 +1021,7 @@ html, body, canvas {
 			ctx.strokeRect(0, -27, 55, 26);
 			ctx.strokeRect(0, 3, 55, 26);
 			ctx.restore(); 
-			if(text){
-				ctx.font = '20px Arial';
-				var text = 'Twin';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+			
 	 	} else if(tankType == 2){
 	 		rad = 31;
 	 		ctx.translate(x,y);
@@ -945,11 +1040,7 @@ html, body, canvas {
 			ctx.fillRect(0, -12, 66, 20);
 			
 			ctx.restore();
-			if(text){
-				ctx.font = '20px Arial';
-				var text = 'Triplet';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+			
 	 	}else if(tankType == 3){
 	 		rad = 30;
 	 		ctx.restore();
@@ -965,11 +1056,7 @@ html, body, canvas {
 				ctx.strokeRect(0, -12, 55, 24);
 				ctx.restore();
 	 		}
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Octotank';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+	 		
 	 	}else if(tankType == 4){
 	 		rad = 30;
 	 		ctx.restore();
@@ -986,12 +1073,7 @@ html, body, canvas {
 				ctx.restore();
 	 		}
 	 		ctx.strokeColor = 'red';
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Triple Twin';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
-	 	
+	 		
 	 	} else if(tankType == 5){
 	 		rad = 26.5;
 	 		ctx.restore();
@@ -1016,13 +1098,7 @@ html, body, canvas {
 			ctx.strokeRect(0, -12, 48, 20);
 			ctx.restore(); 
 			ctx.strokeColor = 'red';
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Triangle';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
-	 	
-	 	
+	 		
 	 	} else if(tankType == 6){
 	 		rad = 26.5;
 	 		ctx.restore();
@@ -1057,13 +1133,7 @@ html, body, canvas {
 			ctx.strokeRect(0, -12, 48, 20);
 			ctx.restore(); 
 			ctx.strokeColor = 'red';
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Booster';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
-	 	
-	 	
+	 		
 	 	} else if(tankType == 7){
 	 		rad = 26.5;
 	 		
@@ -1083,11 +1153,7 @@ html, body, canvas {
 				ctx.fill();
 				ctx.stroke();
 				ctx.restore(); 
-				if(text){
-					ctx.font = '20px Arial';
-					var text = 'Overseer';
-					ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-				}
+				
 			}
 	 	} else if(tankType == 8){
 	 		rad = 30;
@@ -1106,13 +1172,7 @@ html, body, canvas {
 				ctx.restore();
 	 		}
 	 		ctx.strokeColor = 'red';
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Twin Flank';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
-	 	
-	 	
+	 		
 	 	} else if(tankType == 9){
 	 		rad = 30;
 	 		ctx.strokeStyle = 'black';
@@ -1126,11 +1186,7 @@ html, body, canvas {
 				ctx.strokeRect(0, -12, 55, 24);
 				ctx.restore();
 	 		}
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Decatank';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+	 		
 	 	} else if(tankType == 10){
 	 		rad = 23;
 	 		ctx.strokeStyle = 'black';
@@ -1144,11 +1200,7 @@ html, body, canvas {
 				ctx.strokeRect(0, -9, 42, 18);
 				ctx.restore();
 	 		}
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Twin Flank';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			} 
+	 		
 	 	} else if(tankType == 11){
 			ctx.translate(x,y);
 	 		ctx.rotate(angle * Math.PI / 180);
@@ -1163,11 +1215,7 @@ html, body, canvas {
 			ctx.fill();
 			ctx.stroke();
 			ctx.restore(); 
-			if(text){
-				ctx.font = '20px Arial';
-				var text = 'Machine Gun';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+			
 		} else if(tankType == 12){
 			ctx.translate(x,y);
 	 		ctx.rotate(angle * Math.PI / 180);
@@ -1177,11 +1225,7 @@ html, body, canvas {
 			ctx.fillRect(0, -12, 50, 20);
 			ctx.strokeRect(0, -12, 50, 20);
 			ctx.restore(); 
-			if(text){
-				ctx.font = '20px Arial';
-				var text = 'Sniper';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+			
 		}else if(tankType == 13){
 	 		rad = 30;
 	 		ctx.strokeStyle = 'black';
@@ -1195,11 +1239,7 @@ html, body, canvas {
 				ctx.strokeRect(0, -12, 55, 24);
 				ctx.restore();
 	 		}
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Quad Tank';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+	 		
 	 	} else if(tankType == 14){
 	 		rad = 30;
 	 		ctx.restore();
@@ -1215,11 +1255,7 @@ html, body, canvas {
 				ctx.strokeRect(0, -12, 55, 24);
 				ctx.restore();
 	 		}
-	 		if(text){
-				ctx.font = '20px Arial';
-				var text = 'Triple Shot';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+	 		
 	 	} else if(tankType == 15){
 	 		rad = 26.5;
 	 		
@@ -1239,11 +1275,7 @@ html, body, canvas {
 				ctx.fill();
 				ctx.stroke();
 				ctx.restore(); 
-				if(text){
-					ctx.font = '20px Arial';
-					var text = 'Overlord';
-					ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-				}
+				
 			}
 	 	} else if(tankType == 16){
 	 		//ctx.save();
@@ -1257,11 +1289,7 @@ html, body, canvas {
 			ctx.fillRect(0, -20, 50, 40);
 			ctx.strokeRect(0, -20, 50, 40);
 			ctx.restore(); 
-			if(text){
-				ctx.font = '20px Arial';
-				var text = 'Destroyer';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
+			
 		}else if(tankType == 17){
 	 		rad = 30;
 	 		ctx.translate(x,y);
@@ -1280,16 +1308,129 @@ html, body, canvas {
 			ctx.strokeRect(-12, 13, 55, 11);
 			ctx.strokeRect(-12, -26, 55, 11);
 			ctx.restore(); 
-			if(text){
-				ctx.font = '20px Arial';
-				var text = 'Gunner';
-				ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-			}
-	 	} 
-		 	
+			
+	 	} else if(tankType == 18){
+	 		rad = 34;
+	 		ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -10, 60, 8);
+			ctx.fillRect(0, 0, 60, 8);
+			ctx.strokeRect(0, -10, 60, 8);
+			ctx.strokeRect(0, 0, 60, 8);
+			
+			ctx.fillRect(-8, -20, 60, 8);
+			ctx.fillRect(-8, 10, 60, 8);
+			ctx.strokeRect(-8, 10, 60, 8);
+			ctx.strokeRect(-8, -20, 60, 8);
+			
+			ctx.fillRect(-16, -30, 60, 8);
+			ctx.fillRect(-16, 20, 60, 8);
+			ctx.strokeRect(-16, 20, 60, 8);
+			ctx.strokeRect(-16, -30, 60, 8);
+			ctx.restore(); 
+			
+	 	} else if(tankType == 19){
+	 		//ctx.save();
+	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
+	 		rad = 27;
+	 		ctx.restore();
+	 		for(var i = 0; i <= 180; i+= 180){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+		 		ctx.rotate((angle+i) * Math.PI / 180);
+			  ctx.strokeStyle = 'black';
+			  ///ctx.lineWidth = 1;
+				ctx.fillStyle = 'gray';
+				ctx.fillRect(0, -20, 50, 40);
+				ctx.strokeRect(0, -20, 50, 40);
+				ctx.restore(); 
+	 		}
+	 		
+			
+		} else if(tankType == 20){
+	 		//ctx.save();
+	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
+	 		rad = 27;
+	 		ctx.translate(x,y);
+	 		ctx.rotate((angle) * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -20, 50, 40);
+			ctx.fillRect(20, -20, 12, 40);
+			
+			ctx.strokeRect(0, -20, 50, 40);
+			ctx.strokeRect(20, -20, 12, 40);
+			ctx.restore(); 
+	 		
+			
+		} else if(tankType == 21){
+	 		rad = 30;
+	 		ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		
+	 		for(var i = -360 / 9; i < 0; i += 360 / 18){
+	 			ctx.save();
+	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			  ctx.fillStyle = 'gray';
+				ctx.fillRect(0+i * 9 / 360 * 15, -12, 55, 24);
+				ctx.strokeRect(0+i * 9 / 360 * 15, -12, 55, 24);
+				ctx.restore();
+				ctx.save();
+	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle-i) * Math.PI / 180);
+			  ctx.fillStyle = 'gray';
+				ctx.fillRect(0+i * 9 / 360 * 15, -12, 55, 24);
+				ctx.strokeRect(0+i * 9 / 360 * 15, -12, 55, 24);
+				ctx.restore();
+	 		}
+	 		ctx.save();
+ 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
+ 			ctx.translate(x,y);
+ 			ctx.rotate((angle) * Math.PI / 180);
+		  ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -12, 55, 24);
+			ctx.strokeRect(0, -12, 55, 24);
+			ctx.restore();
+			
+			ctx.save();
+	 		
+	 	} else if(tankType == 22){
+			ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -10, 45, 20);
+			ctx.strokeRect(0, -10, 45, 20);
+			ctx.beginPath();
+			ctx.moveTo(45, -12);
+			ctx.lineTo(75, -20);
+			ctx.lineTo(75, 20);
+			ctx.lineTo(45, 12);
+			ctx.fill();
+			ctx.stroke();
+			ctx.restore(); 
+			
+		} 
 		
+		var ch = true;
+		if(text){
+			ctx.font = '19px Arial';
+			if(ch)
+				var text = CHINESE[tankType];
+			else
+				var text = ENGLISH[tankType];
+			ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+		}
 		
-		//ctx.stroke();
 		ctx.save();
 		//ctx.scale(2,2);
 		ctx.lineWidth = 2.5;
@@ -1302,6 +1443,60 @@ html, body, canvas {
 		ctx.stroke();
 		ctx.restore();
 	}
+	
+	var CHINESE = [
+		'大炮',
+	'连环炮',
+	'阵列炮',
+	'八角炮',
+	'多角连环炮',
+	'三角炮',
+	'推射炮',
+	'监察者',
+	'双向连环炮',
+	'十方霸主',
+	'侧卫炮',
+	'机关炮',
+	'狙击手',
+	'四方炮',
+	'三连环炮',
+	'领主',
+	'毁灭炮',
+	'机关枪',
+	'高速机关枪',
+	'双门毁灭炮',
+	'歼灭大炮',
+	'五连大炮',
+	'高射加农炮',
+	];
+	
+	var ENGLISH = [
+		'base tank',
+		'twin',
+		'triplet',
+		'octotank',
+		'triple twin',
+		'triangle',
+		'booster',
+		'overseer',
+		'twin flank',
+		'decatank',
+		'flank guard',
+		'machine gun',
+		'sniper',
+		'quad tank',
+		'triple shot',
+		'overlord',
+		'destroyer',
+		'gunner',
+		'hexagunner',
+		'flank destroyer',
+		'twin destroyer',
+		'penta shot',
+		'flak cannon',
+	];
+	
+	
 	
 	/**
 	 * Draws a rounded rectangle using the current state of the canvas.
@@ -1361,7 +1556,7 @@ html, body, canvas {
 		
 		if(!focused){
 			if(event.keyCode === 68){	//d
-				if(!(Player.list[selfId].x > 4500)){
+				if(!(Player.list[selfId].x > GAME_DIMENSION)){
 					
 					socket.emit('keyPress',{inputId:'right',state:true});
 				}else{
@@ -1369,7 +1564,7 @@ html, body, canvas {
 				}
 			}
 			if(event.keyCode === 83){	//s
-				if(!(Player.list[selfId].y > 4500)){
+				if(!(Player.list[selfId].y > GAME_DIMENSION)){
 					socket.emit('keyPress',{inputId:'down',state:true});
 				}else{
 					socket.emit('keyPress',{inputId:'down',state:false});
@@ -1422,7 +1617,7 @@ html, body, canvas {
 			var spacing = 30;
 			var initial = 10;
 			var w = 15;
-			var length = 104;
+			var length = 154;
 			var leftSpace = 185;
 			if(newTanks.length != 0){
 				var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170;
@@ -1439,7 +1634,7 @@ html, body, canvas {
 			if(isPointInsideRect(x,y,0,HEIGHT - 40,210,40)){
 				focused = true;
 			}else focused = false;
-			if(isPointInsideRect(x,y,300,0,50,50)){
+			if(isPointInsideRect(x,y,350,0,50,50)){
 				levelUpVisible = !levelUpVisible;
 			}
 			if(isPointInsideRect(x,y,222,HEIGHT - 39,42,42)){
@@ -1458,6 +1653,8 @@ html, body, canvas {
 					socket.emit('reload');
 				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*5, length, 20)){
 					socket.emit('maxSpd');
+				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*6, length, 20)){
+					socket.emit('bodyDamage');
 				}else socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
 			}else socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
 		}
