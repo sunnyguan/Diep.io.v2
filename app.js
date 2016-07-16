@@ -861,6 +861,18 @@ var Shape = function(){
 	}
 	
 	self.update = function(){
+		
+		if(self.attacked && self.attackedTimer > 3){
+			self.attacked = false;
+			self.attackedTimer = 0;
+		}else if(self.attacked){
+			self.attackedTimer++;
+		}
+		var x = Math.cos(self.angle/180*Math.PI) * self.speed;
+		var y = Math.sin(self.angle/180*Math.PI) * self.speed;
+		//super_update();
+		
+		//// SUPER UPDATE
 		if(self.x + self.spdX < GAME_DIMENSION && self.x + self.spdX > 0){
 			self.x += self.spdX;
 		}
@@ -884,6 +896,16 @@ var Shape = function(){
 					p.spdY -= Math.sin(angle) * 5;
 				}
 			}
+		}
+		//// SUPER UPDATE
+		
+		if(Math.abs(self.spdX - x) > 0.1 || Math.abs(self.spdY - y) > 0.1){
+			self.spdX *= self.friction;
+			self.spdY *= self.friction;
+		}else if(!stoppedSpeeding){
+			self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
+			self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
+			self.stoppedSpeeding = true;
 		}
 	}
 	self.getDistance = function(pt){
@@ -915,24 +937,6 @@ var Pentagon = function(x,y,radius){
 	self.attackedTimer = 0;
 	var super_update = self.update;
 	self.update = function(){
-		var x = Math.cos(self.angle/180*Math.PI) * self.speed;
-		var y = Math.sin(self.angle/180*Math.PI) * self.speed;
-		super_update();
-		if(Math.abs(self.spdX - x) > 0.1 || Math.abs(self.spdY - y) > 0.1){
-			self.spdX *= self.friction;
-			self.spdY *= self.friction;
-		}else{
-			self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
-			self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
-		}
-		if(self.hp > self.maxhp) self.hp = self.maxhp;
-		self.angle += Math.random() * 0.1;
-		if(self.attacked && self.attackedTimer > 2){
-			self.attacked = false;
-			self.attackedTimer = 0;
-		}else if(self.attacked){
-			self.attackedTimer++;
-		}
 		super_update();
 	}
 	self.getInitPack = function(){
@@ -1019,22 +1023,7 @@ var Square = function(){
 	self.attackedTimer = 0;
 	var super_update = self.update;
 	self.update = function(){
-		if(self.attacked && self.attackedTimer > 3){
-			self.attacked = false;
-			self.attackedTimer = 0;
-		}else if(self.attacked){
-			self.attackedTimer++;
-		}
-		var x = Math.cos(self.angle/180*Math.PI) * self.speed;
-		var y = Math.sin(self.angle/180*Math.PI) * self.speed;
 		super_update();
-		if(Math.abs(self.spdX - x) > 0.1 || Math.abs(self.spdY - y) > 0.1){
-			self.spdX *= self.friction;
-			self.spdY *= self.friction;
-		}else{
-			self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
-			self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
-		}
 	}
 	self.getInitPack = function(){
 		return {
@@ -1107,23 +1096,7 @@ var Triangle = function(){
 	self.stoppedSpeeding = true;
 	var super_update = self.update;
 	self.update = function(){
-		if(self.attacked && self.attackedTimer > 3){
-			self.attacked = false;
-			self.attackedTimer = 0;
-		}else if(self.attacked){
-			self.attackedTimer++;
-		}
-		var x = Math.cos(self.angle/180*Math.PI) * self.speed;
-		var y = Math.sin(self.angle/180*Math.PI) * self.speed;
 		super_update();
-		if(Math.abs(self.spdX - x) > 0.1 || Math.abs(self.spdY - y) > 0.1){
-			self.spdX *= self.friction;
-			self.spdY *= self.friction;
-		}else{
-			self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
-			self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
-			self.stoppedSpeeding = true;
-		}
 	}
 	self.getInitPack = function(){
 		return {
