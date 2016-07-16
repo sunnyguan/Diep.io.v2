@@ -1554,7 +1554,7 @@ html, body, canvas {
 	
 	document.onkeydown = function(event){
 		
-		if(!focused){
+		if(!focused && typeof Player.list[selfId] !== undefined){
 			if(event.keyCode === 68){	//d
 				if(!(Player.list[selfId].x > GAME_DIMENSION)){
 					

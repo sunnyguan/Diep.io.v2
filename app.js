@@ -1104,6 +1104,7 @@ var Triangle = function(){
 	self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
 	self.attacked = false;
 	self.attackedTimer = 0;
+	self.stoppedSpeeding = true;
 	var super_update = self.update;
 	self.update = function(){
 		if(self.attacked && self.attackedTimer > 3){
@@ -1121,6 +1122,7 @@ var Triangle = function(){
 		}else{
 			self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
 			self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
+			self.stoppedSpeeding = true;
 		}
 	}
 	self.getInitPack = function(){
