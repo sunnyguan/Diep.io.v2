@@ -1195,7 +1195,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			}
 		}
 		
-		if(t % 3 == 0){
+		if(t % 2 == 0){
 			for(var i in Player.list){
 				var p = Player.list[i];
 				self.dealWithEntities(p);
