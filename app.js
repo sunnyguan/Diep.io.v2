@@ -1529,7 +1529,7 @@ setInterval(function(){
 			pack.pentagon = Pentagon.getRequired(Player.list[socket.id]);
 			socket.emit('init',initPack);
 			socket.emit('update',pack);
-			socket.emit('remove',removePack);
+			//socket.emit('remove',removePack);
 		}
 	}
 	initPack.player = [];
