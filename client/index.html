@@ -245,7 +245,7 @@ html, body, canvas {
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
 				if(self.drone){
 					ctx.save();
-					ctx.fillStyle = 'DeepSkyBlue';
+					//ctx.fillStyle = 'DeepSkyBlue';
 					ctx.lineWidth = 3;
 					ctx.translate(x,y);
 					ctx.rotate(self.angle * Math.PI / 180);
@@ -269,7 +269,7 @@ html, body, canvas {
 					if(tt == 22)
 						ctx.fillStyle = 'gray';
 					else
-						ctx.fillStyle = 'red';
+						ctx.fillStyle = 'DeepSkyBlue';
 					ctx.lineWidth = 3;
 					
 					var rad = 0;
@@ -283,7 +283,7 @@ html, body, canvas {
 					}else if(tt == 18){
 						rad = 4;
 					}else{
-						rad = 9;
+						rad = 10;
 					}
 					ctx.beginPath();
 					ctx.arc(x-10/2,y-10/2,rad,0,2*Math.PI);
