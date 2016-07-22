@@ -1164,6 +1164,7 @@ var objInViewOfPlayer = function(obj, player){
 }
 
 var pull = 0.7;
+var t = 0;
 var Bullet = function(parent,angle,hp,speed,drone){
 	var self = Entity();
 	self.id = Math.random();
@@ -1223,22 +1224,25 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			}
 		}
 		
-		for(var i in Player.list){
-			var p = Player.list[i];
-			self.dealWithEntities(p);
+		if(t % 3 == 0){
+			for(var i in Player.list){
+				var p = Player.list[i];
+				self.dealWithEntities(p);
+			}
+			for(var i in Square.list){
+				var s = Square.list[i];
+				self.dealWithEntities(s);
+			}
+			for(var i in Pentagon.list){
+				var s = Pentagon.list[i];
+				self.dealWithEntities(s);
+			}
+			for(var i in Triangle.list){
+				var s = Triangle.list[i];
+				self.dealWithEntities(s);
+			}
 		}
-		for(var i in Square.list){
-			var s = Square.list[i];
-			self.dealWithEntities(s);
-		}
-		for(var i in Pentagon.list){
-			var s = Pentagon.list[i];
-			self.dealWithEntities(s);
-		}
-		for(var i in Triangle.list){
-			var s = Triangle.list[i];
-			self.dealWithEntities(s);
-		}
+		
 	}
 	self.dealWithEntities = function(s){
 		if(s.id != self.parent){
