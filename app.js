@@ -982,22 +982,9 @@ var Pentagon = function(x,y,radius){
 }
 Pentagon.list = {};
 
-Pentagon.updateList = {};
-
-Pentagon.getRequired = function(player){
-	var pack = [];
+Pentagon.update = function(player){
 	
-	for(var i in Pentagon.list){
-		var pentagon = Pentagon.list[i];
-		if(objInViewOfPlayer(pentagon, player)){
-			pack.push(Pentagon.updateList[pentagon.id]);
-		}
-	}
 	
-	return pack;
-}
-
-Pentagon.update = function(){
 	if(numOfAlphaPentagons < 4){
 		var x = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
 		var y = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
@@ -1012,6 +999,8 @@ Pentagon.update = function(){
 		var t = Pentagon();
 	}
 	
+	var pack = [];
+	
 	for(var i in Pentagon.list){
 		var pentagon = Pentagon.list[i];
 		if(pentagon.hp <= 0){
@@ -1020,9 +1009,13 @@ Pentagon.update = function(){
 		} else {
 			pentagon.update();
 			var updatePack = pentagon.getUpdatePack();
-			Pentagon.updateList[pentagon.id] = updatePack;
+			if(objInViewOfPlayer(pentagon, player)){
+				pack.push(updatePack);
+			}
 		}
 	}
+	
+	return pack;
 }
 
 Pentagon.getAllInitPack = function(){
@@ -1044,25 +1037,13 @@ var Square = function(){
 }
 Square.list = {};
 
-Square.updateList = {};
-
-Square.getRequired = function(player){
-	var pack = [];
-	
-	for(var i in Square.list){
-		var square = Square.list[i];
-		if(objInViewOfPlayer(square, player)){
-			pack.push(Square.updateList[square.id]);
-		}
-	}
-	
-	return pack;
-}
-
-Square.update = function(){
+Square.update = function(player){
 	if(Object.keys(Square.list).length < 100){
 		var t = Square();
 	}
+	
+	var pack = [];
+	
 	for(var i in Square.list){
 		var square = Square.list[i];
 		if(square.hp <= 0){
@@ -1071,9 +1052,13 @@ Square.update = function(){
 		} else {
 			square.update();
 			var updatePack = square.getUpdatePack();
-			Square.updateList[square.id] = updatePack;
+			if(objInViewOfPlayer(square, player)){
+				pack.push(updatePack);
+			}
 		}
 	}
+	
+	return pack;
 }
 
 Square.getAllInitPack = function(){
@@ -1095,25 +1080,13 @@ var Triangle = function(){
 }
 Triangle.list = {};
 
-Triangle.updateList = {};
-
-Triangle.getRequired = function(player){
-	var pack = [];
-	
-	for(var i in Triangle.list){
-		var triangle = Triangle.list[i];
-		if(objInViewOfPlayer(triangle, player)){
-			pack.push(Triangle.updateList[triangle.id]);
-		}
-	}
-	
-	return pack;
-}
-
-Triangle.update = function(){
+Triangle.update = function(player){
 	if(Object.keys(Triangle.list).length < 100){
 		var t = Triangle();
 	}
+	
+	var pack = [];
+	
 	for(var i in Triangle.list){
 		var triangle = Triangle.list[i];
 		if(triangle.hp <= 0){
@@ -1122,9 +1095,13 @@ Triangle.update = function(){
 		} else {
 			triangle.update();
 			var updatePack = triangle.getUpdatePack();
-			Triangle.updateList[triangle.id] = updatePack;
+			if(objInViewOfPlayer(triangle, player)){
+				pack.push(updatePack);
+			}
 		}
 	}
+	
+	return pack;
 }
 
 Triangle.getAllInitPack = function(){
@@ -1513,23 +1490,20 @@ var initPack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
 var removePack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
 
 setInterval(function(){
-	Square.update();
-	Triangle.update();
-	Pentagon.update();
 	var pack = {
 		player:Player.update(),
 		bullet:Bullet.update(),
-	}
+	};
 	
 	for(var i in SOCKET_LIST){
 		var socket = SOCKET_LIST[i];
 		if(typeof Player.list[socket.id] !== 'undefined'){
-			pack.square = Square.getRequired(Player.list[socket.id]);
-			pack.triangle = Triangle.getRequired(Player.list[socket.id]);
-			pack.pentagon = Pentagon.getRequired(Player.list[socket.id]);
+			pack.square = Square.update(Player.list[socket.id]);
+			pack.triangle = Triangle.update(Player.list[socket.id]);
+			pack.pentagon = Pentagon.update(Player.list[socket.id]);
 			socket.emit('init',initPack);
 			socket.emit('update',pack);
-			//socket.emit('remove',removePack);
+			socket.emit('remove',removePack);
 		}
 	}
 	initPack.player = [];
@@ -1542,4 +1516,4 @@ setInterval(function(){
 	removePack.square = [];
 	removePack.pentagon = [];
 	removePack.triangle = [];
-},1000/48);
+},1000/60);
