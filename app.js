@@ -923,6 +923,14 @@ var Shape = function(){
 		}else if(self.attacked){
 			self.attackedTimer++;
 		}
+		
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+			hp:self.hp,
+			attacked:self.attacked,		
+		};
 	}
 	self.getDistance = function(pt){
 		return Math.sqrt(Math.pow(self.x-pt.x,2) + Math.pow(self.y-pt.y,2));
@@ -1007,8 +1015,7 @@ Pentagon.update = function(player){
 			delete Pentagon.list[i];
 			removePack.pentagon.push(pentagon.id);
 		} else {
-			pentagon.update();
-			var updatePack = pentagon.getUpdatePack();
+			var updatePack = pentagon.update();
 			if(objInViewOfPlayer(pentagon, player)){
 				pack.push(updatePack);
 			}
@@ -1050,8 +1057,7 @@ Square.update = function(player){
 			delete Square.list[i];
 			removePack.square.push(square.id);
 		} else {
-			square.update();
-			var updatePack = square.getUpdatePack();
+			var updatePack = square.update();
 			if(objInViewOfPlayer(square, player)){
 				pack.push(updatePack);
 			}
@@ -1093,8 +1099,8 @@ Triangle.update = function(player){
 			delete Triangle.list[i];
 			removePack.triangle.push(triangle.id);
 		} else {
-			triangle.update();
-			var updatePack = triangle.getUpdatePack();
+			
+			var updatePack = triangle.update();
 			if(objInViewOfPlayer(triangle, player)){
 				pack.push(updatePack);
 			}
