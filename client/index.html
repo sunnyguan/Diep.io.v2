@@ -1590,6 +1590,8 @@ html, body, canvas {
 			}
 		}
 	}
+	var autoFire = false;
+	var wasAutoFire = false;
 	document.onkeyup = function(event){
 		if(!focused){
 			if(event.keyCode === 68)	//d
@@ -1602,6 +1604,10 @@ html, body, canvas {
 				socket.emit('keyPress',{inputId:'up',state:false});
 			if(event.keyCode > 47 && event.keyCode < 58)
 				socket.emit('changeType',{type:{type:event.keyCode - 48,r:1,g:1,b:1}});
+			if(event.keyCode == 69){
+				autoFire = !autoFire;
+				console.log(autoFire);
+			}
 		}
 	}
 	
@@ -1670,6 +1676,13 @@ html, body, canvas {
 			var angle = Math.atan2(y,x) / Math.PI * 180;
 			Player.list[selfId].angle = angle;
 			socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
+			if(autoFire){
+				socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
+				wasAutoFire = true;
+			}else if(!autoFire && wasAutoFire){
+				socket.emit('keyPress',{inputId:'attack',state:false});
+				wasAutoFire = false;
+			}
 		}
 	}
 </script>
