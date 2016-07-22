@@ -245,7 +245,7 @@ html, body, canvas {
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
 				if(self.drone){
 					ctx.save();
-					ctx.fillStyle = 'red';
+					ctx.fillStyle = 'DeepSkyBlue';
 					ctx.lineWidth = 3;
 					ctx.translate(x,y);
 					ctx.rotate(self.angle * Math.PI / 180);
@@ -1600,8 +1600,6 @@ html, body, canvas {
 				socket.emit('keyPress',{inputId:'left',state:false});
 			if(event.keyCode === 87) // w
 				socket.emit('keyPress',{inputId:'up',state:false});
-			if(event.keyCode === 69)
-				document.body.style.zoom=0.5;
 			if(event.keyCode > 47 && event.keyCode < 58)
 				socket.emit('changeType',{type:{type:event.keyCode - 48,r:1,g:1,b:1}});
 		}
