@@ -967,12 +967,19 @@ var numOfAlphaPentagons = 0;
 var Pentagon = function(x,y,radius){
 	var self = Shape();
 	
-	self.score = 130;
-	self.hp = 130;
-	self.maxhp = 130;
-	if(typeof radius !== 'undefined')
+	
+	if(typeof radius !== 'undefined'){
 		self.radius = radius;
-	else self.radius = 30;
+		self.score = 3000;
+		self.hp = 10000;
+		self.maxhp = 10000;
+	}
+	else{
+		self.radius = 30;
+		self.score = 130;
+		self.hp = 130;
+		self.maxhp = 130;
+	}
 	
 	self.getInitPack = function(){
 		return {
@@ -997,9 +1004,6 @@ Pentagon.update = function(player){
 		var x = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
 		var y = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
 		var ap = Pentagon(x,y,120);
-		ap.hp = 10000;
-		ap.maxhp = 10000;
-		ap.score = 3500;
 		numOfAlphaPentagons++;
 	}
 	
@@ -1213,10 +1217,12 @@ var Bullet = function(parent,angle,hp,speed,drone){
 	}
 	self.dealWithEntities = function(s){
 		if(s.id != self.parent){
-			if(self.getDistance(s) < 32){
+			var radius = 32;
+			if(s.radius !== undefined) radius = s.radius;
+			if(self.getDistance(s) < radius){
 				var angle = Math.atan2(self.y-s.y, self.x-s.x);
-				s.spdX -= Math.cos(angle) * 2;
-				s.spdY -= Math.sin(angle) * 2;
+				s.spdX -= Math.cos(angle) * 32 / radius;
+				s.spdY -= Math.sin(angle) * 32 / radius;
 				s.attacked = true;
 				s.hp -= self.hp;
 				self.hp -= s.maxhp;

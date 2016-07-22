@@ -37,6 +37,7 @@ html, body, canvas {
 	<canvas id="ctx" width="1" height="768" style=""></canvas>
 </div>
 <script src="client/CanvasInput.min.js"></script>
+<script src="client/chroma.min.js"></script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
 	var GAME_DIMENSION = 5000;
@@ -337,25 +338,21 @@ html, body, canvas {
 				}
 				ctx.rotate(self.angle/180*Math.PI);
 				self.angle+=self.rotDeg;
-				var numberOfSides = 3,
-				    size = 20,
-				    Xcenter = 0,
-				    Ycenter = 0;
 				
-				//ctx.save();
 				ctx.beginPath();
-				ctx.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));          
+				polygon(ctx,0,0,35,3,0,false);
+				polygon(ctx,0,0,12,3,0,true);
 				
-				for (var i = 1; i <= numberOfSides;i += 1) {
-				    ctx.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
+				if(self.attacked){
+					ctx.fillStyle="red";
+				}else{
+					ctx.fillStyle="#F2C40F";
 				}
+				ctx.shadowColor = 'rgba(0,0,0,0.1)';
+				ctx.shadowOffsetX = 4;
+				ctx.shadowOffsetY = 4;
+				ctx.shadowBlur = 10;
 				
-				ctx.strokeStyle = "#000000";
-				ctx.lineWidth = 3;
-				if(self.attacked)
-					ctx.fillStyle = "#AB5252";
-				else
-					ctx.fillStyle = "red";
 				ctx.fill();
 				ctx.stroke();
 				
@@ -409,12 +406,21 @@ html, body, canvas {
 				}
 				ctx.rotate(self.angle/180*Math.PI);
 				self.angle+=self.rotDeg;
-				if(self.attacked)
-					ctx.fillStyle = "red";
-				else
-					ctx.fillStyle = 'yellow';
+				
 				ctx.beginPath();
-				ctx.rect(-32/2,-32/2,32,32);
+				polygon(ctx,0,0,30,4,0,false);
+				polygon(ctx,0,0,10,4,0,true);
+				
+				if(self.attacked){
+					ctx.fillStyle="red";
+				}else{
+					ctx.fillStyle="#E84C3D";
+				}
+				ctx.shadowColor = 'rgba(0,0,0,0.25)';
+				ctx.shadowOffsetX = 8;
+				ctx.shadowOffsetY = 8;
+				ctx.shadowBlur = 10;
+				
 				ctx.fill();
 				ctx.stroke();
 				ctx.restore();
@@ -457,6 +463,7 @@ html, body, canvas {
 					//console.log(self.hp);
 					var width = 200;
 					var hpWidth = width * self.hp / self.maxhp;
+					console.log(self.hp + ', ' + self.maxhp);
 					//console.log(self.maxhp);
 					ctx.fillStyle = 'green';
 					ctx.fillRect(x - width / 2,y + width - 80,hpWidth,4);
@@ -474,6 +481,7 @@ html, body, canvas {
 				
 				
 				ctx.save();
+				ctx.lineWidth = 2;
 				ctx.translate(x,y);
 				if(self.toRemove){
 					//self.toRemoveTimer+=2;
@@ -482,32 +490,20 @@ html, body, canvas {
 				}
 				ctx.rotate(self.angle/180*Math.PI);
 				self.angle+=self.rotDeg;
-				if(typeof self.radius === undefined){
-					self.radius = 30;
-					console.log('here');				}
-				var numberOfSides = 5,
-				    size = self.radius,
-				    Xcenter = 0,
-				    Ycenter = 0;
 				
-				//ctx.save();
 				ctx.beginPath();
-				ctx.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));          
-				
-				for (var i = 1; i <= numberOfSides;i += 1) {
-				    ctx.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
-				}
-				
-				ctx.strokeStyle = "#000000";
-				ctx.lineWidth = 3;
-				
+				polygon(ctx,0,0,self.radius,8,0,false);
+				polygon(ctx,0,0,self.radius / 4,8,0,true);
 				if(self.attacked){
-					ctx.fillStyle = "red";
-					//console.log('red attacked!');
+					ctx.fillStyle="red";
+				}else{
+					ctx.fillStyle="aqua";
 				}
-				else{
-					ctx.fillStyle = 'blue';
-				}
+				ctx.shadowColor = 'rgba(0,0,0,0.75)';
+				ctx.shadowOffsetX = 8;
+				ctx.shadowOffsetY = 8;
+				ctx.shadowBlur = 10;
+				
 				ctx.fill();
 				ctx.stroke();
 				
@@ -522,6 +518,21 @@ html, body, canvas {
 		return self;
 	}
 	Pentagon.list = {};
+	
+	function polygon(ctx, x, y, radius, sides, startAngle, anticlockwise) {
+	  if (sides < 3) return;
+	  var a = (Math.PI * 2)/sides;
+	  a = anticlockwise?-a:a;
+	  ctx.save();
+	  ctx.translate(x,y);
+	  ctx.rotate(startAngle);
+	  ctx.moveTo(radius,0);
+	  for (var i = 1; i < sides; i++) {
+	    ctx.lineTo(radius*Math.cos(a*i),radius*Math.sin(a*i));
+	  }
+	  ctx.closePath();
+	  ctx.restore();
+	}
 	
 	var selfId = null;
 	
@@ -1606,6 +1617,7 @@ html, body, canvas {
 				socket.emit('changeType',{type:{type:event.keyCode - 48,r:1,g:1,b:1}});
 			if(event.keyCode == 69){
 				autoFire = !autoFire;
+				//wasAutoFire = !wasAutoFire;
 				console.log(autoFire);
 			}
 		}
@@ -1682,6 +1694,9 @@ html, body, canvas {
 			}else if(!autoFire && wasAutoFire){
 				socket.emit('keyPress',{inputId:'attack',state:false});
 				wasAutoFire = false;
+			}else if(autoFire && !wasAutoFire){
+				socket.emit('keyPress',{inputId:'attack',state:false});
+				wasAutoFire = true;
 			}
 		}
 	}
