@@ -343,11 +343,11 @@ html, body, canvas {
 				polygon(ctx,0,0,35,3,0,false);
 				polygon(ctx,0,0,12,3,0,true);
 				
-				if(self.attacked){
-					ctx.fillStyle="red";
-				}else{
-					ctx.fillStyle="#F2C40F";
-				}
+				var color = "00ff00";
+				var red = "ff0000";
+				var ratio = self.hp / self.maxhp;
+				ctx.fillStyle = blendColors(color, red, ratio);
+				
 				ctx.shadowColor = 'rgba(0,0,0,0.1)';
 				ctx.shadowOffsetX = 4;
 				ctx.shadowOffsetY = 4;
@@ -411,11 +411,11 @@ html, body, canvas {
 				polygon(ctx,0,0,30,4,0,false);
 				polygon(ctx,0,0,10,4,0,true);
 				
-				if(self.attacked){
-					ctx.fillStyle="red";
-				}else{
-					ctx.fillStyle="#E84C3D";
-				}
+				var color = "ffff00";
+				var red = "ff0000";
+				var ratio = self.hp / self.maxhp;
+				ctx.fillStyle = blendColors(color, red, ratio);
+				
 				ctx.shadowColor = 'rgba(0,0,0,0.25)';
 				ctx.shadowOffsetX = 8;
 				ctx.shadowOffsetY = 8;
@@ -473,9 +473,9 @@ html, body, canvas {
 				}else{
 					var hpWidth = 50 * self.hp / self.maxhp;
 					ctx.fillStyle = 'green';
-					ctx.fillRect(x - 25,y + 40,hpWidth,4);
+					ctx.fillRect(x - 25,y + 50,hpWidth,4);
 					ctx.fillStyle = 'red';
-					ctx.fillRect(x - 25 + hpWidth, y + 40, 50 - hpWidth, 4);
+					ctx.fillRect(x - 25 + hpWidth, y + 50, 50 - hpWidth, 4);
 					ctx.stroke();
 				}
 				
@@ -492,13 +492,14 @@ html, body, canvas {
 				self.angle+=self.rotDeg;
 				
 				ctx.beginPath();
-				polygon(ctx,0,0,self.radius,8,0,false);
-				polygon(ctx,0,0,self.radius / 4,8,0,true);
-				if(self.attacked){
-					ctx.fillStyle="red";
-				}else{
-					ctx.fillStyle="aqua";
-				}
+				polygon(ctx,0,0,self.radius + 10,8,0,false);
+				polygon(ctx,0,0,(self.radius + 10) / 4,8,0,true);
+				
+				var color = "0000ff";
+				var red = "ff0000";
+				var ratio = self.hp / self.maxhp;
+				ctx.fillStyle = blendColors(color, red, ratio);
+				
 				ctx.shadowColor = 'rgba(0,0,0,0.75)';
 				ctx.shadowOffsetX = 8;
 				ctx.shadowOffsetY = 8;
@@ -518,6 +519,20 @@ html, body, canvas {
 		return self;
 	}
 	Pentagon.list = {};
+	
+	String.prototype.paddingLeft = function (paddingValue) {
+	   return String(paddingValue + this).slice(-paddingValue.length);
+	};
+	
+	function blendColors(color, red, ratio){
+		var first = Math.round(ratio * parseInt(color.substring(0,2), 16) + (1 - ratio) * parseInt(red.substring(0,2), 16)).toString(16).paddingLeft("00");
+		var second = Math.round(ratio * parseInt(color.substring(2,4), 16) + (1 - ratio) * parseInt(red.substring(2,4), 16)).toString(16).paddingLeft("00");
+		var third = Math.round(ratio * parseInt(color.substring(4), 16) + (1 - ratio) * parseInt(red.substring(4), 16)).toString(16).paddingLeft("00");
+		
+		var str = "#" + first + second + third;
+		console.log(str);
+		return str;
+	}
 	
 	function polygon(ctx, x, y, radius, sides, startAngle, anticlockwise) {
 	  if (sides < 3) return;
