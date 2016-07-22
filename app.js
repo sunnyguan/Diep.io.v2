@@ -965,14 +965,8 @@ var Pentagon = function(x,y,radius){
 	if(typeof radius !== 'undefined')
 		self.radius = radius;
 	else self.radius = 30;
-	//console.log(self.radius);
 	
-	var super_update = self.update;
-	self.update = function(){
-		super_update();
-	}
 	self.getInitPack = function(){
-		
 		return {
 			id:self.id,
 			x:self.x,
@@ -1004,7 +998,7 @@ Pentagon.getRequired = function(player){
 }
 
 Pentagon.update = function(){
-	if(numOfAlphaPentagons < 3){
+	if(numOfAlphaPentagons < 4){
 		var x = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
 		var y = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
 		var ap = Pentagon(x,y,120);
@@ -1043,12 +1037,6 @@ var Square = function(){
 	self.score = 10;
 	self.hp = 10;
 	self.maxhp = 10;
-	
-	var super_update = self.update;
-	self.update = function(){
-		super_update();
-		
-	}
 	
 	Square.list[self.id] = self;
 	initPack.square.push(self.getInitPack());
@@ -1100,11 +1088,6 @@ var Triangle = function(){
 	self.score = 25;
 	self.hp = 25;
 	self.maxhp = 25;
-	
-	var super_update = self.update;
-	self.update = function(){
-		super_update();
-	}
 	
 	Triangle.list[self.id] = self;
 	initPack.triangle.push(self.getInitPack());
@@ -1243,7 +1226,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 				self.dealWithEntities(s);
 			}
 		}
-		
+		t++;
 	}
 	self.dealWithEntities = function(s){
 		if(s.id != self.parent){
@@ -1351,11 +1334,6 @@ io.sockets.on('connection', function(socket){
 		isValidPassword(data,function(res){
 			if(res){
 				Player.onConnect(socket,data.username);
-				for(var i = 0; i < 20; i++){
-					var a = Square();
-					var b = Pentagon();
-					var c = Triangle();
-				}
 				socket.emit('signInResponse',{success:true});
 			} else {
 				socket.emit('signInResponse',{success:false});			
@@ -1564,4 +1542,4 @@ setInterval(function(){
 	removePack.square = [];
 	removePack.pentagon = [];
 	removePack.triangle = [];
-},1000/60);
+},1000/48);
