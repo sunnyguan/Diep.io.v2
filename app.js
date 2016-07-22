@@ -659,7 +659,7 @@ var Player = function(id, name){
 		self.x = Math.random() * GAME_DIMENSION;
 		self.y = Math.random() * GAME_DIMENSION;
 		self.level = Math.round(self.level / 2);
-		self.score = self.evaluateNextLevelScore(level);
+		self.score = self.evaluateNextLevelScore(self.level);
 		
 		self.upgrades = self.level;
 		self.regenCount = 0;
@@ -1020,13 +1020,11 @@ Pentagon.update = function(){
 	
 	for(var i in Pentagon.list){
 		var pentagon = Pentagon.list[i];
-		//if(pentagon.radius != 30) console.log(pentagon.hp);
-		pentagon.update();
 		if(pentagon.hp <= 0){
 			delete Pentagon.list[i];
 			removePack.pentagon.push(pentagon.id);
-			//var a = Pentagon();
 		} else {
+			pentagon.update();
 			var updatePack = pentagon.getUpdatePack();
 			Pentagon.updateList[pentagon.id] = updatePack;
 		}
@@ -1079,11 +1077,11 @@ Square.update = function(){
 	}
 	for(var i in Square.list){
 		var square = Square.list[i];
-		square.update();
 		if(square.hp <= 0){
 			delete Square.list[i];
 			removePack.square.push(square.id);
 		} else {
+			square.update();
 			var updatePack = square.getUpdatePack();
 			Square.updateList[square.id] = updatePack;
 		}
@@ -1130,13 +1128,16 @@ Triangle.getRequired = function(player){
 }
 
 Triangle.update = function(){
+	if(Object.keys(Triangle.list).length < 100){
+		var t = Triangle();
+	}
 	for(var i in Triangle.list){
 		var triangle = Triangle.list[i];
-		triangle.update();
 		if(triangle.hp <= 0){
 			delete Triangle.list[i];
 			removePack.triangle.push(triangle.id);
 		} else {
+			triangle.update();
 			var updatePack = triangle.getUpdatePack();
 			Triangle.updateList[triangle.id] = updatePack;
 		}
@@ -1530,8 +1531,8 @@ io.sockets.on('connection', function(socket){
 	
 });
 
-var initPack = {player:[],bullet:[],square:[],pentagon:[]};
-var removePack = {player:[],bullet:[],square:[],pentagon:[]};
+var initPack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
+var removePack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
 
 setInterval(function(){
 	Square.update();
