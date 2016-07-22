@@ -658,7 +658,10 @@ var Player = function(id, name){
 		self.hp = self.hpMax;
 		self.x = Math.random() * GAME_DIMENSION;
 		self.y = Math.random() * GAME_DIMENSION;
-		/*
+		self.level = Math.round(self.level / 2);
+		self.score = self.evaluateNextLevelScore(level);
+		
+		self.upgrades = self.level;
 		self.regenCount = 0;
 		self.hpMaxCount = 0;
 		self.bulletHpCount = 0;
@@ -666,7 +669,6 @@ var Player = function(id, name){
 		self.reloadCount = 0;
 		self.maxSpdCount = 0;
 		self.bodyDamageCount = 0;
-		*/
 	}
 	self.regdden = function(){
 		if(self.timer % self.regen == 0){
@@ -878,7 +880,6 @@ var Shape = function(){
 	}
 	
 	self.update = function(){
-		if(self.hp < 0) self.hp = 0;
 		var x = Math.cos(self.angle/180*Math.PI) * self.speed;
 		var y = Math.sin(self.angle/180*Math.PI) * self.speed;
 		///
@@ -926,12 +927,18 @@ var Shape = function(){
 	self.getDistance = function(pt){
 		return Math.sqrt(Math.pow(self.x-pt.x,2) + Math.pow(self.y-pt.y,2));
 	}
+	self.deathReset = function(){
+		self.x = Math.random() * GAME_DIMENSION;
+		self.y = Math.random() * GAME_DIMENSION;
+		self.hp = self.maxhp;
+	}
 	self.getInitPack = function(){
 		return {
 			id:self.id,
 			x:self.x,
 			y:self.y,
 			hp:self.hp,
+			maxhp:self.maxhp
 		};
 	}
 	self.getUpdatePack = function(){
@@ -942,6 +949,7 @@ var Shape = function(){
 			hp:self.hp,
 			attacked:self.attacked,		
 		};
+		
 	}
 	return self;
 }
@@ -1041,6 +1049,7 @@ var Square = function(){
 	var super_update = self.update;
 	self.update = function(){
 		super_update();
+		
 	}
 	
 	Square.list[self.id] = self;
@@ -1154,6 +1163,7 @@ var objInViewOfPlayer = function(obj, player){
 		return false;
 }
 
+var pull = 0.7;
 var Bullet = function(parent,angle,hp,speed,drone){
 	var self = Entity();
 	self.id = Math.random();
@@ -1167,7 +1177,6 @@ var Bullet = function(parent,angle,hp,speed,drone){
 	}else{
 		self.speed = speed;
 	}
-	
 	self.angle = angle;
 	self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
 	self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
@@ -1189,7 +1198,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
 			self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
 		}
-		var pull = 0.7;
+		
 		if(!self.drone){
 			for(var b in Bullet.list){
 				var p = Bullet.list[b];
@@ -1216,107 +1225,28 @@ var Bullet = function(parent,angle,hp,speed,drone){
 		
 		for(var i in Player.list){
 			var p = Player.list[i];
-			if(self.getDistance(p) < 32 && self.parent !== p.id){
-				p.hp -= Math.round((370 - p.bodyDamage) * self.hp / 370);
-				var angle = Math.atan2(self.y-p.y, self.x-p.x);
-				p.spdX -= Math.cos(angle) * 2;
-				p.spdY -= Math.sin(angle) * 2;
-				if(p.hp <= 0){
-					var shooter = Player.list[self.parent];
-					if(shooter){
-						shooter.score += p.score;
-						p.score = Math.round(p.score / 2);
-					}
-					p.hp = p.hpMax;
-					p.x = Math.random() * GAME_DIMENSION;
-					p.y = Math.random() * GAME_DIMENSION;					
-				}
-				self.toRemove = true;
-				if(self.hp > 0 && Player.list[self.parent].tankType == 22){
-					for(var i = 0; i <= 720; i += 360 / Math.round(Math.random() * 4)){
-						var b1 = Bullet(self.parent,self.angle+i,Math.floor(self.hp / 10),self.speed);
-						var angle = Math.atan2(self.y-s.y, self.x-s.x);
-						b1.x = self.x;// - Math.cos(angle) * 3;
-						b1.y = self.y;// - Math.sin(angle) * 3;
-					}
-				}
-			}
+			self.dealWithEntities(p);
 		}
 		for(var i in Square.list){
 			var s = Square.list[i];
-			if(self.getDistance(s) < 32){
-				var angle = Math.atan2(self.y-s.y, self.x-s.x);
-				s.spdX -= Math.cos(angle) * pull;
-				s.spdY -= Math.sin(angle) * pull;
-				s.attacked = true;
-				s.hp -= self.hp;
-				self.hp -= s.maxhp;
-				if(self.hp <= 0) self.toRemove = true;
-				if(s.hp <= 0){
-					var shooter = Player.list[self.parent];
-					if(shooter){
-						shooter.score += s.score;
-					}
-					var a = Square();
-				}
-				if(self.hp > 0 && Player.list[self.parent].tankType == 22){
-					for(var i = 0; i <= 720; i += 360 / Math.round(Math.random() * 2)){
-						var b1 = Bullet(self.parent,self.angle+i,Math.floor(self.hp / 10),self.speed);
-						var angle = Math.atan2(self.y-s.y, self.x-s.x);
-						b1.x = self.x;// - Math.cos(angle) * 3;
-						b1.y = self.y;// - Math.sin(angle) * 3;
-					}
-				}
-			}
-			
+			self.dealWithEntities(s);
 		}
 		for(var i in Pentagon.list){
 			var s = Pentagon.list[i];
-			if(self.getDistance(s) < s.radius && self.hp > 0){
-				var angle = Math.atan2(self.y-s.y, self.x-s.x);
-				s.spdX -= Math.cos(angle) * pull;
-				s.spdY -= Math.sin(angle) * pull;
-				s.attacked = true;
-				//console.log('red attacked!');
-				s.hp -= self.hp;
-				self.hp -= s.maxhp;
-				if(self.hp <= 0) self.toRemove = true;
-				if(s.hp <= 0){
-					
-					var shooter = Player.list[self.parent];
-					if(shooter){
-						shooter.score += s.score;
-					}
-					if(s.x >= GAME_DIMENSION / 3 && s.x <= 2 * GAME_DIMENSION / 3 &&
-						s.y >= GAME_DIMENSION / 3 && s.y <= 2 * GAME_DIMENSION / 3){
-						numOfFarmPentagons--;
-						//console.log(numOfFarmPentagons);
-						//s.toRemove = true;
-					}
-					if(s.radius != 30) numOfAlphaPentagons--;
-					
-					s.toRemove = true;
-					//var p = Pentagon();
-				}
-				if(self.hp > 0 && Player.list[self.parent].tankType == 22){
-					for(var i = 0; i <= 720; i += 360 / Math.round(Math.random() * 3)){
-						var b1 = Bullet(self.parent,self.angle+i,Math.floor(self.hp / 10),self.speed);
-						var angle = Math.atan2(self.y-s.y, self.x-s.x);
-						b1.x = self.x;// - Math.cos(angle) * 3;
-						b1.y = self.y;// - Math.sin(angle) * 3;
-					}
-				}
-			}
-			
+			self.dealWithEntities(s);
 		}
 		for(var i in Triangle.list){
 			var s = Triangle.list[i];
-			if(self.getDistance(s) < 32 && self.hp > 0){
+			self.dealWithEntities(s);
+		}
+	}
+	self.dealWithEntities = function(s){
+		if(s.id != self.parent){
+			if(self.getDistance(s) < 32){
 				var angle = Math.atan2(self.y-s.y, self.x-s.x);
-				s.spdX -= Math.cos(angle) * pull;
-				s.spdY -= Math.sin(angle) * pull;
+				s.spdX -= Math.cos(angle) * 2;
+				s.spdY -= Math.sin(angle) * 2;
 				s.attacked = true;
-				//console.log('red attacked!');
 				s.hp -= self.hp;
 				self.hp -= s.maxhp;
 				if(self.hp <= 0) self.toRemove = true;
@@ -1325,9 +1255,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 					if(shooter){
 						shooter.score += s.score;
 					}
-					var p = Triangle();
-				}// else self.toRemove = true;
-				//console.log(self.hp);
+				}
 				if(self.hp > 0 && Player.list[self.parent].tankType == 22){
 					for(var i = 0; i <= 720; i += 360 / Math.round(Math.random() * 2)){
 						var b1 = Bullet(self.parent,self.angle+i,Math.floor(self.hp / 10),self.speed);
@@ -1337,7 +1265,6 @@ var Bullet = function(parent,angle,hp,speed,drone){
 					}
 				}
 			}
-			
 		}
 	}
 	self.getInitPack = function(){

@@ -390,7 +390,9 @@ html, body, canvas {
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
+				
 				var hpWidth = 50 * self.hp / self.maxhp;
+				//console.log(self.maxhp);
 				ctx.fillStyle = 'green';
 				ctx.fillRect(x - 25,y + 30,hpWidth,4);
 				ctx.fillStyle = 'red';
@@ -452,10 +454,10 @@ html, body, canvas {
 			if(x < WIDTH + 120 && x > -120 && y < HEIGHT + 120 && y > -120){
 				
 				if(self.radius != 30){
-					console.log(self.hp);
+					//console.log(self.hp);
 					var width = 200;
 					var hpWidth = width * self.hp / self.maxhp;
-					console.log(self.maxhp);
+					//console.log(self.maxhp);
 					ctx.fillStyle = 'green';
 					ctx.fillRect(x - width / 2,y + width - 80,hpWidth,4);
 					ctx.fillStyle = 'red';
@@ -1660,18 +1662,16 @@ html, body, canvas {
 		}
 	}
 	document.onmouseup = function(event){
-		socket.emit('keyPress',{inputId:'attack',state:false});
+		if(signDiv.style.display == 'none')
+			socket.emit('keyPress',{inputId:'attack',state:false});
 	}
 	document.onmousemove = function(event){
-		var x = -(WIDTH / 2) + event.clientX - 8;
-		var y = -(HEIGHT / 2) + event.clientY - 8;
-		var angle = Math.atan2(y,x) / Math.PI * 180;
-		Player.list[selfId].angle = angle;
-		socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
+		if(signDiv.style.display == 'none'){
+			var x = -(WIDTH / 2) + event.clientX - 8;
+			var y = -(HEIGHT / 2) + event.clientY - 8;
+			var angle = Math.atan2(y,x) / Math.PI * 180;
+			Player.list[selfId].angle = angle;
+			socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
+		}
 	}
 </script>
-
-
-
-
-
