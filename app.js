@@ -77,7 +77,7 @@ var Player = function(id, name){
 	self.bulletHp = 7;
 	self.bulletSpeed = 7;
 	self.reload = 38;
-	self.maxSpd = 6;
+	self.maxSpd = 4;
 	self.bodyDamage = 10;
 	
 	self.minRegen = 8;
@@ -100,8 +100,8 @@ var Player = function(id, name){
 	self.maxReload = 38;
 	self.updateReload = true;
 	
-	self.minSpeed = 6;
-	self.maxSpeed = 10;
+	self.minSpeed = 4;
+	self.maxSpeed = 8;
 	self.updateSpeed = true;
 	
 	self.minBodyDamage = 10;
@@ -118,7 +118,7 @@ var Player = function(id, name){
 	
 	self.bullets = [];
 	self.moveTimer = 0;
-	self.friction = 0.96;
+	self.friction = 0.97;
 	self.level = 1;
 	self.mouseX = 0;
 	self.mouseY = 0;
@@ -738,7 +738,7 @@ var Player = function(id, name){
 }
 Player.list = {};
 Player.tankProps = [
-	{ name: 'base tank', minRegen: 8, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 200, 
+	{ name: 'base tank', minRegen: 8, maxRegen: 21, minSpeed: 4, maxSpeed: 8, minHp: 100, maxHp: 200, 
 	minBulletHp: 7, maxBulletHp: 30, minBulletSpeed: 7, maxBulletSpeed: 25, minReload: 11, maxReload: 38, 
 	minBodyDamage: 10, maxBodyDamage: 200},
 	{ name: 'twin', minRegen: 6, maxRegen: 21, minSpeed: 6, maxSpeed: 9, minHp: 100, maxHp: 160, 
@@ -902,8 +902,8 @@ var Shape = function(){
 					p.score += self.score;
 				}else{
 					var angle = Math.atan2(self.y-p.y, self.x-p.x);
-					p.spdX -= Math.cos(angle) * 5;
-					p.spdY -= Math.sin(angle) * 5;
+					p.spdX -= Math.cos(angle) * 7;
+					p.spdY -= Math.sin(angle) * 7;
 				}
 			}
 		}
@@ -1217,7 +1217,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 	}
 	self.dealWithEntities = function(s){
 		if(s.id != self.parent){
-			var radius = 32;
+			var radius = 45;
 			if(s.radius !== undefined) radius = s.radius;
 			if(self.getDistance(s) < radius){
 				var angle = Math.atan2(self.y-s.y, self.x-s.x);
@@ -1513,9 +1513,9 @@ setInterval(function(){
 			pack.square = Square.update(Player.list[socket.id]);
 			pack.triangle = Triangle.update(Player.list[socket.id]);
 			pack.pentagon = Pentagon.update(Player.list[socket.id]);
-			socket.emit('init',initPack);
-			socket.emit('update',pack);
-			socket.emit('remove',removePack);
+			socket.compress(true).emit('init',initPack);
+			socket.compress(true).emit('update',pack);
+			socket.compress(true).emit('remove',removePack);
 		}
 	}
 	initPack.player = [];
@@ -1528,4 +1528,4 @@ setInterval(function(){
 	removePack.square = [];
 	removePack.pentagon = [];
 	removePack.triangle = [];
-},1000/60);
+},1000/50);

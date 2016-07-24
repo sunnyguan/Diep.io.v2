@@ -492,10 +492,19 @@ html, body, canvas {
 				self.angle+=self.rotDeg;
 				
 				ctx.beginPath();
-				polygon(ctx,0,0,self.radius + 10,8,0,false);
-				polygon(ctx,0,0,(self.radius + 10) / 4,8,0,true);
 				
 				var color = "0000ff";
+				
+				if(self.radius != 30){
+					color = "00FFEC";
+					polygon(ctx,0,0,self.radius + 10,6,0,false);
+					polygon(ctx,0,0,(self.radius + 10) / 4,6,0,true);
+				}else{
+					polygon(ctx,0,0,self.radius + 10,8,0,false);
+					polygon(ctx,0,0,(self.radius + 10) / 4,8,0,true);
+				}
+				
+				
 				var red = "ff0000";
 				var ratio = self.hp / self.maxhp;
 				ctx.fillStyle = blendColors(color, red, ratio);
