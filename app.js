@@ -227,7 +227,7 @@ var Player = function(id, name){
 				}else if(self.tankType == 14){
 					tanks = [2, 21];
 				}else if(self.tankType == 5){
-					tanks = [6];
+					tanks = [6, 23];
 				}else if(self.tankType == 7){
 					tanks = [15];
 				}else if(self.tankType == 16){
@@ -251,7 +251,7 @@ var Player = function(id, name){
 				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
 				self.sent[1] = true;
 			}else if(self.level >= 15 && self.availableUpgrades[0]){
-				tanks = [1, 10, 11, 12, 23];
+				tanks = [1, 10, 11, 12];
 				console.log('wherer');
 				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
 				self.sent[0] = true;
