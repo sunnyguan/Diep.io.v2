@@ -74,7 +74,7 @@ var Player = function(id, name){
 	
 	self.regen = 21;
 	self.hpMax = 100;
-	self.bulletHp = 7;
+	self.bulletHp = 1600;
 	self.bulletSpeed = 7;
 	self.reload = 38;
 	self.maxSpd = 4;
@@ -251,7 +251,7 @@ var Player = function(id, name){
 				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
 				self.sent[1] = true;
 			}else if(self.level >= 15 && self.availableUpgrades[0]){
-				tanks = [1, 10, 11, 12];
+				tanks = [1, 10, 11, 12, 23];
 				console.log('wherer');
 				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
 				self.sent[0] = true;
@@ -651,7 +651,38 @@ var Player = function(id, name){
 			b.x = self.x;
 			b.y = self.y;
 			console.log('shot');
-		}
+		} else if (self.tankType === 23) {
+			turbAngle = -90 + turbAngle;
+			self.spdX += Math.cos(angle/180*Math.PI) * 2.2 * damping;
+			self.spdY += Math.sin(angle/180*Math.PI) * 2.2 * damping;
+			var b1 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+			b1.x = self.x;
+			b1.y = self.y;
+			
+			if(self.reloadNum == 0){
+				angle += 90;
+				var b2 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b2.x = self.x;
+				b2.y = self.y;
+				
+				angle -= 180;
+				var b3 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b3.x = self.x;
+				b3.y = self.y;
+				self.reloadNum = 1;
+			} else if(self.reloadNum == 1){
+				angle += 145;
+				var b2 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b2.x = self.x;
+				b2.y = self.y;
+				
+				angle -= 290;
+				var b4 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+				b4.x = self.x;
+				b4.y = self.y;
+				self.reloadNum = 0;
+			}
+		} 
 
 	}
 	self.deathReset = function(){
@@ -807,6 +838,9 @@ Player.tankProps = [
 	{ name: 'flak cannon', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 131, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
 	minBodyDamage: 10, maxBodyDamage: 200},
+	{ name: 'fighter', minRegen: 2, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
+	minBulletHp: 10, maxBulletHp: 37, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 22,
+	minBodyDamage: 144, maxBodyDamage: 364},
 ];
 Player.onConnect = function(socket,username){
 	var player = Player(socket.id,username);
@@ -869,7 +903,7 @@ var Shape = function(){
 		score:0,
 		hp:0,
 		maxhp:0,
-		friction:0.95,
+		friction:0.96,
 		angle:angle,
 		toRemove:false,
 		speed:speed,
@@ -1195,7 +1229,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			}
 		}
 		
-		if(t % 2 == 0){
+		if(t % 1 == 0){
 			for(var i in Player.list){
 				var p = Player.list[i];
 				self.dealWithEntities(p);
@@ -1528,4 +1562,4 @@ setInterval(function(){
 	removePack.square = [];
 	removePack.pentagon = [];
 	removePack.triangle = [];
-},1000/50);
+},1000/60);

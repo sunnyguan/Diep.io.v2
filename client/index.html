@@ -1456,7 +1456,42 @@ html, body, canvas {
 			ctx.stroke();
 			ctx.restore(); 
 			
-		} 
+		} else if(tankType == 23){
+	 		rad = 26.5;
+	 		ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		
+	 		for(var i = -90; i <= 90; i+=180){
+	 			ctx.save();
+	 			ctx.fillStyle = 'gray';
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			 	ctx.fillRect(0, -12, 42, 20);
+				ctx.strokeRect(0, -12, 42, 20);
+				ctx.restore();
+	 		}
+	 		for(var i = -145; i <= 145; i+=290){
+	 			ctx.save();
+	 			ctx.fillStyle = 'gray';
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			 	ctx.fillRect(0, -12, 42, 20);
+				ctx.strokeRect(0, -12, 42, 20);
+				ctx.restore();
+	 		}
+	 		ctx.save();
+	 		ctx.translate(x,y);
+	 		ctx.rotate(angle * Math.PI / 180);
+		  ctx.strokeStyle = 'black';
+		  ///ctx.lineWidth = 1;
+			
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, -12, 48, 20);
+			ctx.strokeRect(0, -12, 48, 20);
+			ctx.restore(); 
+			ctx.strokeColor = 'red';
+	 		
+	 	} 
 		
 		var ch = true;
 		if(text){
@@ -1505,6 +1540,7 @@ html, body, canvas {
 	'歼灭大炮',
 	'五连大炮',
 	'高射加农炮',
+	'战斗机',
 	];
 	
 	var ENGLISH = [
@@ -1531,6 +1567,7 @@ html, body, canvas {
 		'twin destroyer',
 		'penta shot',
 		'flak cannon',
+		'fighter',
 	];
 	
 	
