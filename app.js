@@ -136,7 +136,7 @@ var Player = function(id, name){
 	self.update = function(){
 		
 		self.updateSpd();
-		for(var i in Player.list){
+		/*for(var i in Player.list){
 			var p = Player.list[i];
 			if(p.id != self.id){
 				if(self.getDistance(p) < 40){
@@ -172,8 +172,8 @@ var Player = function(id, name){
 			}
 			
 			//console.log(Object.keys(Triangle.list).length);
-		}
-		super_update();
+		}*/
+		super_update();/*
 		self.timer++;
 		//console.log(self.reload);
 		if(self.pressingAttack && self.timer % Math.round(self.reload) == 0){
@@ -204,7 +204,7 @@ var Player = function(id, name){
 				
 			}
 			
-		}
+		}*/
 	}
 	self.checkForUpgrades = function(){
 		var tanks = [];
