@@ -747,7 +747,7 @@ var Player = function(id, name){
 			x:self.x,
 			y:self.y,
 		};
-		/*if(self.lastPack.hp != self.hp) pack.hp = self.hp;
+		if(self.lastPack.hp != self.hp) pack.hp = self.hp;
 		if(self.lastPack.pMaxHp != self.hpMax) pack.pMaxHp = self.hpMax;
 		if(self.lastPack.score != self.score) pack.score = self.score;
 		if(self.lastPack.angle != self.mouseAngle) pack.angle = self.mouseAngle;
@@ -762,7 +762,7 @@ var Player = function(id, name){
 		if(self.updateReload) pack.bulletReload = self.reloadCount;
 		if(self.updateSpeed) pack.movementSpeed = self.maxSpdCount;
 		if(self.updateBodyDamage)	pack.bodyDamage = self.bodyDamageCount;
-		*/
+		
 		self.lastPack = pack;
 		
 		return pack;
@@ -1365,6 +1365,7 @@ io.sockets.on('connection', function(socket){
 	socket.on('signIn',function(data){
 		isValidPassword(data,function(res){
 			if(res){
+				socket.compress(true).emit('init',initPack);
 				Player.onConnect(socket,data.username);
 				socket.emit('signInResponse',{success:true});
 			} else {
@@ -1556,7 +1557,7 @@ setInterval(function(){
 			//pack.square = Square.update(Player.list[socket.id]);
 			//pack.triangle = Triangle.update(Player.list[socket.id]);
 			//pack.pentagon = Pentagon.update(Player.list[socket.id]);
-			socket.compress(true).emit('init',initPack);
+			//socket.compress(true).emit('init',initPack);
 			socket.compress(true).emit('update',pack);
 			socket.compress(true).emit('remove',removePack);
 		}
