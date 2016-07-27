@@ -1752,7 +1752,7 @@ html, body, canvas {
 			var x = -(WIDTH / 2) + event.clientX - 8;
 			var y = -(HEIGHT / 2) + event.clientY - 8;
 			var angle = Math.atan2(y,x) / Math.PI * 180;
-			//Player.list[selfId].angle = angle;
+			Player.list[selfId].angle = angle;
 			socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
 			if(autoFire){
 				socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});

@@ -747,7 +747,7 @@ var Player = function(id, name){
 			x:self.x,
 			y:self.y,
 		};
-		if(self.lastPack.hp != self.hp) pack.hp = self.hp;
+		/*if(self.lastPack.hp != self.hp) pack.hp = self.hp;
 		if(self.lastPack.pMaxHp != self.hpMax) pack.pMaxHp = self.hpMax;
 		if(self.lastPack.score != self.score) pack.score = self.score;
 		if(self.lastPack.angle != self.mouseAngle) pack.angle = self.mouseAngle;
@@ -762,7 +762,7 @@ var Player = function(id, name){
 		if(self.updateReload) pack.bulletReload = self.reloadCount;
 		if(self.updateSpeed) pack.movementSpeed = self.maxSpdCount;
 		if(self.updateBodyDamage)	pack.bodyDamage = self.bodyDamageCount;
-		
+		*/
 		self.lastPack = pack;
 		
 		return pack;
