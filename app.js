@@ -1054,7 +1054,7 @@ Pentagon.regUpdate = function(){
 		var pentagon = Pentagon.list[i];
 		if(pentagon.hp <= 0){
 			delete Pentagon.list[i];
-			removePack.square.push(pentagon.id);
+			removePack.pentagon.push(pentagon.id);
 		} else {
 			pentagon.update();
 		}
@@ -1100,7 +1100,7 @@ Square.regUpdate = function(){
 	for(var i in Square.list){
 		var square = Square.list[i];
 		if(square.hp <= 0){
-			delete Triangle.list[i];
+			delete Square.list[i];
 			removePack.square.push(square.id);
 		} else {
 			square.update();
