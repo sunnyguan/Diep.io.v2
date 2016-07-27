@@ -592,9 +592,11 @@ html, body, canvas {
 					p.x = pack.x;
 				if(pack.y !== undefined)
 					p.y = pack.y;
-				if(pack.id != selfId)
-					if(pack.angle !== undefined)
+				if(pack.id != selfId){
+					if(pack.angle !== undefined){
 						p.angle = pack.angle;
+					}
+				}
 				if(pack.hp !== undefined)
 					p.hp = pack.hp;
 				if(pack.score !== undefined)
