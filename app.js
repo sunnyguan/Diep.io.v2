@@ -747,6 +747,7 @@ var Player = function(id, name){
 			hp:self.hp,
 			pMaxHp:self.hpMax,
 			score:self.score,
+			angle:self.mouseAngle,
 			upgrades:self.upgrades,
 			tankType:self.tankType,
 			level:self.level,
@@ -1266,6 +1267,8 @@ var Bullet = function(parent,angle,hp,speed,drone){
 					if(shooter){
 						shooter.score += s.score;
 					}
+					if(typeof s === 'Player')
+						s.deathReset();
 				}
 				if(self.hp > 0 && Player.list[self.parent].tankType == 22){
 					for(var i = 0; i <= 720; i += 360 / Math.round(Math.random() * 2)){
@@ -1285,6 +1288,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			y:self.y,
 			drone:self.drone,		
 			angle:self.angle,
+			parent:self.parent,
 		};
 	}
 	self.getUpdatePack = function(){
@@ -1540,13 +1544,13 @@ setInterval(function(){
 		player:Player.update(),
 		bullet:Bullet.update(),
 	};
-	
+	//console.log(Pentagon.list.length);
 	for(var i in SOCKET_LIST){
 		var socket = SOCKET_LIST[i];
 		if(typeof Player.list[socket.id] !== 'undefined'){
-			pack.square = Square.update(Player.list[socket.id]);
-			pack.triangle = Triangle.update(Player.list[socket.id]);
-			pack.pentagon = Pentagon.update(Player.list[socket.id]);
+			//pack.square = Square.update(Player.list[socket.id]);
+			//pack.triangle = Triangle.update(Player.list[socket.id]);
+			//pack.pentagon = Pentagon.update(Player.list[socket.id]);
 			socket.compress(true).emit('init',initPack);
 			socket.compress(true).emit('update',pack);
 			socket.compress(true).emit('remove',removePack);

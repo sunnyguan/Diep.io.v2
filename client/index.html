@@ -234,6 +234,7 @@ html, body, canvas {
 
 	var Bullet = function(initPack){
 		var self = {};
+		self.parent = initPack.parent;
 		self.id = initPack.id;
 		self.x = initPack.x;
 		self.y = initPack.y;
@@ -266,7 +267,7 @@ html, body, canvas {
 					ctx.stroke();
 					ctx.restore();
 				}else{
-					var tt = Player.list[selfId].tankType;
+					var tt = Player.list[self.parent].tankType;
 					if(tt == 22)
 						ctx.fillStyle = 'gray';
 					else
@@ -274,7 +275,7 @@ html, body, canvas {
 					ctx.lineWidth = 3;
 					
 					var rad = 0;
-					
+					console.log(tt);
 					if(tt == 16){
 						rad = 22;
 					}else if(tt == 19 || tt == 20){
@@ -539,7 +540,7 @@ html, body, canvas {
 		var third = Math.round(ratio * parseInt(color.substring(4), 16) + (1 - ratio) * parseInt(red.substring(4), 16)).toString(16).paddingLeft("00");
 		
 		var str = "#" + first + second + third;
-		console.log(str);
+		//console.log(str);
 		return str;
 	}
 	
@@ -591,6 +592,8 @@ html, body, canvas {
 					p.x = pack.x;
 				if(pack.y !== undefined)
 					p.y = pack.y;
+				if(pack.angle !== undefined)
+					p.angle = pack.angle;
 				if(pack.hp !== undefined)
 					p.hp = pack.hp;
 				if(pack.score !== undefined)
@@ -627,6 +630,8 @@ html, body, canvas {
 					b.x = pack.x;
 				if(pack.y !== undefined)
 					b.y = pack.y;
+				if(pack.parent !== undefined)
+					b.parent = pack.parent;
 			}
 		}
 		for(var i = 0 ; i < data.square.length; i++){
@@ -1747,7 +1752,7 @@ html, body, canvas {
 			var x = -(WIDTH / 2) + event.clientX - 8;
 			var y = -(HEIGHT / 2) + event.clientY - 8;
 			var angle = Math.atan2(y,x) / Math.PI * 180;
-			Player.list[selfId].angle = angle;
+			//Player.list[selfId].angle = angle;
 			socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
 			if(autoFire){
 				socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
