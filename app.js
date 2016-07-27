@@ -123,6 +123,8 @@ var Player = function(id, name){
 	self.mouseX = 0;
 	self.mouseY = 0;
 	
+	self.lastPack = {};
+	
 	self.availableUpgrades = [0,0,0];
 	self.sent = [0,0,0];
 	var super_update = self.update;
@@ -136,7 +138,7 @@ var Player = function(id, name){
 	self.update = function(){
 		
 		self.updateSpd();
-		/*for(var i in Player.list){
+		for(var i in Player.list){
 			var p = Player.list[i];
 			if(p.id != self.id){
 				if(self.getDistance(p) < 40){
@@ -172,8 +174,8 @@ var Player = function(id, name){
 			}
 			
 			//console.log(Object.keys(Triangle.list).length);
-		}*/
-		super_update();/*
+		}
+		super_update();
 		self.timer++;
 		//console.log(self.reload);
 		if(self.pressingAttack && self.timer % Math.round(self.reload) == 0){
@@ -204,7 +206,7 @@ var Player = function(id, name){
 				
 			}
 			
-		}*/
+		}
 	}
 	self.checkForUpgrades = function(){
 		var tanks = [];
@@ -737,21 +739,22 @@ var Player = function(id, name){
 			score:self.score,
 			name:self.name,
 			tankType:self.tankType,
-		};		
+		};
 	}
 	self.getUpdatePack = function(){
 		var pack = {
 			id:self.id,
 			x:self.x,
 			y:self.y,
-			hp:self.hp,
-			pMaxHp:self.hpMax,
-			score:self.score,
-			angle:self.mouseAngle,
-			upgrades:self.upgrades,
-			tankType:self.tankType,
-			level:self.level,
 		};
+		if(self.lastPack.hp != self.hp) pack.hp = self.hp;
+		if(self.lastPack.pMaxHp != self.hpMax) pack.pMaxHp = self.hpMax;
+		if(self.lastPack.score != self.score) pack.score = self.score;
+		if(self.lastPack.angle != self.mouseAngle) pack.angle = self.mouseAngle;
+		if(self.lastPack.upgrades != self.upgrades) pack.upgrades = self.upgrades;
+		if(self.lastPack.tankType != self.tankType) pack.tankType = self.tankType;
+		if(self.lastPack.level != self.level) pack.level = self.level;
+		
 		if(self.updateRegen) pack.regen = self.regenCount;
 		if(self.updateHp) pack.maxhp = self.hpMaxCount;
 		if(self.updateBulletHp) pack.bulletHp = self.bulletHpCount;
@@ -759,6 +762,8 @@ var Player = function(id, name){
 		if(self.updateReload) pack.bulletReload = self.reloadCount;
 		if(self.updateSpeed) pack.movementSpeed = self.maxSpdCount;
 		if(self.updateBodyDamage)	pack.bodyDamage = self.bodyDamageCount;
+		
+		self.lastPack = pack;
 		
 		return pack;
 	}
