@@ -1542,7 +1542,7 @@ var removePack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
 setInterval(function(){
 	var pack = {
 		player:Player.update(),
-		bullet:Bullet.update(),
+		//bullet:Bullet.update(),
 	};
 	//console.log(Pentagon.list.length);
 	for(var i in SOCKET_LIST){
