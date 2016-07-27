@@ -625,16 +625,18 @@ html, body, canvas {
 					p.level = pack.level;
 			}
 		}
-		for(var i = 0 ; i < data.bullet.length; i++){
-			var pack = data.bullet[i];
-			var b = Bullet.list[data.bullet[i].id];
-			if(b){
-				if(pack.x !== undefined)
-					b.x = pack.x;
-				if(pack.y !== undefined)
-					b.y = pack.y;
-				if(pack.parent !== undefined)
-					b.parent = pack.parent;
+		if(data.bullet !== undefined)
+			for(var i = 0 ; i < data.bullet.length; i++){
+				var pack = data.bullet[i];
+				var b = Bullet.list[data.bullet[i].id];
+				if(b){
+					if(pack.x !== undefined)
+						b.x = pack.x;
+					if(pack.y !== undefined)
+						b.y = pack.y;
+					if(pack.parent !== undefined)
+						b.parent = pack.parent;
+				}
 			}
 		}
 		for(var i = 0 ; i < data.square.length; i++){
