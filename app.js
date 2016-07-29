@@ -74,10 +74,10 @@ var Player = function(id, name){
 	
 	self.regen = 21;
 	self.hpMax = 100;
-	self.bulletHp = 1600;
+	self.bulletHp = 7;
 	self.bulletSpeed = 7;
 	self.reload = 38;
-	self.maxSpd = 4;
+	self.maxSpd = 6;
 	self.bodyDamage = 10;
 	
 	self.minRegen = 8;
@@ -100,8 +100,8 @@ var Player = function(id, name){
 	self.maxReload = 38;
 	self.updateReload = true;
 	
-	self.minSpeed = 4;
-	self.maxSpeed = 8;
+	self.minSpeed = 6;
+	self.maxSpeed = 10;
 	self.updateSpeed = true;
 	
 	self.minBodyDamage = 10;
@@ -118,12 +118,10 @@ var Player = function(id, name){
 	
 	self.bullets = [];
 	self.moveTimer = 0;
-	self.friction = 0.97;
+	self.friction = 0.96;
 	self.level = 1;
 	self.mouseX = 0;
 	self.mouseY = 0;
-	
-	self.lastPack = {};
 	
 	self.availableUpgrades = [0,0,0];
 	self.sent = [0,0,0];
@@ -229,7 +227,7 @@ var Player = function(id, name){
 				}else if(self.tankType == 14){
 					tanks = [2, 21];
 				}else if(self.tankType == 5){
-					tanks = [6, 23];
+					tanks = [6];
 				}else if(self.tankType == 7){
 					tanks = [15];
 				}else if(self.tankType == 16){
@@ -653,38 +651,7 @@ var Player = function(id, name){
 			b.x = self.x;
 			b.y = self.y;
 			console.log('shot');
-		} else if (self.tankType === 23) {
-			turbAngle = -90 + turbAngle;
-			self.spdX += Math.cos(angle/180*Math.PI) * 2.2 * damping;
-			self.spdY += Math.sin(angle/180*Math.PI) * 2.2 * damping;
-			var b1 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
-			b1.x = self.x;
-			b1.y = self.y;
-			
-			if(self.reloadNum == 0){
-				angle += 90;
-				var b2 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
-				
-				angle -= 180;
-				var b3 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
-				b3.x = self.x;
-				b3.y = self.y;
-				self.reloadNum = 1;
-			} else if(self.reloadNum == 1){
-				angle += 145;
-				var b2 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
-				
-				angle -= 290;
-				var b4 = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
-				b4.x = self.x;
-				b4.y = self.y;
-				self.reloadNum = 0;
-			}
-		} 
+		}
 
 	}
 	self.deathReset = function(){
@@ -739,22 +706,20 @@ var Player = function(id, name){
 			score:self.score,
 			name:self.name,
 			tankType:self.tankType,
-		};
+		};		
 	}
 	self.getUpdatePack = function(){
 		var pack = {
 			id:self.id,
 			x:self.x,
 			y:self.y,
+			hp:self.hp,
+			pMaxHp:self.hpMax,
+			score:self.score,
+			upgrades:self.upgrades,
+			tankType:self.tankType,
+			level:self.level,
 		};
-		if(self.lastPack.hp != self.hp) pack.hp = self.hp;
-		if(self.lastPack.pMaxHp != self.hpMax) pack.pMaxHp = self.hpMax;
-		if(self.lastPack.score != self.score) pack.score = self.score;
-		if(self.lastPack.angle != self.mouseAngle) pack.angle = self.mouseAngle;
-		if(self.lastPack.upgrades != self.upgrades) pack.upgrades = self.upgrades;
-		if(self.lastPack.tankType != self.tankType) pack.tankType = self.tankType;
-		if(self.lastPack.level != self.level) pack.level = self.level;
-		
 		if(self.updateRegen) pack.regen = self.regenCount;
 		if(self.updateHp) pack.maxhp = self.hpMaxCount;
 		if(self.updateBulletHp) pack.bulletHp = self.bulletHpCount;
@@ -762,8 +727,6 @@ var Player = function(id, name){
 		if(self.updateReload) pack.bulletReload = self.reloadCount;
 		if(self.updateSpeed) pack.movementSpeed = self.maxSpdCount;
 		if(self.updateBodyDamage)	pack.bodyDamage = self.bodyDamageCount;
-		
-		self.lastPack = pack;
 		
 		return pack;
 	}
@@ -775,7 +738,7 @@ var Player = function(id, name){
 }
 Player.list = {};
 Player.tankProps = [
-	{ name: 'base tank', minRegen: 8, maxRegen: 21, minSpeed: 4, maxSpeed: 8, minHp: 100, maxHp: 200, 
+	{ name: 'base tank', minRegen: 8, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 200, 
 	minBulletHp: 7, maxBulletHp: 30, minBulletSpeed: 7, maxBulletSpeed: 25, minReload: 11, maxReload: 38, 
 	minBodyDamage: 10, maxBodyDamage: 200},
 	{ name: 'twin', minRegen: 6, maxRegen: 21, minSpeed: 6, maxSpeed: 9, minHp: 100, maxHp: 160, 
@@ -844,9 +807,6 @@ Player.tankProps = [
 	{ name: 'flak cannon', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 131, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
 	minBodyDamage: 10, maxBodyDamage: 200},
-	{ name: 'fighter', minRegen: 2, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
-	minBulletHp: 10, maxBulletHp: 37, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 22,
-	minBodyDamage: 144, maxBodyDamage: 364},
 ];
 Player.onConnect = function(socket,username){
 	var player = Player(socket.id,username);
@@ -909,7 +869,7 @@ var Shape = function(){
 		score:0,
 		hp:0,
 		maxhp:0,
-		friction:0.96,
+		friction:0.95,
 		angle:angle,
 		toRemove:false,
 		speed:speed,
@@ -942,8 +902,8 @@ var Shape = function(){
 					p.score += self.score;
 				}else{
 					var angle = Math.atan2(self.y-p.y, self.x-p.x);
-					p.spdX -= Math.cos(angle) * 7;
-					p.spdY -= Math.sin(angle) * 7;
+					p.spdX -= Math.cos(angle) * 5;
+					p.spdY -= Math.sin(angle) * 5;
 				}
 			}
 		}
@@ -1037,7 +997,8 @@ var Pentagon = function(x,y,radius){
 }
 Pentagon.list = {};
 
-Pentagon.regUpdate = function(){
+Pentagon.update = function(player){
+	
 	
 	if(numOfAlphaPentagons < 4){
 		var x = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
@@ -1050,24 +1011,19 @@ Pentagon.regUpdate = function(){
 		var t = Pentagon();
 	}
 	
+	var pack = [];
+	
 	for(var i in Pentagon.list){
 		var pentagon = Pentagon.list[i];
 		if(pentagon.hp <= 0){
 			delete Pentagon.list[i];
 			removePack.pentagon.push(pentagon.id);
 		} else {
-			pentagon.update();
+			var updatePack = pentagon.update();
+			if(objInViewOfPlayer(pentagon, player)){
+				pack.push(updatePack);
+			}
 		}
-	}
-}
-
-Pentagon.update = function(player){
-	var pack = [];
-	
-	for(var i in Pentagon.list){
-		var pentagon = Pentagon.list[i];
-		if(objInViewOfPlayer(Pentagon, player))
-			pack.push(pentagon.getUpdatePack());
 	}
 	
 	return pack;
@@ -1092,10 +1048,12 @@ var Square = function(){
 }
 Square.list = {};
 
-Square.regUpdate = function(){
+Square.update = function(player){
 	if(Object.keys(Square.list).length < 100){
 		var t = Square();
 	}
+	
+	var pack = [];
 	
 	for(var i in Square.list){
 		var square = Square.list[i];
@@ -1103,18 +1061,11 @@ Square.regUpdate = function(){
 			delete Square.list[i];
 			removePack.square.push(square.id);
 		} else {
-			square.update();
+			var updatePack = square.update();
+			if(objInViewOfPlayer(square, player)){
+				pack.push(updatePack);
+			}
 		}
-	}
-}
-
-Square.update = function(player){
-	var pack = [];
-	
-	for(var i in Square.list){
-		var square = Square.list[i];
-		if(objInViewOfPlayer(square, player))
-			pack.push(square.getUpdatePack());
 	}
 	
 	return pack;
@@ -1139,10 +1090,12 @@ var Triangle = function(){
 }
 Triangle.list = {};
 
-Triangle.regUpdate = function(){
+Triangle.update = function(player){
 	if(Object.keys(Triangle.list).length < 100){
 		var t = Triangle();
 	}
+	
+	var pack = [];
 	
 	for(var i in Triangle.list){
 		var triangle = Triangle.list[i];
@@ -1150,18 +1103,12 @@ Triangle.regUpdate = function(){
 			delete Triangle.list[i];
 			removePack.triangle.push(triangle.id);
 		} else {
-			triangle.update();
+			
+			var updatePack = triangle.update();
+			if(objInViewOfPlayer(triangle, player)){
+				pack.push(updatePack);
+			}
 		}
-	}
-}
-
-Triangle.update = function(player){
-	var pack = [];
-	
-	for(var i in Triangle.list){
-		var triangle = Triangle.list[i];
-		if(objInViewOfPlayer(triangle, player))
-			pack.push(triangle.getUpdatePack());
 	}
 	
 	return pack;
@@ -1248,7 +1195,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			}
 		}
 		
-		if(t % 1 == 0){
+		if(t % 2 == 0){
 			for(var i in Player.list){
 				var p = Player.list[i];
 				self.dealWithEntities(p);
@@ -1265,13 +1212,14 @@ var Bullet = function(parent,angle,hp,speed,drone){
 				var s = Triangle.list[i];
 				self.dealWithEntities(s);
 			}
+			t = 0;
 		}
 		t++;
 	}
 	self.dealWithEntities = function(s){
 		if(s.id != self.parent){
 			var radius = 45;
-			if(s.radius !== undefined) radius = s.radius;
+			//if(s.radius !== undefined) radius = s.radius;
 			if(self.getDistance(s) < radius){
 				var angle = Math.atan2(self.y-s.y, self.x-s.x);
 				s.spdX -= Math.cos(angle) * 32 / radius;
@@ -1285,8 +1233,6 @@ var Bullet = function(parent,angle,hp,speed,drone){
 					if(shooter){
 						shooter.score += s.score;
 					}
-					if(typeof s === 'Player')
-						s.deathReset();
 				}
 				if(self.hp > 0 && Player.list[self.parent].tankType == 22){
 					for(var i = 0; i <= 720; i += 360 / Math.round(Math.random() * 2)){
@@ -1306,7 +1252,6 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			y:self.y,
 			drone:self.drone,		
 			angle:self.angle,
-			parent:self.parent,
 		};
 	}
 	self.getUpdatePack = function(){
@@ -1378,7 +1323,6 @@ io.sockets.on('connection', function(socket){
 	socket.on('signIn',function(data){
 		isValidPassword(data,function(res){
 			if(res){
-				socket.compress(true).emit('init',initPack);
 				Player.onConnect(socket,data.username);
 				socket.emit('signInResponse',{success:true});
 			} else {
@@ -1563,19 +1507,16 @@ setInterval(function(){
 		player:Player.update(),
 		bullet:Bullet.update(),
 	};
-	Square.regUpdate();
-	Pentagon.regUpdate();
-	Triangle.regUpdate();
-	//console.log(Pentagon.list.length);
+	
 	for(var i in SOCKET_LIST){
 		var socket = SOCKET_LIST[i];
 		if(typeof Player.list[socket.id] !== 'undefined'){
 			pack.square = Square.update(Player.list[socket.id]);
 			pack.triangle = Triangle.update(Player.list[socket.id]);
 			pack.pentagon = Pentagon.update(Player.list[socket.id]);
-			socket.compress(true).emit('init',initPack);
-			socket.compress(true).emit('update',pack);
-			socket.compress(true).emit('remove',removePack);
+			socket.emit('init',initPack);
+			socket.emit('update',pack);
+			socket.emit('remove',removePack);
 		}
 	}
 	initPack.player = [];

@@ -1,4 +1,4 @@
-﻿<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+﻿ta http-equiv="Content-type" content="text/html; charset=utf-8">
 
 <div id="signDiv">
 	Username: <input id="signDiv-username" type="text"></input><br>
@@ -234,7 +234,6 @@ html, body, canvas {
 
 	var Bullet = function(initPack){
 		var self = {};
-		self.parent = initPack.parent;
 		self.id = initPack.id;
 		self.x = initPack.x;
 		self.y = initPack.y;
@@ -267,7 +266,7 @@ html, body, canvas {
 					ctx.stroke();
 					ctx.restore();
 				}else{
-					var tt = Player.list[self.parent].tankType;
+					var tt = Player.list[selfId].tankType;
 					if(tt == 22)
 						ctx.fillStyle = 'gray';
 					else
@@ -275,7 +274,7 @@ html, body, canvas {
 					ctx.lineWidth = 3;
 					
 					var rad = 0;
-					console.log(tt);
+					
 					if(tt == 16){
 						rad = 22;
 					}else if(tt == 19 || tt == 20){
@@ -540,7 +539,7 @@ html, body, canvas {
 		var third = Math.round(ratio * parseInt(color.substring(4), 16) + (1 - ratio) * parseInt(red.substring(4), 16)).toString(16).paddingLeft("00");
 		
 		var str = "#" + first + second + third;
-		//console.log(str);
+		console.log(str);
 		return str;
 	}
 	
@@ -592,11 +591,6 @@ html, body, canvas {
 					p.x = pack.x;
 				if(pack.y !== undefined)
 					p.y = pack.y;
-				if(pack.id != selfId){
-					if(pack.angle !== undefined){
-						p.angle = pack.angle;
-					}
-				}
 				if(pack.hp !== undefined)
 					p.hp = pack.hp;
 				if(pack.score !== undefined)
@@ -625,18 +619,14 @@ html, body, canvas {
 					p.level = pack.level;
 			}
 		}
-		if(data.bullet !== undefined){
-			for(var i = 0 ; i < data.bullet.length; i++){
-				var pack = data.bullet[i];
-				var b = Bullet.list[data.bullet[i].id];
-				if(b){
-					if(pack.x !== undefined)
-						b.x = pack.x;
-					if(pack.y !== undefined)
-						b.y = pack.y;
-					if(pack.parent !== undefined)
-						b.parent = pack.parent;
-				}
+		for(var i = 0 ; i < data.bullet.length; i++){
+			var pack = data.bullet[i];
+			var b = Bullet.list[data.bullet[i].id];
+			if(b){
+				if(pack.x !== undefined)
+					b.x = pack.x;
+				if(pack.y !== undefined)
+					b.y = pack.y;
 			}
 		}
 		for(var i = 0 ; i < data.square.length; i++){
@@ -1006,7 +996,7 @@ html, body, canvas {
 			
 			ctx.arc(WIDTH - 200 + 200 * pla.x / GAME_DIMENSION, 200 * pla.y / GAME_DIMENSION, 5, 0, 2 * Math.PI);
 			//ctx.fill();
-			var scoreText = (y / 40 + 1) + '. ' + pla.name + ': ' + pla.score;
+			var scoreText = (y / 40 + 1) + '. ' + pla.name + ': ' + Math.max( Math.round(pla.score * 10) / 10, 2.8 ).toFixed(2);;
 			ctx.fillText(scoreText, WIDTH - ctx.measureText(scoreText).width, HEIGHT / 2 - 150 + y);
 			y += 40;
 			//ctx.stroke();
@@ -1466,42 +1456,7 @@ html, body, canvas {
 			ctx.stroke();
 			ctx.restore(); 
 			
-		} else if(tankType == 23){
-	 		rad = 26.5;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
-	 		
-	 		for(var i = -90; i <= 90; i+=180){
-	 			ctx.save();
-	 			ctx.fillStyle = 'gray';
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			 	ctx.fillRect(0, -12, 42, 20);
-				ctx.strokeRect(0, -12, 42, 20);
-				ctx.restore();
-	 		}
-	 		for(var i = -145; i <= 145; i+=290){
-	 			ctx.save();
-	 			ctx.fillStyle = 'gray';
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			 	ctx.fillRect(0, -12, 42, 20);
-				ctx.strokeRect(0, -12, 42, 20);
-				ctx.restore();
-	 		}
-	 		ctx.save();
-	 		ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			
-			ctx.fillStyle = 'gray';
-			ctx.fillRect(0, -12, 48, 20);
-			ctx.strokeRect(0, -12, 48, 20);
-			ctx.restore(); 
-			ctx.strokeColor = 'red';
-	 		
-	 	} 
+		} 
 		
 		var ch = true;
 		if(text){
@@ -1550,7 +1505,6 @@ html, body, canvas {
 	'歼灭大炮',
 	'五连大炮',
 	'高射加农炮',
-	'战斗机',
 	];
 	
 	var ENGLISH = [
@@ -1577,7 +1531,6 @@ html, body, canvas {
 		'twin destroyer',
 		'penta shot',
 		'flak cannon',
-		'fighter',
 	];
 	
 	
