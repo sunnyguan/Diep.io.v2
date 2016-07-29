@@ -829,14 +829,14 @@ Player.onConnect = function(socket,username){
 		}
 	});
 	
-	socket.emit('init',{
+	socket.emit('allUpdate',{init:{
 		selfId:socket.id,
 		player:Player.getAllInitPack(),
 		bullet:Bullet.getAllInitPack(),
 		square:Square.getAllInitPack(),
 		pentagon:Pentagon.getAllInitPack(),
 		triangle:Triangle.getAllInitPack()
-	})
+	}})
 }
 Player.getAllInitPack = function(){
 	var players = [];
@@ -1515,7 +1515,7 @@ io.sockets.on('connection', function(socket){
 
 var initPack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
 var removePack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
-
+var allpack = {};
 setInterval(function(){
 	Triangle.regUpdate();
 	Square.regUpdate();
@@ -1532,11 +1532,13 @@ setInterval(function(){
 			pack.square = Square.update(Player.list[socket.id]);
 			pack.triangle = Triangle.update(Player.list[socket.id]);
 			pack.pentagon = Pentagon.update(Player.list[socket.id]);
-			socket.emit('init',initPack);
-			socket.emit('update',pack);
-			socket.emit('remove',removePack);
+			allpack["init"] = initPack;
+			allpack["update"] = pack;
+			allpack["remove"] = removePack;
+			socket.emit('allUpdate',allpack);
 		}
 	}
+	for (var member in allpack) delete allpack[member];
 	initPack.player = [];
 	initPack.bullet = [];
 	initPack.square = [];

@@ -38,7 +38,6 @@ html, body, canvas {
 	<canvas id="ctx" width="1" height="768" style=""></canvas>
 </div>
 <script src="client/CanvasInput.min.js"></script>
-<script src="client/chroma.min.js"></script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
 	var GAME_DIMENSION = 5000;
@@ -561,7 +560,17 @@ html, body, canvas {
 	
 	var selfId = null;
 	
-	socket.on('init',function(data){	
+	socket.on('allUpdate',function(data){
+		//console.log(data.update.player.id);
+		if(data.init !== undefined)
+			init(data.init);
+		if(data.update !== undefined)
+			update(data.update);
+		if(data.remove !== undefined)
+			remove(data.remove);
+	});
+	
+	function init(data){
 		if(data.selfId)
 			selfId = data.selfId;
 		//{ player : [{id:123,number:'1',x:0,y:0},{id:1,number:'2',x:0,y:0}], bullet: []}
@@ -579,10 +588,12 @@ html, body, canvas {
 		}
 		for(var i = 0 ; i < data.triangle.length; i++){
 			new Triangle(data.triangle[i]);
+			console.log(i);
 		}
-	});
+		//console.log(data);
+	}
 	
-	socket.on('update',function(data){
+	function update(data){
 		//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
 		for(var i = 0 ; i < data.player.length; i++){
 			var pack = data.player[i];
@@ -674,9 +685,9 @@ html, body, canvas {
 					b.attacked = pack.attacked;
 			}
 		}
-	});
+	}
 	
-	socket.on('remove',function(data){
+	function remove(data){
 		//{player:[12323],bullet:[12323,123123]}
 		for(var i = 0 ; i < data.player.length; i++){
 			delete Player.list[data.player[i]];
@@ -696,7 +707,7 @@ html, body, canvas {
 			Triangle.list[data.triangle[i]].toRemove = true;
 			//delete Triangle.list[data.triangle[i]];
 		}
-	});
+	}
 	
 	socket.on('newTanks', function(data){
 		newTankVisible = true;
@@ -735,6 +746,7 @@ html, body, canvas {
 	var newTankVisible = false;
 	var newTanks = [];
 	function draw(){
+		console.log('hi');
 		requestAnimationFrame(draw);
 		
 		var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
@@ -756,7 +768,7 @@ html, body, canvas {
 		if(!selfId)
 			return;
 		ctx.clearRect(0,0,WIDTH,HEIGHT);
-		
+		console.log('wefoih');
 		drawMap();
 		drawScore();
 		for(var i in Bullet.list)
