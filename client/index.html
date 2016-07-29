@@ -1,5 +1,6 @@
-﻿ta http-equiv="Content-type" content="text/html; charset=utf-8">
-
+﻿<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+</head>
 <div id="signDiv">
 	Username: <input id="signDiv-username" type="text"></input><br>
 	Password: <input id="signDiv-password" type="password"></input>
@@ -1682,7 +1683,7 @@ html, body, canvas {
 			if(isPointInsideRect(x,y,222,HEIGHT - 39,42,42)){
 				chatVisible = !chatVisible;
 			}
-			if(levelUpVisible){
+			if(levelUpVisible && isPointInsideRect(x,y,0,0,400,250)){
 				if(isPointInsideRect(x,y,leftSpace, initial, length, 20)){
 					socket.emit('regen');
 				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing, length, 20)){
@@ -1705,6 +1706,7 @@ html, body, canvas {
 		if(signDiv.style.display == 'none')
 			socket.emit('keyPress',{inputId:'attack',state:false});
 	}
+	
 	document.onmousemove = function(event){
 		if(signDiv.style.display == 'none'){
 			var x = -(WIDTH / 2) + event.clientX - 8;
