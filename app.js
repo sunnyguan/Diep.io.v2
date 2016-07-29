@@ -997,33 +997,36 @@ var Pentagon = function(x,y,radius){
 }
 Pentagon.list = {};
 
-Pentagon.update = function(player){
-	
-	
+Pentagon.updatePack = {};
+
+Pentagon.regUpdate = function(){
 	if(numOfAlphaPentagons < 4){
 		var x = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
 		var y = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
 		var ap = Pentagon(x,y,120);
 		numOfAlphaPentagons++;
 	}
-	
-	if(Object.keys(Pentagon.list).length < 100){
+	if(Object.keys(Pentagon.list).length < 60){
 		var t = Pentagon();
 	}
-	
-	var pack = [];
-	
 	for(var i in Pentagon.list){
 		var pentagon = Pentagon.list[i];
 		if(pentagon.hp <= 0){
 			delete Pentagon.list[i];
 			removePack.pentagon.push(pentagon.id);
 		} else {
-			var updatePack = pentagon.update();
-			if(objInViewOfPlayer(pentagon, player)){
-				pack.push(updatePack);
-			}
+			Pentagon.updatePack[pentagon.id] = pentagon.update();
 		}
+	}
+}
+
+Pentagon.update = function(player){
+	var pack = [];
+	
+	for(var i in Pentagon.list){
+		var pentagon = Pentagon.list[i];
+		if(objInViewOfPlayer(pentagon, player))
+			pack.push(Pentagon.updatePack[pentagon.id]);
 	}
 	
 	return pack;
@@ -1048,24 +1051,30 @@ var Square = function(){
 }
 Square.list = {};
 
-Square.update = function(player){
-	if(Object.keys(Square.list).length < 100){
+Square.updatePack = {};
+
+Square.regUpdate = function(){
+	if(Object.keys(Square.list).length < 60){
 		var t = Square();
 	}
-	
-	var pack = [];
-	
 	for(var i in Square.list){
 		var square = Square.list[i];
 		if(square.hp <= 0){
 			delete Square.list[i];
 			removePack.square.push(square.id);
 		} else {
-			var updatePack = square.update();
-			if(objInViewOfPlayer(square, player)){
-				pack.push(updatePack);
-			}
+			Square.updatePack[square.id] = square.update();
 		}
+	}
+}
+
+Square.update = function(player){
+	var pack = [];
+	
+	for(var i in Square.list){
+		var square = Square.list[i];
+		if(objInViewOfPlayer(square, player))
+			pack.push(Square.updatePack[square.id]);
 	}
 	
 	return pack;
@@ -1090,25 +1099,30 @@ var Triangle = function(){
 }
 Triangle.list = {};
 
-Triangle.update = function(player){
+Triangle.updatePack = {};
+
+Triangle.regUpdate = function(){
 	if(Object.keys(Triangle.list).length < 100){
 		var t = Triangle();
 	}
-	
-	var pack = [];
-	
 	for(var i in Triangle.list){
 		var triangle = Triangle.list[i];
 		if(triangle.hp <= 0){
 			delete Triangle.list[i];
 			removePack.triangle.push(triangle.id);
 		} else {
-			
-			var updatePack = triangle.update();
-			if(objInViewOfPlayer(triangle, player)){
-				pack.push(updatePack);
-			}
+			Triangle.updatePack[triangle.id] = triangle.update();
 		}
+	}
+}
+
+Triangle.update = function(player){
+	var pack = [];
+	
+	for(var i in Triangle.list){
+		var triangle = Triangle.list[i];
+		if(objInViewOfPlayer(triangle, player))
+			pack.push(Triangle.updatePack[triangle.id]);
 	}
 	
 	return pack;
@@ -1503,6 +1517,10 @@ var initPack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
 var removePack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
 
 setInterval(function(){
+	Triangle.regUpdate();
+	Square.regUpdate();
+	Pentagon.regUpdate();
+	
 	var pack = {
 		player:Player.update(),
 		bullet:Bullet.update(),
