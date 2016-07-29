@@ -1549,4 +1549,4 @@ setInterval(function(){
 	removePack.square = [];
 	removePack.pentagon = [];
 	removePack.triangle = [];
-},1000/45);
+},1000/38);
