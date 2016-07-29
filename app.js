@@ -858,7 +858,7 @@ Player.update = function(){
 	}
 	return pack;
 }
-
+var t = 0;
 var Shape = function(){
 	var speed = 0.1;
 	var angle = Math.random() * 360;
@@ -873,22 +873,23 @@ var Shape = function(){
 		angle:angle,
 		toRemove:false,
 		speed:speed,
-		spdX:Math.cos(angle/180*Math.PI) * speed,
-		spdY:Math.cos(angle/180*Math.PI) * speed,
+		spdX:0,//Math.cos(angle/180*Math.PI) * speed,
+		spdY:0,//Math.cos(angle/180*Math.PI) * speed,
 		attacked:false,
-		attackedTimer:0
+		attackedTimer:0,
+		dirChange:true
 	}
 	
 	self.update = function(){
-		var x = Math.cos(self.angle/180*Math.PI) * self.speed;
-		var y = Math.sin(self.angle/180*Math.PI) * self.speed;
+		//var x = Math.cos(self.angle/180*Math.PI) * self.speed;
+		//var y = Math.sin(self.angle/180*Math.PI) * self.speed;
 		///
-		if(self.x + self.spdX < GAME_DIMENSION && self.x + self.spdX > 0){
+		/*if(self.x + self.spdX < GAME_DIMENSION && self.x + self.spdX > 0){
 			self.x += self.spdX;
 		}
 		if(self.y + self.spdY < GAME_DIMENSION && self.y + self.spdY > 0){
 			self.y += self.spdY;
-		}
+		}*/
 		for(var i in Player.list){
 			var p = Player.list[i];
 			if(self.getDistance(p) < 50){
@@ -908,15 +909,18 @@ var Shape = function(){
 			}
 		}
 		///
-		if(Math.abs(self.spdX - x) > 0.1 || Math.abs(self.spdY - y) > 0.1){
+		/*if(Math.abs(self.spdX - x) > 0.1 || Math.abs(self.spdY - y) > 0.1){
 			self.spdX *= self.friction;
 			self.spdY *= self.friction;
 		}else{
 			self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
 			self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
-		}
+		}*/
 		if(self.hp > self.maxhp) self.hp = self.maxhp;
-		self.angle += Math.random() * 0.3;
+		/*if(t % Math.round(Math.random() * 20) == 0){
+			self.angle += Math.random() * 2;
+			self.dirChange = true;
+		}*/
 		if(self.attacked && self.attackedTimer > 2){
 			self.attacked = false;
 			self.attackedTimer = 0;
@@ -945,6 +949,8 @@ var Shape = function(){
 			id:self.id,
 			x:self.x,
 			y:self.y,
+			///spdX:self.spdX,
+			//spdY:self.spdY,
 			hp:self.hp,
 			maxhp:self.maxhp
 		};
@@ -952,8 +958,8 @@ var Shape = function(){
 	self.getUpdatePack = function(){
 		return {
 			id:self.id,
-			x:self.x,
-			y:self.y,
+			//spdX:self.spdX,
+			//spdY:self.spdY,
 			hp:self.hp,
 			attacked:self.attacked,		
 		};
@@ -1025,8 +1031,10 @@ Pentagon.update = function(player){
 	
 	for(var i in Pentagon.list){
 		var pentagon = Pentagon.list[i];
-		if(objInViewOfPlayer(pentagon, player))
+		if(pentagon.dirChange && objInViewOfPlayer(pentagon, player)){
 			pack.push(Pentagon.updatePack[pentagon.id]);
+			pentagon.dirChange = false;
+		}
 	}
 	
 	return pack;
@@ -1073,8 +1081,10 @@ Square.update = function(player){
 	
 	for(var i in Square.list){
 		var square = Square.list[i];
-		if(objInViewOfPlayer(square, player))
+		if(square.dirChange && objInViewOfPlayer(square, player)){
 			pack.push(Square.updatePack[square.id]);
+			square.dirChange = false;
+		}
 	}
 	
 	return pack;
@@ -1121,8 +1131,10 @@ Triangle.update = function(player){
 	
 	for(var i in Triangle.list){
 		var triangle = Triangle.list[i];
-		if(objInViewOfPlayer(triangle, player))
+		if(triangle.dirChange && objInViewOfPlayer(triangle, player)){
 			pack.push(Triangle.updatePack[triangle.id]);
+			triangle.dirChange = false;
+		}
 	}
 	
 	return pack;
@@ -1236,8 +1248,10 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			//if(s.radius !== undefined) radius = s.radius;
 			if(self.getDistance(s) < radius){
 				var angle = Math.atan2(self.y-s.y, self.x-s.x);
-				s.spdX -= Math.cos(angle) * 32 / radius;
-				s.spdY -= Math.sin(angle) * 32 / radius;
+				//s.spdX -= Math.cos(angle) * 32 / radius;
+				//s.spdY -= Math.sin(angle) * 32 / radius;
+				if(typeof s !== "player")
+					s.dirChange = true;
 				s.attacked = true;
 				s.hp -= self.hp;
 				self.hp -= s.maxhp;
@@ -1549,4 +1563,4 @@ setInterval(function(){
 	removePack.square = [];
 	removePack.pentagon = [];
 	removePack.triangle = [];
-},1000/38);
+},1000/45);
