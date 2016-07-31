@@ -603,6 +603,7 @@ html, body, canvas {
 		//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
 		for(var i = 0 ; i < data.player.length; i++){
 			var pack = data.player[i];
+			//console.log(pack);
 			var p = Player.list[pack.id];
 			if(p){
 				if(pack.x !== undefined)

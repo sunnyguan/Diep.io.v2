@@ -118,7 +118,7 @@ var Player = function(id, name){
 	
 	self.bullets = [];
 	self.moveTimer = 0;
-	self.friction = 0.92;
+	self.friction = 0.96;
 	self.level = 1;
 	self.mouseX = 0;
 	self.mouseY = 0;
@@ -211,8 +211,10 @@ var Player = function(id, name){
 				
 			}
 		}
-		if(Math.abs(self.x - ox) > 0.3 || Math.abs(self.y - oy) > 0.3) self.needToUpdate = true;
+		if(Math.abs(self.x - ox) > 0.2 || Math.abs(self.y - oy) > 0.2) self.needToUpdate = true;
 		else self.needToUpdate = false;
+			
+		return self.getUpdatePack();
 	}
 	self.checkForUpgrades = function(){
 		var tanks = [];
@@ -701,6 +703,8 @@ var Player = function(id, name){
 		
 		self.spdX *= self.friction;
 		self.spdY *= self.friction;
+		
+		
 	}
 	
 	self.getInitPack = function(){
@@ -858,19 +862,33 @@ Player.onDisconnect = function(socket){
 	delete Player.list[socket.id];
 	removePack.player.push(socket.id);
 }
-Player.update = function(){
-	var pack = [];
+Player.updatePack = {};
+
+Player.regUpdate = function(){
 	for(var i in Player.list){
 		var player = Player.list[i];
-		player.update();
 		if(player.hp <= 0){
-			console.log('efowjeoij');
 			player.deathReset();
-		}else if(player.needToUpdate){
-			pack.push(player.getUpdatePack());		
-			console.log(t++);
+		} else {
+			Player.updatePack[player.id] = player.update();
+			//console.log(player.update());
 		}
 	}
+}
+
+Player.update = function(p){
+	var pack = [];
+	
+	for(var i in Player.list){
+		var player = Player.list[i];
+		if(player.needToUpdate && objInViewOfPlayer(player, p)){
+			//console.log('hi');
+			pack.push(Player.updatePack[player.id]);
+			//console.log(Player.updatePack[player.id]);
+			
+		}
+	}
+	
 	return pack;
 }
 var t = 0;
@@ -1564,9 +1582,8 @@ setInterval(function(){
 	Triangle.regUpdate();
 	Square.regUpdate();
 	Pentagon.regUpdate();
-	
+	Player.regUpdate();
 	var pack = {
-		player:Player.update(),
 		bullet:Bullet.update(),
 	};
 	
@@ -1576,6 +1593,8 @@ setInterval(function(){
 			pack.square = Square.update(Player.list[socket.id]);
 			pack.triangle = Triangle.update(Player.list[socket.id]);
 			pack.pentagon = Pentagon.update(Player.list[socket.id]);
+			pack.player = Player.update(Player.list[socket.id]);
+			//console.log(pack.player);
 			allpack["init"] = initPack;
 			allpack["update"] = pack;
 			allpack["remove"] = removePack;
