@@ -55,8 +55,8 @@ var Player = function(id, name){
 	
 	self.id = id;
 	self.name = name;
-	self.x = 2500;//Math.random() * GAME_DIMENSION;
-	self.y = 2500;//Math.random() * GAME_DIMENSION;
+	self.x = Math.random() * GAME_DIMENSION;
+	self.y = Math.random() * GAME_DIMENSION;
 	self.number = "" + Math.floor(10 * Math.random());
 	self.pressingRight = false;
 	self.pressingLeft = false;
@@ -881,7 +881,7 @@ var Shape = function(){
 		friction:0.95,
 		angle:angle,
 		toRemove:false,
-		speed:speed,
+		speed:0,
 		spdX:0,//Math.cos(angle/180*Math.PI) * speed,
 		spdY:0,//Math.cos(angle/180*Math.PI) * speed,
 		attacked:false,
@@ -891,6 +891,7 @@ var Shape = function(){
 	}
 	
 	self.update = function(){
+		//console.log(self.angle);
 		var oriX = self.x;
 		var oriY = self.y;
 		var x = Math.cos(self.angle/180*Math.PI) * self.speed;
@@ -966,7 +967,7 @@ var Shape = function(){
 			id:self.id,
 			x:self.x,
 			y:self.y,
-			angle:self.angle,
+			angle:0,
 			hp:self.hp,
 			maxhp:self.maxhp
 		};
@@ -1027,7 +1028,7 @@ Pentagon.regUpdate = function(){
 		var ap = Pentagon(x,y,120);
 		numOfAlphaPentagons++;
 	}
-	if(Object.keys(Pentagon.list).length < 60){
+	if(Object.keys(Pentagon.list).length < 90){
 		var t = Pentagon();
 	}
 	for(var i in Pentagon.list){
@@ -1040,13 +1041,14 @@ Pentagon.regUpdate = function(){
 		}
 	}
 }
-
+var t = 0;
 Pentagon.update = function(player){
 	var pack = [];
 	
 	for(var i in Pentagon.list){
 		var pentagon = Pentagon.list[i];
 		if(pentagon.needToUpdate && objInViewOfPlayer(pentagon, player)){
+			console.log(t++);
 			pack.push(Pentagon.updatePack[pentagon.id]);
 		}
 	}
@@ -1076,7 +1078,7 @@ Square.list = {};
 Square.updatePack = {};
 
 Square.regUpdate = function(){
-	if(Object.keys(Square.list).length < 60){
+	if(Object.keys(Square.list).length < 120){
 		var t = Square();
 	}
 	for(var i in Square.list){
@@ -1125,7 +1127,7 @@ Triangle.list = {};
 Triangle.updatePack = {};
 
 Triangle.regUpdate = function(){
-	if(Object.keys(Triangle.list).length < 100){
+	if(Object.keys(Triangle.list).length < 50){
 		var t = Triangle();
 	}
 	for(var i in Triangle.list){
@@ -1264,10 +1266,10 @@ var Bullet = function(parent,angle,hp,speed,drone){
 					s.spdX += Math.cos(angle) * 32 / 10;
 					s.spdY -= Math.sin(angle) * 32 / 10;
 				}else{
-					s.spdX -= Math.cos(angle) * 32 / radius;
-					s.spdY -= Math.sin(angle) * 32 / radius;
+					s.spdX -= Math.cos(angle) * 20 / radius;
+					s.spdY -= Math.sin(angle) * 20 / radius;
 				}
-				s.angle = angle;
+				//s.angle = angle;
 				s.needToUpdate = true;
 				if(typeof s !== "Player")
 					s.dirChange = true;
@@ -1292,7 +1294,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 						b1.y = self.y;// - Math.sin(angle) * 3;
 					}
 				}
-			}
+			}else s.angle = 0;
 		}
 	}
 	self.getInitPack = function(){

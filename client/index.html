@@ -330,7 +330,7 @@ html, body, canvas {
 				ctx.fillRect(x - 25,y + 30,hpWidth,4);
 				ctx.fillStyle = 'red';
 				ctx.fillRect(x - 25 + hpWidth, y + 30, 50 - hpWidth, 4);
-				ctx.stroke();
+				//ctx.stroke();
 				
 				ctx.save();
 				
@@ -343,33 +343,20 @@ html, body, canvas {
 				}
 				ctx.rotate(self.angle/180*Math.PI);
 				self.angle+=self.rotDeg;
-				
 				ctx.beginPath();
-				//ctx.strokeStyle = "F4A8FF";
-				polygon(ctx,0,0,35,3,0,false,"#F4A8FF");
-				//ctx.fill();
-				//polygon(ctx,0,0,22,3,0,false,"#FDFFA9");
-				//ctx.fill();
 				
-				//ctx.closePath();
+				ctx.strokeStyle = "#fabefa";
+				ctx.lineWidth = 3;
+				ctx.lineJoin = "bevel";
+				polygon(ctx,0,0,35,3,0,false);
 				
-				ctx.lineWidth = 6;
-				ctx.lineJoin = "round";
-				
-				
-				var color = "F4A8FF";
+				var color = "f0a8ff";
 				var red = "ff0000";
 				var ratio = self.hp / self.maxhp;
+				
 				ctx.fillStyle = blendColors(color, red, ratio);
 				ctx.fill();
-				ctx.strokeStyle = "#000000";
 				ctx.stroke();
-				//ctx.shadowColor = 'yellow';
-				//ctx.shadowBlur = 15;
-				
-				//
-				//ctx.strokeStyle = "#F4A8FF";
-				//ctx.stroke();
 				
 				ctx.restore();
 			}
@@ -413,7 +400,7 @@ html, body, canvas {
 				ctx.fillRect(x - 25,y + 30,hpWidth,4);
 				ctx.fillStyle = 'red';
 				ctx.fillRect(x - 25 + hpWidth, y + 30, 50 - hpWidth, 4);
-				ctx.stroke();
+				//ctx.stroke();
 				
 				ctx.save();
 				ctx.lineWidth = 3;
@@ -489,14 +476,14 @@ html, body, canvas {
 					ctx.fillRect(x - width / 2,y + width - 80,hpWidth,4);
 					ctx.fillStyle = 'red';
 					ctx.fillRect(x - width / 2 + hpWidth, y + width - 80, width - hpWidth, 4);
-					ctx.stroke();
+					//ctx.stroke();
 				}else{
 					var hpWidth = 50 * self.hp / self.maxhp;
 					ctx.fillStyle = 'green';
 					ctx.fillRect(x - 25,y + 50,hpWidth,4);
 					ctx.fillStyle = 'red';
 					ctx.fillRect(x - 25 + hpWidth, y + 50, 50 - hpWidth, 4);
-					ctx.stroke();
+					//ctx.stroke();
 				}
 				
 				
@@ -566,7 +553,7 @@ html, body, canvas {
 	  var a = (Math.PI * 2)/sides;
 	  a = anticlockwise?-a:a;
 	  ctx.save();
-	  ctx.strokeStyle = color;
+	  //ctx.strokeStyle = color;
 	  ctx.translate(x,y);
 	  ctx.rotate(startAngle);
 	  ctx.moveTo(radius,0);
