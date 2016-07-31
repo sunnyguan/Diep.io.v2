@@ -315,13 +315,12 @@ html, body, canvas {
 		self.attacked = false;
 		self.toRemove = false;
 		self.toRemoveTimer = 0;
-		self.spdX = 0;
-		self.spdY = 0;
+		self.angle = initPack.angle;
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
-			self.x += self.spdX;
-			self.y += self.spdY;
+			self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
+			self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
 			
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
@@ -386,13 +385,13 @@ html, body, canvas {
 		self.attacked = false;
 		self.toRemove = false;
 		self.toRemoveTimer = 0;
-		self.spdX = 0;
-		self.spdY = 0;
+		self.angle = initPack.angle;
+		
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
-			self.x += self.spdX;
-			self.y += self.spdY;
+			self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
+			self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
@@ -461,13 +460,12 @@ html, body, canvas {
 		self.attacked = false;
 		self.toRemove = false;
 		self.toRemoveTimer = 0;
-		self.spdX = initPack.spdX;
-		self.spdY = initPack.spdY;
+		self.angle = initPack.angle;
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
-			//self.x += self.spdX;
-			//self.y += self.spdY;
+			self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
+			self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			if(x < WIDTH + 120 && x > -120 && y < HEIGHT + 120 && y > -120){
@@ -666,10 +664,8 @@ html, body, canvas {
 					b.hp = pack.hp;
 				if(pack.attacked !== undefined)
 					b.attacked = pack.attacked;
-				if(pack.spdX !== undefined)
-					b.spdX = pack.spdX;
-				if(pack.spdY !== undefined)
-					b.spdY = pack.spdY;	
+				if(pack.angle !== undefined)
+					b.angle = pack.angle;
 			}
 		}
 		for(var i = 0 ; i < data.pentagon.length; i++){
@@ -686,10 +682,8 @@ html, body, canvas {
 					b.attacked = pack.attacked;
 				if(pack.maxhp !== undefined)
 					b.maxhp = pack.maxhp;
-				if(pack.spdX !== undefined)
-					b.spdX = pack.spdX;
-				if(pack.spdY !== undefined)
-					b.spdY = pack.spdY;	
+				if(pack.angle !== undefined)
+					b.angle = pack.angle;
 			}
 		}
 		for(var i = 0 ; i < data.triangle.length; i++){
@@ -704,10 +698,8 @@ html, body, canvas {
 					b.hp = pack.hp;
 				if(pack.attacked !== undefined)
 					b.attacked = pack.attacked;
-				if(pack.spdX !== undefined)
-					b.spdX = pack.spdX;
-				if(pack.spdY !== undefined)
-					b.spdY = pack.spdY;	
+				if(pack.angle !== undefined)
+					b.angle = pack.angle;
 			}
 		}
 	}
@@ -771,7 +763,7 @@ html, body, canvas {
 	var newTankVisible = false;
 	var newTanks = [];
 	function draw(){
-		console.log('hi');
+		//console.log('hi');
 		requestAnimationFrame(draw);
 		
 		var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
@@ -793,7 +785,7 @@ html, body, canvas {
 		if(!selfId)
 			return;
 		ctx.clearRect(0,0,WIDTH,HEIGHT);
-		console.log('wefoih');
+		//console.log('wefoih');
 		drawMap();
 		drawScore();
 		for(var i in Bullet.list)
