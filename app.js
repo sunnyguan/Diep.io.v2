@@ -118,10 +118,12 @@ var Player = function(id, name){
 	
 	self.bullets = [];
 	self.moveTimer = 0;
-	self.friction = 0.96;
+	self.friction = 0.92;
 	self.level = 1;
 	self.mouseX = 0;
 	self.mouseY = 0;
+	
+	self.needToUpdate = false;
 	
 	self.availableUpgrades = [0,0,0];
 	self.sent = [0,0,0];
@@ -134,7 +136,8 @@ var Player = function(id, name){
 		else return 0.46*x*x*x-12*x*x+170*x-529;
 	}
 	self.update = function(){
-		
+		var ox = self.x;
+		var oy = self.y;
 		self.updateSpd();
 		for(var i in Player.list){
 			var p = Player.list[i];
@@ -207,8 +210,9 @@ var Player = function(id, name){
 				}
 				
 			}
-			
 		}
+		if(Math.abs(self.x - ox) > 0.3 || Math.abs(self.y - oy) > 0.3) self.needToUpdate = true;
+		else self.needToUpdate = false;
 	}
 	self.checkForUpgrades = function(){
 		var tanks = [];
@@ -862,8 +866,10 @@ Player.update = function(){
 		if(player.hp <= 0){
 			console.log('efowjeoij');
 			player.deathReset();
+		}else if(player.needToUpdate){
+			pack.push(player.getUpdatePack());		
+			console.log(t++);
 		}
-		pack.push(player.getUpdatePack());		
 	}
 	return pack;
 }
