@@ -211,7 +211,7 @@ var Player = function(id, name){
 				
 			}
 		}
-		if(Math.abs(self.x - ox) > 0.2 || Math.abs(self.y - oy) > 0.2) self.needToUpdate = true;
+		if(Math.abs(self.x - ox) > 0 || Math.abs(self.y - oy) > 0) self.needToUpdate = true;
 		else self.needToUpdate = false;
 			
 		return self.getUpdatePack();
@@ -1069,9 +1069,10 @@ var t = 0;
 Pentagon.update = function(player){
 	var pack = [];
 	
-	for(var i in Pentagon.list){
+	for(var i in Pentagon.updatePack){
 		var pentagon = Pentagon.list[i];
-		if(pentagon.needToUpdate && objInViewOfPlayer(pentagon, player)){
+		if(pentagon !== undefined && 
+		   pentagon.needToUpdate && objInViewOfPlayer(pentagon, player)){
 			console.log(t++);
 			pack.push(Pentagon.updatePack[pentagon.id]);
 		}
