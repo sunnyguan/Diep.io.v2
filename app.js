@@ -861,7 +861,7 @@ Player.update = function(){
 var t = 0;
 var Shape = function(){
 	var speed = 0.1;
-	var angle = Math.random() * 360;
+	var angle = 0;//Math.random() * 360;
 	var self = {
 		id:Math.random(),
 		x:Math.random() * GAME_DIMENSION,
