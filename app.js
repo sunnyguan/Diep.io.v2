@@ -930,11 +930,11 @@ var Shape = function(){
 			self.attackedTimer++;
 		}
 		
-		/*if(self.x != oriX || self.y != oriY){
+		if(self.x != oriX || self.y != oriY){
 			self.needToUpdate = true;
 		}else{
 			self.needToUpdate = false;
-		}*/
+		}
 		
 		return {
 			id:self.id,
@@ -965,7 +965,8 @@ var Shape = function(){
 	self.getUpdatePack = function(){
 		return {
 			id:self.id,
-			angle:self.angle,
+			x:self.x,
+			y:self.y,
 			hp:self.hp,
 			attacked:self.attacked,		
 		};

@@ -315,12 +315,12 @@ html, body, canvas {
 		self.attacked = false;
 		self.toRemove = false;
 		self.toRemoveTimer = 0;
-		self.angle = initPack.angle;
+		//self.angle = initPack.angle;
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
-			self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
-			self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
+			//self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
+			//self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
 			
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
@@ -385,13 +385,13 @@ html, body, canvas {
 		self.attacked = false;
 		self.toRemove = false;
 		self.toRemoveTimer = 0;
-		self.angle = initPack.angle;
+		//self.angle = initPack.angle;
 		
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
-			self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
-			self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
+			//self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
+			//self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
@@ -460,12 +460,12 @@ html, body, canvas {
 		self.attacked = false;
 		self.toRemove = false;
 		self.toRemoveTimer = 0;
-		self.angle = initPack.angle;
+		//self.angle = initPack.angle;
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
-			self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
-			self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
+			//self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
+			//self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			if(x < WIDTH + 120 && x > -120 && y < HEIGHT + 120 && y > -120){
