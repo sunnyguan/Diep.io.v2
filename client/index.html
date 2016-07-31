@@ -640,6 +640,8 @@ html, body, canvas {
 					p.tankType = pack.tankType;
 				if(pack.level !== undefined)
 					p.level = pack.level;
+				if(pack.mouseAngle !== undefined && pack.id != selfId)
+					p.angle = pack.mouseAngle;
 			}
 		}
 		for(var i = 0 ; i < data.bullet.length; i++){

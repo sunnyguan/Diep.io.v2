@@ -140,6 +140,10 @@ var Player = function(id, name){
 			var p = Player.list[i];
 			if(p.id != self.id){
 				if(self.getDistance(p) < 40){
+					p.spdX += Math.cos(angle) * 32 / 10;
+					p.spdY -= Math.sin(angle) * 32 / 10;
+					self.spdX += Math.cos(angle) * 32 / 10;
+					self.spdY -= Math.sin(angle) * 32 / 10;
 					p.hp -= Math.round(self.bodyDamage / 3) + 10;
 					self.hp -= Math.round(p.bodyDamage / 3) + 10;
 					console.log('bodyD: ' + self.bodyDamage + ', ' + p.bodyDamage);
@@ -660,7 +664,7 @@ var Player = function(id, name){
 		self.y = Math.random() * GAME_DIMENSION;
 		self.level = Math.round(self.level / 2);
 		self.score = self.evaluateNextLevelScore(self.level);
-		
+		console.log("/");
 		self.upgrades = self.level;
 		self.regenCount = 0;
 		self.hpMaxCount = 0;
@@ -719,6 +723,7 @@ var Player = function(id, name){
 			upgrades:self.upgrades,
 			tankType:self.tankType,
 			level:self.level,
+			mouseAngle:self.mouseAngle,
 		};
 		if(self.updateRegen) pack.regen = self.regenCount;
 		if(self.updateHp) pack.maxhp = self.hpMaxCount;
@@ -854,6 +859,10 @@ Player.update = function(){
 	for(var i in Player.list){
 		var player = Player.list[i];
 		player.update();
+		if(player.hp <= 0){
+			console.log('efowjeoij');
+			player.deathReset();
+		}
 		pack.push(player.getUpdatePack());		
 	}
 	return pack;
@@ -1246,19 +1255,26 @@ var Bullet = function(parent,angle,hp,speed,drone){
 		t++;
 	}
 	self.dealWithEntities = function(s){
-		if(s.id != self.parent){
+		if(s.id != self.parent && !isNaN(self.hp)){
 			var radius = 45;
 			//if(s.radius !== undefined) radius = s.radius;
 			if(self.getDistance(s) < radius){
 				var angle = Math.atan2(self.y-s.y, self.x-s.x);
-				s.spdX -= Math.cos(angle) * 32 / radius;
-				s.spdY -= Math.sin(angle) * 32 / radius;
+				if(typeof s === "Player"){
+					s.spdX += Math.cos(angle) * 32 / 10;
+					s.spdY -= Math.sin(angle) * 32 / 10;
+				}else{
+					s.spdX -= Math.cos(angle) * 32 / radius;
+					s.spdY -= Math.sin(angle) * 32 / radius;
+				}
 				s.angle = angle;
 				s.needToUpdate = true;
-				if(typeof s !== "player")
+				if(typeof s !== "Player")
 					s.dirChange = true;
 				s.attacked = true;
+				console.log(self.hp + ', ' + s.hp);
 				s.hp -= self.hp;
+				console.log(s.hp + ', ' + typeof s);
 				self.hp -= s.maxhp;
 				if(self.hp <= 0) self.toRemove = true;
 				if(s.hp <= 0){
@@ -1266,6 +1282,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 					if(shooter){
 						shooter.score += s.score;
 					}
+					if(typeof s === "Player") s.deathReset();
 				}
 				if(self.hp > 0 && Player.list[self.parent].tankType == 22){
 					for(var i = 0; i <= 720; i += 360 / Math.round(Math.random() * 2)){
