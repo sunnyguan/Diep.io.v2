@@ -336,6 +336,7 @@ html, body, canvas {
 				
 				ctx.translate(x,y);
 				if(self.toRemove){
+					self.hp = 0;
 					//self.toRemoveTimer+=2;
 					ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
 					ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
@@ -344,23 +345,31 @@ html, body, canvas {
 				self.angle+=self.rotDeg;
 				
 				ctx.beginPath();
-				polygon(ctx,0,0,35,3,0,false);
-				polygon(ctx,0,0,12,3,0,true);
-				ctx.strokeStyle = "black";
+				//ctx.strokeStyle = "F4A8FF";
+				polygon(ctx,0,0,35,3,0,false,"#F4A8FF");
+				//ctx.fill();
+				//polygon(ctx,0,0,22,3,0,false,"#FDFFA9");
+				//ctx.fill();
+				
+				//ctx.closePath();
+				
 				ctx.lineWidth = 6;
 				ctx.lineJoin = "round";
 				
 				
-				var color = "00ff00";
+				var color = "F4A8FF";
 				var red = "ff0000";
 				var ratio = self.hp / self.maxhp;
 				ctx.fillStyle = blendColors(color, red, ratio);
-				
-				ctx.shadowColor = 'yellow';
-				ctx.shadowBlur = 15;
-				
 				ctx.fill();
+				ctx.strokeStyle = "#000000";
 				ctx.stroke();
+				//ctx.shadowColor = 'yellow';
+				//ctx.shadowBlur = 15;
+				
+				//
+				//ctx.strokeStyle = "#F4A8FF";
+				//ctx.stroke();
 				
 				ctx.restore();
 			}
@@ -418,8 +427,8 @@ html, body, canvas {
 				self.angle+=self.rotDeg;
 				
 				ctx.beginPath();
-				polygon(ctx,0,0,30,4,0,false);
-				polygon(ctx,0,0,10,4,0,true);
+				polygon(ctx,0,0,30,4,0,false, "yellow");
+				polygon(ctx,0,0,10,4,0,true, "yellow");
 				
 				var color = "ffff00";
 				var red = "ff0000";
@@ -508,11 +517,11 @@ html, body, canvas {
 				
 				if(self.radius != 30){
 					color = "00FFEC";
-					polygon(ctx,0,0,self.radius + 10,6,0,false);
-					polygon(ctx,0,0,(self.radius + 10) / 4,6,0,true);
+					polygon(ctx,0,0,self.radius + 10,6,0,false, color);
+					polygon(ctx,0,0,(self.radius + 10) / 4,6,0,true, color);
 				}else{
-					polygon(ctx,0,0,self.radius + 10,8,0,false);
-					polygon(ctx,0,0,(self.radius + 10) / 4,8,0,true);
+					polygon(ctx,0,0,self.radius + 10,8,0,false, color);
+					polygon(ctx,0,0,(self.radius + 10) / 4,8,0,true, color);
 				}
 				
 				
@@ -552,11 +561,12 @@ html, body, canvas {
 		return str;
 	}
 	
-	function polygon(ctx, x, y, radius, sides, startAngle, anticlockwise) {
+	function polygon(ctx, x, y, radius, sides, startAngle, anticlockwise, color) {
 	  if (sides < 3) return;
 	  var a = (Math.PI * 2)/sides;
 	  a = anticlockwise?-a:a;
 	  ctx.save();
+	  ctx.strokeStyle = color;
 	  ctx.translate(x,y);
 	  ctx.rotate(startAngle);
 	  ctx.moveTo(radius,0);
