@@ -346,16 +346,18 @@ html, body, canvas {
 				ctx.beginPath();
 				polygon(ctx,0,0,35,3,0,false);
 				polygon(ctx,0,0,12,3,0,true);
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = 6;
+				ctx.lineJoin = "round";
+				
 				
 				var color = "00ff00";
 				var red = "ff0000";
 				var ratio = self.hp / self.maxhp;
 				ctx.fillStyle = blendColors(color, red, ratio);
 				
-				ctx.shadowColor = 'rgba(0,0,0,0.1)';
-				ctx.shadowOffsetX = 4;
-				ctx.shadowOffsetY = 4;
-				ctx.shadowBlur = 10;
+				ctx.shadowColor = 'yellow';
+				ctx.shadowBlur = 15;
 				
 				ctx.fill();
 				ctx.stroke();
@@ -424,10 +426,8 @@ html, body, canvas {
 				var ratio = self.hp / self.maxhp;
 				ctx.fillStyle = blendColors(color, red, ratio);
 				
-				ctx.shadowColor = 'rgba(0,0,0,0.25)';
-				ctx.shadowOffsetX = 8;
-				ctx.shadowOffsetY = 8;
-				ctx.shadowBlur = 10;
+				ctx.shadowColor = 'aqua';
+				ctx.shadowBlur = 15;
 				
 				ctx.fill();
 				ctx.stroke();
@@ -520,10 +520,8 @@ html, body, canvas {
 				var ratio = self.hp / self.maxhp;
 				ctx.fillStyle = blendColors(color, red, ratio);
 				
-				ctx.shadowColor = 'rgba(0,0,0,0.75)';
-				ctx.shadowOffsetX = 8;
-				ctx.shadowOffsetY = 8;
-				ctx.shadowBlur = 10;
+				ctx.shadowColor = 'DeepSkyBlue';
+				ctx.shadowBlur = 20;
 				
 				ctx.fill();
 				ctx.stroke();
@@ -912,7 +910,7 @@ html, body, canvas {
     }
     
     
-    ctx.stroke();
+    //ctx.stroke();
     ctx.globalAlpha = 1;
 	}
 	
