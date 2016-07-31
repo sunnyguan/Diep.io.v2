@@ -930,11 +930,11 @@ var Shape = function(){
 			self.attackedTimer++;
 		}
 		
-		if(self.x != oriX || self.y != oriY){
+		/*if(self.x != oriX || self.y != oriY){
 			self.needToUpdate = true;
 		}else{
 			self.needToUpdate = false;
-		}
+		}*/
 		
 		return {
 			id:self.id,
