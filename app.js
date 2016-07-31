@@ -211,8 +211,8 @@ var Player = function(id, name){
 				
 			}
 		}
-		//if(Math.abs(self.x - ox) > 0 || Math.abs(self.y - oy) > 0) self.needToUpdate = true;
-		//else self.needToUpdate = false;
+		if(Math.abs(self.x - ox) > 0 || Math.abs(self.y - oy) > 0) self.needToUpdate = true;
+		else self.needToUpdate = false;
 			
 		return self.getUpdatePack();
 	}
