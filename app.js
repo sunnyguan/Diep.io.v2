@@ -123,7 +123,7 @@ var Player = function(id, name){
 	self.mouseX = 0;
 	self.mouseY = 0;
 	
-	self.needToUpdate = false;
+	self.needToUpdate = true;
 	
 	self.availableUpgrades = [0,0,0];
 	self.sent = [0,0,0];
@@ -211,8 +211,8 @@ var Player = function(id, name){
 				
 			}
 		}
-		if(Math.abs(self.x - ox) > 0 || Math.abs(self.y - oy) > 0) self.needToUpdate = true;
-		else self.needToUpdate = false;
+		//if(Math.abs(self.x - ox) > 0 || Math.abs(self.y - oy) > 0) self.needToUpdate = true;
+		//else self.needToUpdate = false;
 			
 		return self.getUpdatePack();
 	}
@@ -1120,9 +1120,9 @@ Square.regUpdate = function(){
 Square.update = function(player){
 	var pack = [];
 	
-	for(var i in Square.list){
+	for(var i in Square.updatePack){
 		var square = Square.list[i];
-		if(square.needToUpdate && objInViewOfPlayer(square, player)){
+		if(square !== undefined && square.needToUpdate && objInViewOfPlayer(square, player)){
 			pack.push(Square.updatePack[square.id]);
 		}
 	}
@@ -1169,9 +1169,10 @@ Triangle.regUpdate = function(){
 Triangle.update = function(player){
 	var pack = [];
 	
-	for(var i in Triangle.list){
+	for(var i in Triangle.updatePack){
 		var triangle = Triangle.list[i];
-		if(triangle.needToUpdate && objInViewOfPlayer(triangle, player)){
+		if(triangle !== undefined &&
+		   triangle.needToUpdate && objInViewOfPlayer(triangle, player)){
 			pack.push(Triangle.updatePack[triangle.id]);
 		}
 	}
