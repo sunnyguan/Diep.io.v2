@@ -244,6 +244,7 @@ html, body, canvas {
 		self.y = initPack.y;
 		self.drone = initPack.drone;
 		self.angle = initPack.angle;
+		self.trap = initPack.trap;
 		self.draw = function(){	
 			//ctx.globalAlpha = 1;		
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
@@ -267,6 +268,18 @@ html, body, canvas {
 					for (var i = 1; i <= numberOfSides;i += 1) {
 					    ctx.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
 					}
+					ctx.fill();
+					ctx.stroke();
+					ctx.restore();
+				}else if(self.trap){
+					ctx.save();
+					//ctx.fillStyle = 'DeepSkyBlue';
+					ctx.lineWidth = 3;
+					ctx.translate(x,y);
+					ctx.rotate(self.angle * Math.PI / 180);
+					
+					polygon(ctx,0,0,10,3,0,false,"#000000");
+					
 					ctx.fill();
 					ctx.stroke();
 					ctx.restore();
@@ -330,11 +343,11 @@ html, body, canvas {
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
-				var hpWidth = 50 * self.hp / self.maxhp;
+				/*var hpWidth = 50 * self.hp / self.maxhp;
 				ctx.fillStyle = 'green';
 				ctx.fillRect(x - 25,y + 30,hpWidth,4);
 				ctx.fillStyle = 'red';
-				ctx.fillRect(x - 25 + hpWidth, y + 30, 50 - hpWidth, 4);
+				ctx.fillRect(x - 25 + hpWidth, y + 30, 50 - hpWidth, 4);*/
 				//ctx.stroke();
 				
 				ctx.save();
@@ -351,7 +364,7 @@ html, body, canvas {
 				ctx.beginPath();
 				
 				//ctx.strokeStyle = "#fabefa";
-				ctx.lineWidth = 6;
+				ctx.lineWidth = 5;
 				ctx.lineJoin = "round";
 				polygon(ctx,0,0,35,3,0,false);
 				
@@ -399,13 +412,13 @@ html, body, canvas {
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
 				
-				var hpWidth = 50 * self.hp / self.maxhp;
+				/*var hpWidth = 50 * self.hp / self.maxhp;
 				//console.log(self.maxhp);
 				ctx.fillStyle = 'green';
 				ctx.fillRect(x - 25,y + 30,hpWidth,4);
 				ctx.fillStyle = 'red';
 				ctx.fillRect(x - 25 + hpWidth, y + 30, 50 - hpWidth, 4);
-				//ctx.stroke();
+				//ctx.stroke();*/
 				
 				ctx.save();
 				ctx.lineWidth = 3;
@@ -471,7 +484,7 @@ html, body, canvas {
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			if(x < WIDTH + 120 && x > -120 && y < HEIGHT + 120 && y > -120){
 				
-				if(self.radius != 30){
+				/*if(self.radius != 30){
 					//console.log(self.hp);
 					var width = 200;
 					var hpWidth = width * self.hp / self.maxhp;
@@ -489,7 +502,7 @@ html, body, canvas {
 					ctx.fillStyle = 'red';
 					ctx.fillRect(x - 25 + hpWidth, y + 50, 50 - hpWidth, 4);
 					//ctx.stroke();
-				}
+				}*/
 				
 				
 				ctx.save();
@@ -772,7 +785,9 @@ html, body, canvas {
 		requestAnimationFrame(draw);
 		if(drawDeath){
 			ctx.fillStyle = 'red';
-			ctx.fillText('Health Regen',500, 200);
+			ctx.font = "100px Arial";
+			var text = 'You died, refresh to restart';
+			ctx.fillText(text, WIDTH / 2 - ctx.measureText(text).width / 2, HEIGHT / 2);
 			delete Player.list[data.player[i]];
 		}else{
 			var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
@@ -829,7 +844,7 @@ html, body, canvas {
 		var spacing = 30;
 		var initial = 10;
 		var leftSpace = 185;
-		var leftWordSpace = 5;
+		var leftWordSpace = 45;
 		var w = 15;
 		var length = 150;
 		var divider = 6;
@@ -844,59 +859,58 @@ html, body, canvas {
 			ctx.globalAlpha = 0.5;
 		}
 		
-		
 		if(levelUpVisible){
-			ctx.fillText('Health Regen',leftWordSpace, initial+spacing*1-w);
+			ctx.fillText('生命恢复',leftWordSpace, initial+spacing*1-w);
 			ctx.rect(leftSpace, initial+spacing*0, length, 20);
-			
-			ctx.fillText('Max Health',leftWordSpace, initial+spacing*2-w);
+
+			ctx.fillText('最大生命',leftWordSpace, initial+spacing*2-w);
 			ctx.rect(leftSpace, initial+spacing*1, length, 20);
-			
-			ctx.fillText('Bullet Speed',leftWordSpace, initial+spacing*3-w);
+
+			ctx.fillText('炮弹速度',leftWordSpace, initial+spacing*3-w);
 			ctx.rect(leftSpace, initial+spacing*2, length, 20);
-			
-			ctx.fillText('Bullet Damage',leftWordSpace, initial+spacing*4-w);
+
+			ctx.fillText('炮弹伤害',leftWordSpace, initial+spacing*4-w);
 			ctx.rect(leftSpace, initial+spacing*3, length, 20);
-			
-			ctx.fillText('Bullet Reload',leftWordSpace, initial+spacing*5-w);
+
+			ctx.fillText('装填速度',leftWordSpace, initial+spacing*5-w);
 			ctx.rect(leftSpace, initial+spacing*4, length, 20);
-			
-			ctx.fillText('Movement Speed',leftWordSpace, initial+spacing*6-w);
+
+			ctx.fillText('移动速度',leftWordSpace, initial+spacing*6-w);
 			ctx.rect(leftSpace, initial+spacing*5, length, 20);
-			
-			ctx.fillText('Body Damage',leftWordSpace, initial+spacing*7-w);
+
+			ctx.fillText('冲撞伤害',leftWordSpace, initial+spacing*7-w);
 			ctx.rect(leftSpace, initial+spacing*6, length, 20);
-			
+
 			ctx.fillRect(leftSpace, initial+spacing*0, Player.list[selfId].regen * (length / levelUpCount), 20);
 			ctx.fillRect(leftSpace, initial+spacing*1, Player.list[selfId].hpMax * (length / levelUpCount), 20);
 			ctx.fillRect(leftSpace, initial+spacing*2, Player.list[selfId].bulletSpeed * (length / levelUpCount), 20);
-	    ctx.fillRect(leftSpace, initial+spacing*3, Player.list[selfId].bulletHp * (length / levelUpCount), 20);
-	    ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * (length / levelUpCount), 20);
-	    ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * (length / levelUpCount), 20);
-	    ctx.fillRect(leftSpace, initial+spacing*6, Player.list[selfId].bodyDamage * (length / levelUpCount), 20);
-	    ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 60, initial + spacing * 8-w);
-	    
-	    //ctx.save();
-	    //ctx.lineWidth = 0.1;
-	    /*for(var j = initial + spacing*0; j <= initial + spacing * 6; j += spacing){
-		    for(var i = leftSpace; i < leftSpace + length; i += length / levelUpCount){
-		    	ctx.moveTo(i, j);
-		    	ctx.lineTo(i, j+20);
-		    }
-		  }*/
-		  //ctx.lineWidth = 1;
-		  //ctx.stroke();
-		  //ctx.restore();
-	    
-	    ctx.moveTo(350,0);
-	    ctx.lineTo(350,250);
-	    ctx.lineTo(0,250);
-	    
-	  }else{
-	  	ctx.fillText('Upgrades: ' + Player.list[selfId].upgrades, 85, initial+spacing*1-10);
+			ctx.fillRect(leftSpace, initial+spacing*3, Player.list[selfId].bulletHp * (length / levelUpCount), 20);
+			ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * (length / levelUpCount), 20);
+			ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * (length / levelUpCount), 20);
+			ctx.fillRect(leftSpace, initial+spacing*6, Player.list[selfId].bodyDamage * (length / levelUpCount), 20);
+			ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 60, initial + spacing * 8-w);
+
+			//ctx.save();
+			//ctx.lineWidth = 0.1;
+			/*for(var j = initial + spacing*0; j <= initial + spacing * 6; j += spacing){
+			 for(var i = leftSpace; i < leftSpace + length; i += length / levelUpCount){
+			 ctx.moveTo(i, j);
+			 ctx.lineTo(i, j+20);
+			 }
+			 }*/
+			//ctx.lineWidth = 1;
+			//ctx.stroke();
+			//ctx.restore();
+
 			ctx.moveTo(350,0);
-	    ctx.lineTo(350,50);
-	    ctx.lineTo(0,50);
+			ctx.lineTo(350,250);
+			ctx.lineTo(0,250);
+
+		}else{
+			ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 85, initial+spacing*1-10);
+			ctx.moveTo(350,0);
+			ctx.lineTo(350,50);
+			ctx.lineTo(0,50);
 		}
 		
 		var prev = 100;
@@ -1501,7 +1515,49 @@ html, body, canvas {
 			ctx.stroke();
 			ctx.restore(); 
 			
-		} 
+		} else if(tankType == 23){
+	 		rad = 27;
+	 		
+	 		ctx.restore();
+	 		for(var i = 0; i < 360; i += 60){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+		 		ctx.rotate((i + angle) * Math.PI / 180);
+			  ctx.strokeStyle = 'black';
+			  ///ctx.lineWidth = 1;
+				ctx.fillStyle = barrelColor;
+				ctx.beginPath();
+				ctx.moveTo(5, -12);
+				ctx.lineTo(35, -20);
+				ctx.lineTo(35, 20);
+				ctx.lineTo(-5, 12);
+				ctx.fill();
+				ctx.stroke();
+				ctx.restore(); 
+				
+			}
+	 	} else if(tankType == 24){
+	 		rad = 27;
+	 		
+	 		ctx.restore();
+	 		for(var i = 0; i < 360; i += 120){
+	 			ctx.save();
+	 			ctx.translate(x,y);
+		 		ctx.rotate((i + angle) * Math.PI / 180);
+			  ctx.strokeStyle = 'black';
+			  ///ctx.lineWidth = 1;
+				ctx.fillStyle = barrelColor;
+				ctx.beginPath();
+				ctx.moveTo(5, -12);
+				ctx.lineTo(35, -20);
+				ctx.lineTo(35, 20);
+				ctx.lineTo(-5, 12);
+				ctx.fill();
+				ctx.stroke();
+				ctx.restore(); 
+				
+			}
+	 	} 
 		
 		var ch = true;
 		if(text){
@@ -1550,6 +1606,7 @@ html, body, canvas {
 	'歼灭大炮',
 	'五连大炮',
 	'高射加农炮',
+	'地雷',
 	];
 	
 	var ENGLISH = [
@@ -1576,6 +1633,7 @@ html, body, canvas {
 		'twin destroyer',
 		'penta shot',
 		'flak cannon',
+		'landmine',
 	];
 	
 	

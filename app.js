@@ -119,7 +119,7 @@ var Player = function(id, name){
 	self.bullets = [];
 	self.moveTimer = 0;
 	self.friction = 0.96;
-	self.level = 1;
+	self.level = 15;
 	self.mouseX = 0;
 	self.mouseY = 0;
 	
@@ -278,7 +278,7 @@ var Player = function(id, name){
 				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
 				self.sent[1] = true;
 			}else if(self.level >= 15 && self.availableUpgrades[0]){
-				tanks = [1, 10, 11, 12];
+				tanks = [1, 10, 11, 12, 24];
 				console.log('wherer');
 				SOCKET_LIST[self.id].emit('newTanks', {tanks:tanks});
 				self.sent[0] = true;
@@ -678,13 +678,22 @@ var Player = function(id, name){
 			b.x = self.x;
 			b.y = self.y;
 			//console.log('shot');
+		} else if(self.tankType === 24){
+			self.spdX -= Math.cos(angle/180*Math.PI) * 0.5 * damping;
+			self.spdY -= Math.sin(angle/180*Math.PI) * 0.5 * damping;
+			var b = Bullet(self.id,angle,self.bulletHp,self.bulletSpeed);
+			b.x = self.x;
+			b.y = self.y;
+			
+			b.stationary = true;
+			//console.log('shot');
 		}
 
 	}
 	self.deathReset = function(){
-		delete Player.list[self.id];
+		//delete Player.list[self.id];
 		removePack.player.push(self.id);
-		/*self.hp = self.hpMax;
+		self.hp = self.hpMax;
 		self.x = Math.random() * GAME_DIMENSION;
 		self.y = Math.random() * GAME_DIMENSION;
 		self.level = Math.round(self.level / 2);
@@ -697,7 +706,8 @@ var Player = function(id, name){
 		self.bulletSpeedCount = 0;
 		self.reloadCount = 0;
 		self.maxSpdCount = 0;
-		self.bodyDamageCount = 0;*/
+		self.bodyDamageCount = 0;
+		self.needToUpdate = true;
 	}
 	self.regdden = function(){
 		if(self.timer % self.regen == 0){
@@ -848,6 +858,12 @@ Player.tankProps = [
 	{ name: 'flak cannon', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 131, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
 	minBodyDamage: 10, maxBodyDamage: 200},
+	{ name: 'landmine', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 150, maxHp: 300, 
+	minBulletHp: 70, maxBulletHp: 270, minBulletSpeed: 8, maxBulletSpeed: 15, minReload: 30, maxReload: 80,
+	minBodyDamage: 150, maxBodyDamage: 369},
+	{ name: 'trapper', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 150, maxHp: 300, 
+	minBulletHp: 70, maxBulletHp: 270, minBulletSpeed: 8, maxBulletSpeed: 15, minReload: 3, maxReload: 10,
+	minBodyDamage: 150, maxBodyDamage: 369},
 ];
 Player.onConnect = function(socket,username){
 	var player = Player(socket.id,username);
@@ -960,7 +976,7 @@ var Shape = function(){
 			if(self.getDistance(p) < 50){
 				self.attacked = true;
 				//console.log(self.hp + ', ' + p.hp);
-				p.hp -= Math.round((self.maxhp + 10)/3);
+				p.hp -= Math.round((self.maxhp + 10)/3) * (400 - p.bodyDamage) / 400;
 				self.hp -= p.bodyDamage + 10;
 				if(p.hp <= 0){
 					p.deathReset();
@@ -1236,6 +1252,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 	if (typeof drone == 'undefined') {
     drone = false;
   }
+ 	
   self.drone = drone;
 	self.hp = hp;
 	if(drone){
@@ -1247,21 +1264,31 @@ var Bullet = function(parent,angle,hp,speed,drone){
 	self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
 	self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
 	self.parent = parent;
+	if(Player.list[self.parent].tankType == 24)
+ 		self.trap = true;
+ 	else
+ 		self.trap = false;
 	self.timer = 0;
 	self.maxhp = hp;
 	self.toRemove = false;	
 	self.stationary = false;
-	self.friction = 1;
+	self.friction = 0.95;
 	//self.angle = 
 	var super_update = self.update;
 	self.update = function(){
-		if(self.timer++ > 75 && !drone)
-			self.toRemove = true;
+		if(!self.trap){
+			if(self.timer++ > 75 && !drone)
+				self.toRemove = true;
+		}else{
+			if(self.timer++ > 120)
+				self.toRemove = true;
+		}
 		//if(self.hp <= 0) self.toRemove = true;
 		super_update();
 		self.spdX *= self.friction;
 		self.spdY *= self.friction;
 		if(!self.stationary){
+			console.log('what');
 			self.spdX = Math.cos(self.angle/180*Math.PI) * self.speed;
 			self.spdY = Math.sin(self.angle/180*Math.PI) * self.speed;
 		}
@@ -1357,8 +1384,9 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			id:self.id,
 			x:self.x,
 			y:self.y,
-			drone:self.drone,		
+			drone:self.drone,
 			angle:self.angle,
+			trap:self.trap,
 		};
 	}
 	self.getUpdatePack = function(){
