@@ -133,8 +133,8 @@ html, body, canvas {
 		var margin = 5;
 		if(chatVisible){
 			for(var msg in chatMsgs){
-			ctx.fillText(chatMsgs[msg], 20, i);
-			i += HEIGHT / 40;
+				ctx.fillText(chatMsgs[msg], 20, i);
+				i += HEIGHT / 40;
 			}
 			ctx.moveTo(212 + padding, HEIGHT - 23 + margin);
 	    ctx.lineTo(223 + padding, HEIGHT - 12 + margin);
@@ -148,6 +148,11 @@ html, body, canvas {
 			ctx.moveTo(200 + 22 + 42, HEIGHT - 39);
 			ctx.lineTo(200 + 22 + 42, HEIGHT - 389);
 			ctx.lineTo(0, HEIGHT - 389);
+			ctx.save();
+			ctx.globalAlpha = 0.2;
+			ctx.fillStyle = 'yellow';
+			ctx.fillRect(0, HEIGHT - 389, 200 + 22 + 42, 389 - 39);
+			ctx.restore();
 	  }else{
 	  	
 	    ctx.moveTo(212 + padding, HEIGHT - 12 + margin);
@@ -345,9 +350,9 @@ html, body, canvas {
 				self.angle+=self.rotDeg;
 				ctx.beginPath();
 				
-				ctx.strokeStyle = "#fabefa";
-				ctx.lineWidth = 3;
-				ctx.lineJoin = "bevel";
+				//ctx.strokeStyle = "#fabefa";
+				ctx.lineWidth = 6;
+				ctx.lineJoin = "round";
 				polygon(ctx,0,0,35,3,0,false);
 				
 				var color = "f0a8ff";
@@ -417,12 +422,12 @@ html, body, canvas {
 				polygon(ctx,0,0,30,4,0,false, "yellow");
 				polygon(ctx,0,0,10,4,0,true, "yellow");
 				
-				var color = "ffff00";
+				var color = "fafaaa";
 				var red = "ff0000";
 				var ratio = self.hp / self.maxhp;
 				ctx.fillStyle = blendColors(color, red, ratio);
 				
-				ctx.shadowColor = 'aqua';
+				ctx.shadowColor = 'orange';
 				ctx.shadowBlur = 15;
 				
 				ctx.fill();
@@ -470,7 +475,7 @@ html, body, canvas {
 					//console.log(self.hp);
 					var width = 200;
 					var hpWidth = width * self.hp / self.maxhp;
-					console.log(self.hp + ', ' + self.maxhp);
+					//console.log(self.hp + ', ' + self.maxhp);
 					//console.log(self.maxhp);
 					ctx.fillStyle = 'green';
 					ctx.fillRect(x - width / 2,y + width - 80,hpWidth,4);
@@ -500,7 +505,7 @@ html, body, canvas {
 				
 				ctx.beginPath();
 				
-				var color = "0000ff";
+				var color = "00FF00";
 				
 				if(self.radius != 30){
 					color = "00FFEC";
@@ -705,7 +710,8 @@ html, body, canvas {
 	function remove(data){
 		//{player:[12323],bullet:[12323,123123]}
 		for(var i = 0 ; i < data.player.length; i++){
-			delete Player.list[data.player[i]];
+			if(data.player[i] == selfId) drawDeath = true;
+			else delete Player.list[data.player[i]];
 		}
 		for(var i = 0 ; i < data.bullet.length; i++){
 			delete Bullet.list[data.bullet[i]];
@@ -760,51 +766,59 @@ html, body, canvas {
 	var u = 0;
 	var newTankVisible = false;
 	var newTanks = [];
+	var drawDeath = false
 	function draw(){
 		//console.log('hi');
 		requestAnimationFrame(draw);
-		
-		var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
-		var height = 100;
-		
-		
-		WIDTH = document.body.clientWidth;
-		HEIGHT = document.body.clientHeight;
-		
-		if(u % 30 == 0){
-			socket.emit('dimension', {width:WIDTH,height:HEIGHT});
-			u-=30;
+		if(drawDeath){
+			ctx.fillStyle = 'red';
+			ctx.fillText('Health Regen',500, 200);
+			delete Player.list[data.player[i]];
+		}else{
+			var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
+			var height = 100;
+			
+			
+			WIDTH = document.body.clientWidth;
+			HEIGHT = document.body.clientHeight;
+			
+			if(u % 30 == 0){
+				socket.emit('dimension', {width:WIDTH,height:HEIGHT});
+				u-=30;
+			}
+			u++;
+			
+			canvas.width = WIDTH;
+			canvas.height = HEIGHT;
+			
+			if(!selfId)
+				return;
+			ctx.clearRect(0,0,WIDTH,HEIGHT);
+			//console.log('wefoih');
+			drawMap();
+			drawScore();
+			for(var i in Bullet.list)
+				Bullet.list[i].draw();
+			for(var i in Player.list)
+				Player.list[i].draw();
+			for(var i in Square.list)
+				Square.list[i].draw();
+			for(var i in Pentagon.list)
+				Pentagon.list[i].draw();
+			for(var i in Triangle.list)
+				Triangle.list[i].draw();
+			//console.log(Square.list.size());
+			drawLevelUp();
+			if(newTankVisible){
+				drawTankUpgrades();
+			}
+			input.render();
+			//ctx.strokeRect(starting - 100,height - 100,(newTanks.length) * 170,170);
+			drawChat();
+			//input.y = HEIGHT - 40;
 		}
-		u++;
 		
-		canvas.width = WIDTH;
-		canvas.height = HEIGHT;
 		
-		if(!selfId)
-			return;
-		ctx.clearRect(0,0,WIDTH,HEIGHT);
-		//console.log('wefoih');
-		drawMap();
-		drawScore();
-		for(var i in Bullet.list)
-			Bullet.list[i].draw();
-		for(var i in Player.list)
-			Player.list[i].draw();
-		for(var i in Square.list)
-			Square.list[i].draw();
-		for(var i in Pentagon.list)
-			Pentagon.list[i].draw();
-		for(var i in Triangle.list)
-			Triangle.list[i].draw();
-		//console.log(Square.list.size());
-		drawLevelUp();
-		if(newTankVisible){
-			drawTankUpgrades();
-		}
-		input.render();
-		//ctx.strokeRect(starting - 100,height - 100,(newTanks.length) * 170,170);
-		drawChat();
-		input.y = HEIGHT - 40;
 	}
 	draw();
 	
@@ -1061,6 +1075,9 @@ html, body, canvas {
 		//ctx.scale(2,2);
 	 	var rad = 22;
 	 	ctx.lineWidth = 2.5;
+	 	
+	 	var barrelColor = "#DCDCDC";
+	 	
 	 	if(tankType == 0){
 	 		//ctx.save();
 	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
@@ -1068,7 +1085,7 @@ html, body, canvas {
 	 		ctx.rotate(angle * Math.PI / 180);
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -12, 40, 20);
 			ctx.strokeRect(0, -12, 40, 20);
 			ctx.restore(); 
@@ -1080,7 +1097,7 @@ html, body, canvas {
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
 			
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -27, 55, 26);
 			ctx.fillRect(0, 3, 55, 26);
 			ctx.strokeRect(0, -27, 55, 26);
@@ -1094,7 +1111,7 @@ html, body, canvas {
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
 		  
-		  ctx.fillStyle = 'gray';
+		  ctx.fillStyle = barrelColor;
 			
 			ctx.fillRect(0, -30, 56, 20);
 			ctx.fillRect(0, 5, 56, 20);
@@ -1116,7 +1133,7 @@ html, body, canvas {
 	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = 'gray';
+			  ctx.fillStyle = barrelColor;
 				ctx.fillRect(0, -12, 55, 24);
 				ctx.strokeRect(0, -12, 55, 24);
 				ctx.restore();
@@ -1128,7 +1145,7 @@ html, body, canvas {
 	 		ctx.strokeStyle = 'black';
 	 		for(var i = 0; i <= 360; i+=120){
 	 			ctx.save();
-	 			ctx.fillStyle = 'gray';
+	 			ctx.fillStyle = barrelColor;
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -27, 55, 26);
@@ -1145,7 +1162,7 @@ html, body, canvas {
 	 		ctx.strokeStyle = 'black';
 	 		for(var i = -150; i <= 150; i+=300){
 	 			ctx.save();
-	 			ctx.fillStyle = 'gray';
+	 			ctx.fillStyle = barrelColor;
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -12, 42, 20);
@@ -1158,7 +1175,7 @@ html, body, canvas {
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
 			
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -12, 48, 20);
 			ctx.strokeRect(0, -12, 48, 20);
 			ctx.restore(); 
@@ -1171,7 +1188,7 @@ html, body, canvas {
 	 		
 	 		for(var i = -150; i <= 150; i+=300){
 	 			ctx.save();
-	 			ctx.fillStyle = 'gray';
+	 			ctx.fillStyle = barrelColor;
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -12, 42, 20);
@@ -1180,7 +1197,7 @@ html, body, canvas {
 	 		}
 	 		for(var i = -135; i <= 135; i+=270){
 	 			ctx.save();
-	 			ctx.fillStyle = 'gray';
+	 			ctx.fillStyle = barrelColor;
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -12, 42, 20);
@@ -1193,7 +1210,7 @@ html, body, canvas {
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
 			
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -12, 48, 20);
 			ctx.strokeRect(0, -12, 48, 20);
 			ctx.restore(); 
@@ -1209,7 +1226,7 @@ html, body, canvas {
 		 		ctx.rotate((i + angle) * Math.PI / 180);
 			  ctx.strokeStyle = 'black';
 			  ///ctx.lineWidth = 1;
-				ctx.fillStyle = 'gray';
+				ctx.fillStyle = barrelColor;
 				ctx.beginPath();
 				ctx.moveTo(5, -12);
 				ctx.lineTo(35, -20);
@@ -1227,7 +1244,7 @@ html, body, canvas {
 	 		
 	 		for(var i = 0; i <= 360; i+=180){
 	 			ctx.save();
-	 			ctx.fillStyle = 'gray';
+	 			ctx.fillStyle = barrelColor;
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
 			 	ctx.fillRect(0, -27, 55, 26);
@@ -1246,7 +1263,7 @@ html, body, canvas {
 	 			ctx.save();
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = 'gray';
+			  ctx.fillStyle = barrelColor;
 				ctx.fillRect(0, -12, 55, 24);
 				ctx.strokeRect(0, -12, 55, 24);
 				ctx.restore();
@@ -1260,7 +1277,7 @@ html, body, canvas {
 	 			ctx.save();
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = 'gray';
+			  ctx.fillStyle = barrelColor;
 				ctx.fillRect(0, -9, 42, 18);
 				ctx.strokeRect(0, -9, 42, 18);
 				ctx.restore();
@@ -1271,7 +1288,7 @@ html, body, canvas {
 	 		ctx.rotate(angle * Math.PI / 180);
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.beginPath();
 			ctx.moveTo(5, -12);
 			ctx.lineTo(35, -20);
@@ -1286,7 +1303,7 @@ html, body, canvas {
 	 		ctx.rotate(angle * Math.PI / 180);
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -12, 50, 20);
 			ctx.strokeRect(0, -12, 50, 20);
 			ctx.restore(); 
@@ -1299,7 +1316,7 @@ html, body, canvas {
 	 			ctx.save();
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = 'gray';
+			  ctx.fillStyle = barrelColor;
 				ctx.fillRect(0, -12, 55, 24);
 				ctx.strokeRect(0, -12, 55, 24);
 				ctx.restore();
@@ -1315,7 +1332,7 @@ html, body, canvas {
 	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = 'gray';
+			  ctx.fillStyle = barrelColor;
 				ctx.fillRect(0, -12, 55, 24);
 				ctx.strokeRect(0, -12, 55, 24);
 				ctx.restore();
@@ -1331,7 +1348,7 @@ html, body, canvas {
 		 		ctx.rotate((i + angle) * Math.PI / 180);
 			  ctx.strokeStyle = 'black';
 			  ///ctx.lineWidth = 1;
-				ctx.fillStyle = 'gray';
+				ctx.fillStyle = barrelColor;
 				ctx.beginPath();
 				ctx.moveTo(5, -12);
 				ctx.lineTo(35, -20);
@@ -1350,7 +1367,7 @@ html, body, canvas {
 	 		ctx.rotate(angle * Math.PI / 180);
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -20, 50, 40);
 			ctx.strokeRect(0, -20, 50, 40);
 			ctx.restore(); 
@@ -1362,7 +1379,7 @@ html, body, canvas {
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
 			
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -13, 55, 11);
 			ctx.fillRect(0, 0, 55, 11);
 			ctx.strokeRect(0, -13, 55, 11);
@@ -1381,7 +1398,7 @@ html, body, canvas {
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
 			
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -10, 60, 8);
 			ctx.fillRect(0, 0, 60, 8);
 			ctx.strokeRect(0, -10, 60, 8);
@@ -1409,7 +1426,7 @@ html, body, canvas {
 		 		ctx.rotate((angle+i) * Math.PI / 180);
 			  ctx.strokeStyle = 'black';
 			  ///ctx.lineWidth = 1;
-				ctx.fillStyle = 'gray';
+				ctx.fillStyle = barrelColor;
 				ctx.fillRect(0, -20, 50, 40);
 				ctx.strokeRect(0, -20, 50, 40);
 				ctx.restore(); 
@@ -1424,7 +1441,7 @@ html, body, canvas {
 	 		ctx.rotate((angle) * Math.PI / 180);
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -20, 50, 40);
 			ctx.fillRect(20, -20, 12, 40);
 			
@@ -1443,7 +1460,7 @@ html, body, canvas {
 	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = 'gray';
+			  ctx.fillStyle = barrelColor;
 				ctx.fillRect(0+i * 9 / 360 * 15, -12, 55, 24);
 				ctx.strokeRect(0+i * 9 / 360 * 15, -12, 55, 24);
 				ctx.restore();
@@ -1451,7 +1468,7 @@ html, body, canvas {
 	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
 	 			ctx.translate(x,y);
 	 			ctx.rotate((angle-i) * Math.PI / 180);
-			  ctx.fillStyle = 'gray';
+			  ctx.fillStyle = barrelColor;
 				ctx.fillRect(0+i * 9 / 360 * 15, -12, 55, 24);
 				ctx.strokeRect(0+i * 9 / 360 * 15, -12, 55, 24);
 				ctx.restore();
@@ -1460,7 +1477,7 @@ html, body, canvas {
  			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
  			ctx.translate(x,y);
  			ctx.rotate((angle) * Math.PI / 180);
-		  ctx.fillStyle = 'gray';
+		  ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -12, 55, 24);
 			ctx.strokeRect(0, -12, 55, 24);
 			ctx.restore();
@@ -1472,7 +1489,7 @@ html, body, canvas {
 	 		ctx.rotate(angle * Math.PI / 180);
 		  ctx.strokeStyle = 'black';
 		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = 'gray';
+			ctx.fillStyle = barrelColor;
 			ctx.fillRect(0, -10, 45, 20);
 			ctx.strokeRect(0, -10, 45, 20);
 			ctx.beginPath();
@@ -1502,7 +1519,7 @@ html, body, canvas {
 		ctx.strokeStyle = 'black';
 		ctx.beginPath();
 		ctx.arc(x, y, rad, 0, 2 * Math.PI);
-		ctx.fillStyle = 'DeepSkyBlue';
+		ctx.fillStyle = '#7DF9FF';
 		ctx.fill();
 		ctx.closePath();
 		ctx.stroke();
