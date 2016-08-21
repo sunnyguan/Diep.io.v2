@@ -78,6 +78,7 @@ var Player = function(id, name){
 	self.reload = 38;
 	self.maxSpd = 6;
 	self.bodyDamage = 10;
+	self.penetration = 80;
 	
 	self.minRegen = 8;
 	self.maxRegen = 21;
@@ -107,6 +108,10 @@ var Player = function(id, name){
 	self.maxBodyDamage = 200;
 	self.updateBodyDamage = true;
 	
+	self.minPenetration = 90;
+	self.maxPenetration = 90;
+	self.updateBodyDamage = true;
+	
 	self.regenCount = 0;
 	self.hpMaxCount = 0;
 	self.bulletHpCount = 0;
@@ -114,6 +119,7 @@ var Player = function(id, name){
 	self.reloadCount = 0;
 	self.maxSpdCount = 0;
 	self.bodyDamageCount = 0;
+	self.penetrationCount = 0;
 	
 	self.bullets = [];
 	self.moveTimer = 0;
@@ -781,13 +787,38 @@ var Player = function(id, name){
 			level:self.level,
 			mouseAngle:self.mouseAngle,
 		};
-		if(self.updateRegen) pack.regen = self.regenCount;
-		if(self.updateHp) pack.maxhp = self.hpMaxCount;
-		if(self.updateBulletHp) pack.bulletHp = self.bulletHpCount;
-		if(self.updateBulletSpeed) pack.bulletSpeed = self.bulletSpeedCount;
-		if(self.updateReload) pack.bulletReload = self.reloadCount;
-		if(self.updateSpeed) pack.movementSpeed = self.maxSpdCount;
-		if(self.updateBodyDamage)	pack.bodyDamage = self.bodyDamageCount;
+		if(self.updateRegen){
+			pack.regen = self.regenCount;
+			self.updateRegen = false;
+		}
+		if(self.updateHp){
+			pack.maxhp = self.hpMaxCount;
+			self.updateHp = false;
+		}
+		if(self.updateBulletHp){
+			pack.bulletHp = self.bulletHpCount;
+			self.updateBulletHp = false;
+		}
+		if(self.updateBulletSpeed){
+			pack.bulletSpeed = self.bulletSpeedCount;
+			self.updateBulletSpeed = false;
+		}
+		if(self.updateReload){
+			pack.bulletReload = self.reloadCount;
+			self.updateReload = false;
+		}
+		if(self.updateSpeed){
+			pack.movementSpeed = self.maxSpdCount;
+			self.updateSpeed = false;
+		}
+		if(self.updateBodyDamage){
+			pack.bodyDamage = self.bodyDamageCount;
+			self.updateBodyDamage = false;
+		}
+		if(self.updatePenetration){
+			pack.penetration = self.penetrationCount;
+			self.updatePenetration = false;
+		}
 		
 		return pack;
 	}
@@ -830,79 +861,79 @@ Player.list = {};
 Player.tankProps = [
 	{ name: 'base tank', minRegen: 8, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 200, 
 	minBulletHp: 7, maxBulletHp: 30, minBulletSpeed: 7, maxBulletSpeed: 25, minReload: 11, maxReload: 38, 
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'twin', minRegen: 6, maxRegen: 21, minSpeed: 6, maxSpeed: 9, minHp: 100, maxHp: 160, 
 	minBulletHp: 10, maxBulletHp: 50, minBulletSpeed: 5, maxBulletSpeed: 20, minReload: 3, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'triplet', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 170, 
 	minBulletHp: 10, maxBulletHp: 55, minBulletSpeed: 5, maxBulletSpeed: 23, minReload: 3, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'octotank', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'triple twin', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'triangle', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 80, maxBodyDamage: 280},
+	minBodyDamage: 80, maxBodyDamage: 280, minPenetration: 10, maxPenetration: 60},
 	{ name: 'booster', minRegen: 2, maxRegen: 17, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 130, maxBodyDamage: 360},
+	minBodyDamage: 130, maxBodyDamage: 360, minPenetration: 10, maxPenetration: 60},
 	{ name: 'overseer', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 80, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'twin flank', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'decatank', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'flank guard', minRegen: 3, maxRegen: 18, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 60, maxBodyDamage: 260},
+	minBodyDamage: 60, maxBodyDamage: 260, minPenetration: 10, maxPenetration: 60},
 	{ name: 'machine gun', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 2, maxReload: 16,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'sniper', minRegen: 4, maxRegen: 21, minSpeed: 8, maxSpeed: 12, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 100, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 25, maxReload: 50,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 30, maxPenetration: 80},
 	{ name: 'quad tank', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'triple shot', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'overlord', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 100, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'destroyer', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 150, maxHp: 300, 
 	minBulletHp: 70, maxBulletHp: 270, minBulletSpeed: 8, maxBulletSpeed: 15, minReload: 30, maxReload: 80,
-	minBodyDamage: 150, maxBodyDamage: 365},
+	minBodyDamage: 150, maxBodyDamage: 365, minPenetration: 10, maxPenetration: 60},
 	{ name: 'gunner', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 7, maxBulletHp: 30, minBulletSpeed: 19, maxBulletSpeed: 30, minReload: 3, maxReload: 18,
-	minBodyDamage: 150, maxBodyDamage: 365},
+	minBodyDamage: 150, maxBodyDamage: 365, minPenetration: 10, maxPenetration: 60},
 	{ name: 'hexagunner', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 7, maxBulletHp: 32, minBulletSpeed: 19, maxBulletSpeed: 30, minReload: 2, maxReload: 16,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'flank destroyer', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 150, maxHp: 300, 
 	minBulletHp: 70, maxBulletHp: 280, minBulletSpeed: 8, maxBulletSpeed: 15, minReload: 30, maxReload: 80,
-	minBodyDamage: 150, maxBodyDamage: 369},
+	minBodyDamage: 150, maxBodyDamage: 369, minPenetration: 10, maxPenetration: 60},
 	{ name: 'twin destroyer', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 150, maxHp: 300, 
 	minBulletHp: 70, maxBulletHp: 280, minBulletSpeed: 8, maxBulletSpeed: 15, minReload: 30, maxReload: 80,
-	minBodyDamage: 150, maxBodyDamage: 369},
+	minBodyDamage: 150, maxBodyDamage: 369, minPenetration: 10, maxPenetration: 60},
 	{ name: 'penta shot', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 40, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'flak cannon', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 100, maxHp: 180, 
 	minBulletHp: 10, maxBulletHp: 131, minBulletSpeed: 15, maxBulletSpeed: 23, minReload: 4, maxReload: 21,
-	minBodyDamage: 10, maxBodyDamage: 200},
+	minBodyDamage: 10, maxBodyDamage: 200, minPenetration: 10, maxPenetration: 60},
 	{ name: 'landmine', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 150, maxHp: 300, 
 	minBulletHp: 70, maxBulletHp: 270, minBulletSpeed: 8, maxBulletSpeed: 15, minReload: 30, maxReload: 80,
-	minBodyDamage: 150, maxBodyDamage: 369},
+	minBodyDamage: 150, maxBodyDamage: 369, minPenetration: 10, maxPenetration: 60},
 	{ name: 'trapper', minRegen: 4, maxRegen: 21, minSpeed: 6, maxSpeed: 10, minHp: 150, maxHp: 300, 
 	minBulletHp: 70, maxBulletHp: 270, minBulletSpeed: 15, maxBulletSpeed: 25, minReload: 5, maxReload: 10,
-	minBodyDamage: 150, maxBodyDamage: 369},
+	minBodyDamage: 150, maxBodyDamage: 369, minPenetration: 10, maxPenetration: 60},
 ];
 Player.onConnect = function(socket,username){
 	var player = Player(socket.id,username);
@@ -1137,7 +1168,7 @@ Pentagon.regUpdate = function(){
 		var ap = Pentagon(x,y,120);
 		numOfAlphaPentagons++;
 	}
-	if(Object.keys(Pentagon.list).length < 90){
+	if(Object.keys(Pentagon.list).length < 150){
 		var t = Pentagon();
 	}
 	for(var i in Pentagon.list){
@@ -1188,7 +1219,7 @@ Square.list = {};
 Square.updatePack = {};
 
 Square.regUpdate = function(){
-	if(Object.keys(Square.list).length < 120){
+	if(Object.keys(Square.list).length < 390){
 		var t = Square();
 	}
 	for(var i in Square.list){
@@ -1237,7 +1268,7 @@ Triangle.list = {};
 Triangle.updatePack = {};
 
 Triangle.regUpdate = function(){
-	if(Object.keys(Triangle.list).length < 50){
+	if(Object.keys(Triangle.list).length < 150){
 		var t = Triangle();
 	}
 	for(var i in Triangle.list){
@@ -1293,7 +1324,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 	if (typeof drone == 'undefined') {
     drone = false;
   }
- 	
+ 	self.penetration = Player.list[parent].penetration;
   self.drone = drone;
 	self.hp = hp;
 	if(drone){
@@ -1360,7 +1391,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			}
 		}
 		
-		if(t % 1 == 0){
+		if(t % 3 == 0){
 			for(var i in Player.list){
 				var p = Player.list[i];
 				self.dealWithEntities(p);
@@ -1399,10 +1430,8 @@ var Bullet = function(parent,angle,hp,speed,drone){
 				if(typeof s !== "Player")
 					s.dirChange = true;
 				s.attacked = true;
-				//console.log(self.hp + ', ' + s.hp);
 				s.hp -= self.hp;
-				//console.log(s.hp + ', ' + typeof s);
-				self.hp -= s.maxhp;
+				self.hp -= s.maxhp * (1 - self.penetration / 100);
 				if(self.hp <= 0) self.toRemove = true;
 				if(s.hp <= 0){
 					var shooter = Player.list[self.parent];
@@ -1642,6 +1671,12 @@ io.sockets.on('connection', function(socket){
 		p.updateBodyDamage = true;
 	});
 	
+	socket.on('penetration',function(){
+		var p = Player.list[socket.id];
+		updateLevel(p.maxPenetration, p.minPenetration, p.penetrationCount, p.penetrationCount, 7);
+		p.updatePenetration = true;
+	});
+	
 	var updateLevel = function(max, min, count1, count2, index){
 		var p = Player.list[socket.id];
 		
@@ -1682,6 +1717,10 @@ io.sockets.on('connection', function(socket){
 				    case 6:
 				        p.bodyDamage = newValue;
 								p.bodyDamageCount++;
+				        break;
+				    case 7:
+				        p.penetration = newValue;
+								p.penetrationCount++;
 				        break;
 				}
 			}

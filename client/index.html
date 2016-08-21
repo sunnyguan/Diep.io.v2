@@ -1,12 +1,14 @@
 ﻿<head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 </head>
-<div id="signDiv">
-	Username: <input id="signDiv-username" type="text"></input><br>
-	Password: <input id="signDiv-password" type="password"></input>
+<body>
+<div id="signDiv" style="display: table; margin: 0 auto;">
+	<input id="signDiv-username" placeholder="Username" type="text"></input>
+	<!--Password: <input id="signDiv-password" type="password"></input>!-->
 	<button id="signDiv-signIn">Sign In</button>
-	<button id="signDiv-signUp">Sign Up</button>
+	<!--<button id="signDiv-signUp">Sign Up</button>!-->
 </div>
+
 <style type="text/css">
 * {
 	-webkit-touch-callout: none; /* iOS Safari */
@@ -17,28 +19,111 @@
   user-select: none;           /* Non-prefixed version, currently
                                   not supported by any browser */
 }
+#signDiv.outer{
+    display:inline-block;
+    position:relative;
+    left:50%;
+}
+
+#signDiv.inner{
+    position:relative;
+    left:-50%;
+}
+::-webkit-input-placeholder { /* Chrome */
+  color: lightgray;
+}
+input {
+	color: white;
+	outline: none;
+	width:300px;
+	height:100px;
+	font-size:50px;
+	text-align:center;
+  padding: 5px;
+  border: none;
+  border-bottom: solid 2px #c9c9c9;
+  transition: border 0.3s;
+  
+}
+#signDiv-username[type="text"] {
+	background-color:black;
+}
+input:focus,
+input.focus {
+  border: solid 2px #969696;
+}
 html, body, canvas {
 	margin: 0;
 	padding: 0;
+	background: url("https://files.gitter.im/sunnyguan/iZee/blob") no-repeat center center fixed;
+	background-size: cover;
 	overflow: hidden;
 }
+#signDiv-signIn {
+	height:100px;
+	-moz-box-shadow: 0px 10px 14px -7px #04e030;
+	-webkit-box-shadow: 0px 10px 14px -7px #04e030;
+	box-shadow: 0px 10px 14px -7px #04e030;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #00ffea), color-stop(1, #00ccff));
+	background:-moz-linear-gradient(top, #00ffea 5%, #00ccff 100%);
+	background:-webkit-linear-gradient(top, #00ffea 5%, #00ccff 100%);
+	background:-o-linear-gradient(top, #00ffea 5%, #00ccff 100%);
+	background:-ms-linear-gradient(top, #00ffea 5%, #00ccff 100%);
+	background:linear-gradient(to bottom, #00ffea 5%, #00ccff 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffea', endColorstr='#00ccff',GradientType=0);
+	background-color:#00ffea;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border-radius:4px;
+	border:1px solid #ad754f;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:13px;
+	font-weight:bold;
+	padding:6px 12px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #0000ff;
+	width:300px;
+	margin-top:20px;
+	font-size:40px;
+}
+#signDiv-signIn:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #00ccff), color-stop(1, #00ffea));
+	background:-moz-linear-gradient(top, #00ccff 5%, #00ffea 100%);
+	background:-webkit-linear-gradient(top, #00ccff 5%, #00ffea 100%);
+	background:-o-linear-gradient(top, #00ccff 5%, #00ffea 100%);
+	background:-ms-linear-gradient(top, #00ccff 5%, #00ffea 100%);
+	background:linear-gradient(to bottom, #00ccff 5%, #00ffea 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ccff', endColorstr='#00ffea',GradientType=0);
+	background-color:#00ccff;
+}
+#signDiv-signIn:active {
+	position:relative;
+	top:1px;
+}
+
 #signDiv {
-	position: absolute;
-  margin: auto;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100px;
-  height: 100px;
+	text-align:center;
+	position: relative;
+  opacity:0;
+  width: 200px;
+  height: 150px;
  	border-radius: 3px;
 }
 </style>
 <div id="gameDiv" style="display:none;">
 	<canvas id="ctx" width="1" height="768" style=""></canvas>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="client/CanvasInput.min.js"></script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+$(document).ready(function(){
+    $("div").animate({top: $(document).height() / 2 - $("div").height() / 2 + 'px', opacity: 1}, 1000);
+});
+</script>
 <script>
 	var GAME_DIMENSION = 5000;
 	
@@ -96,15 +181,15 @@ html, body, canvas {
 	var signDiv = document.getElementById('signDiv');
 	var signDivUsername = document.getElementById('signDiv-username');
 	var signDivSignIn = document.getElementById('signDiv-signIn');
-	var signDivSignUp = document.getElementById('signDiv-signUp');
-	var signDivPassword = document.getElementById('signDiv-password');
+	//var signDivSignUp = document.getElementById('signDiv-signUp');
+	//var signDivPassword = document.getElementById('signDiv-password');
 	
 	signDivSignIn.onclick = function(){
-		socket.emit('signIn',{username:signDivUsername.value,password:signDivPassword.value});
+		socket.emit('signIn',{username:signDivUsername.value,password:"0"});
 	}
-	signDivSignUp.onclick = function(){
-		socket.emit('signUp',{username:signDivUsername.value,password:signDivPassword.value});
-	}
+	//signDivSignUp.onclick = function(){
+		//socket.emit('signUp',{username:signDivUsername.value,password:"0"});
+	//}
 	socket.on('signInResponse',function(data){
 		if(data.success){
 			signDiv.style.display = 'none';
@@ -208,6 +293,7 @@ html, body, canvas {
 		self.bulletReload = 0;
 		self.movementSpeed = 0;
 		self.bodyDamage = 0;
+		self.penetration = 0;
 		self.level = 1;
 		self.upgrades = 0;
 		self.pMaxHp = 0;
@@ -241,7 +327,7 @@ html, body, canvas {
 			
 			var name = Player.list[selfId].name;
 			ctx.fillText(name, WIDTH / 2 - ctx.measureText(name).width / 2, HEIGHT / 2 - 60);
-		
+			
 			drawMinis(x, y, self.angle, false, self.tankType);
 		}
 		
@@ -260,10 +346,13 @@ html, body, canvas {
 		self.drone = initPack.drone;
 		self.angle = initPack.angle;
 		self.trap = initPack.trap;
+		self.toRemoveTimer = 0;
+		self.toRemove = false;
 		self.draw = function(){	
-			//ctx.globalAlpha = 1;		
+			//ctx.globalAlpha = 1;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
+			
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
 				if(self.drone){
 					ctx.save();
@@ -319,10 +408,22 @@ html, body, canvas {
 					}else{
 						rad = 10;
 					}
+					ctx.save();
+					ctx.translate(x-10/2,y-10/2);
+					if(self.toRemove){
+						//self.toRemoveTimer+=2;
+						ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+						ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+					}
 					ctx.beginPath();
-					ctx.arc(x-10/2,y-10/2,rad,0,2*Math.PI);
+					ctx.arc(0,0,rad,0,2*Math.PI);
 					ctx.fill();
 					ctx.stroke();
+					ctx.restore();
+					
+					if(self.toRemove) self.toRemoveTimer+=3;
+					if(self.toRemoveTimer >= 45)
+						delete Bullet.list[self.id];
 				}
 				
 				//console.log('whowhowoh');
@@ -548,6 +649,10 @@ html, body, canvas {
 					polygon(ctx,0,0,(self.radius + 10) / 4,8,0,true, color);
 				}
 				
+				if(self.attacked){
+					color = "ff0000";
+					console.log("red");
+				}
 				
 				var red = "ff0000";
 				var ratio = self.hp / self.maxhp;
@@ -668,6 +773,8 @@ html, body, canvas {
 					p.movementSpeed = pack.movementSpeed;
 				if(pack.bodyDamage !== undefined)
 					p.bodyDamage = pack.bodyDamage;
+				if(pack.penetration !== undefined)
+					p.penetration = pack.penetration;
 				if(pack.upgrades !== undefined)
 					p.upgrades = pack.upgrades;
 				if(pack.tankType !== undefined)
@@ -747,7 +854,8 @@ html, body, canvas {
 			else delete Player.list[data.player[i]];
 		}
 		for(var i = 0 ; i < data.bullet.length; i++){
-			delete Bullet.list[data.bullet[i]];
+			Bullet.list[data.bullet[i]].toRemove = true;
+			//delete Bullet.list[data.bullet[i]];
 		}
 		for(var i = 0 ; i < data.square.length; i++){
 			Square.list[data.square[i]].toRemove = true;
@@ -915,6 +1023,9 @@ html, body, canvas {
 
 			ctx.fillText('冲撞伤害',leftWordSpace, initial+spacing*7-w);
 			ctx.rect(leftSpace, initial+spacing*6, length, 20);
+			
+			ctx.fillText('炮弹渗透',leftWordSpace, initial+spacing*8-w);
+			ctx.rect(leftSpace, initial+spacing*7, length, 20);
 
 			ctx.fillRect(leftSpace, initial+spacing*0, Player.list[selfId].regen * (length / levelUpCount), 20);
 			ctx.fillRect(leftSpace, initial+spacing*1, Player.list[selfId].hpMax * (length / levelUpCount), 20);
@@ -923,7 +1034,8 @@ html, body, canvas {
 			ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * (length / levelUpCount), 20);
 			ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * (length / levelUpCount), 20);
 			ctx.fillRect(leftSpace, initial+spacing*6, Player.list[selfId].bodyDamage * (length / levelUpCount), 20);
-			ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 60, initial + spacing * 8-w);
+			ctx.fillRect(leftSpace, initial+spacing*7, Player.list[selfId].penetration * (length / levelUpCount), 20);
+			ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 60, initial + spacing * 9);
 
 			//ctx.save();
 			//ctx.lineWidth = 0.1;
@@ -938,8 +1050,8 @@ html, body, canvas {
 			//ctx.restore();
 
 			ctx.moveTo(350,0);
-			ctx.lineTo(350,250);
-			ctx.lineTo(0,250);
+			ctx.lineTo(350,290);
+			ctx.lineTo(0,290);
 
 		}else{
 			ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 85, initial+spacing*1-10);
@@ -979,7 +1091,7 @@ html, body, canvas {
 		if(!blackTheme){
 			ctx.fillStyle = '#D9D9D9';
 		}else{
-			ctx.fillStyle = '#191919';
+			ctx.fillStyle = 'black';
 		}
 		ctx.fillRect(0,0,WIDTH,HEIGHT);
 		ctx.save();
@@ -988,7 +1100,7 @@ html, body, canvas {
 		if(!blackTheme){
 			ctx.strokeStyle = '#bfbfbf';
 		}else{
-			ctx.strokeStyle = '#4d4d4d';
+			ctx.strokeStyle = 'black';
 		}
    //ctx.strokeStyle = '#CCCCCC';
    
@@ -1045,9 +1157,9 @@ html, body, canvas {
 		var p = Player.list[selfId];
 		
 		var levelWidth = wa * (p.score - p.evaluateNextLevelScore(p.level - 1)) / (p.evaluateNextLevelScore(p.level) - p.evaluateNextLevelScore(p.level - 1));
-		console.log((Player.list[selfId].score - Player.list[selfId].evaluateNextLevelScore(Player.list[selfId].level - 1)) + ',' + Player.list[selfId].evaluateNextLevelScore(Player.list[selfId].level));
+		//console.log((Player.list[selfId].score - Player.list[selfId].evaluateNextLevelScore(Player.list[selfId].level - 1)) + ',' + Player.list[selfId].evaluateNextLevelScore(Player.list[selfId].level));
 		var ll = lengthOfLevelBar - levelWidth;
-		console.log(ll);
+		//console.log(ll);
 		if(ll < -2){
 			lengthOfLevelBar+=3;
 		}else if(ll > 2){
@@ -1065,7 +1177,7 @@ html, body, canvas {
 		var width = 20;
 		
 		drawConcentricCircles(x,y,radius,width);
-		drawGradientLoader(x,y,radius,Player.list[selfId].level / 40, width);
+		drawGradientLoader(x,y,radius,Player.list[selfId].level / 45, width);
 		x = WIDTH / 2 + 120;
 		drawConcentricCircles(x,y,radius,width);
 		drawGradientLoader(x,y,radius,Player.list[selfId].score / highScore, width);
@@ -1088,41 +1200,7 @@ html, body, canvas {
 		ctx.stroke();
 	}
 	
-	/*function drawMultiRadiantCircle(xc, yc, r, radientColors) {
-		 
-      var partLength = (2 * Math.PI) / radientColors.length;
-      var start = 0.5 * Math.PI;
-      var gradient = null;
-      var startColor = null,
-          endColor = null;
-			
-      for (var i = 0; i < radientColors.length; i++) {
-          startColor = radientColors[i];
-          endColor = radientColors[(i + 1) % radientColors.length];
-
-          // x start / end of the next arc to draw
-          var xStart = xc + Math.cos(start) * r;
-          var xEnd = xc + Math.cos(start + partLength) * r;
-          // y start / end of the next arc to draw
-          var yStart = yc + Math.sin(start) * r;
-          var yEnd = yc + Math.sin(start + partLength) * r;
-					
-          ctx.beginPath();
-					ctx.moveTo(xStart, yStart);
-          gradient = ctx.createLinearGradient(xStart, yStart, xEnd, yEnd);
-          gradient.addColorStop(0, startColor);
-          gradient.addColorStop(1.0, endColor);
-					
-          ctx.strokeStyle = gradient;
-          ctx.arc(xc, yc, r, start, start + partLength);
-          ctx.lineWidth = 30;
-          ctx.stroke();
-          ctx.moveTo(xEnd, yEnd);
-          ctx.closePath();
-					
-          start += partLength;
-      }
-  }*/
+	
 	var highScore = 1;
   
 	var drawScore = function(){
@@ -1130,15 +1208,6 @@ html, body, canvas {
 		ctx.fillStyle = 'red';
 		ctx.font = '30px Arial';
 		
-		//roundRect(ctx, WIDTH / 2 - 200, HEIGHT - 50, 400, 15, 12, true, true);
-		//roundRect(ctx, WIDTH / 2 - 200, HEIGHT - 100, 400, 10, 7, true, true);
-		//ctx.fillStyle = 'yellow';
-		//var wlength = Player.list[selfId].score.toString().length * 30;
-		//ctx.fillText(Player.list[selfId].score, WIDTH / 2 - 1 * wlength / 4 - 2, HEIGHT - 125);
-		//wlength = Player.list[selfId].level.toString().length * 30;
-		//ctx.fillText(Player.list[selfId].level, WIDTH / 2 - 1 * wlength / 4 - 2, HEIGHT - 50);
-
-	
 		ctx.beginPath();
 		ctx.lineWidth = 3;
 		
@@ -1213,6 +1282,7 @@ html, body, canvas {
 		
 		
 		var txt = Player.list[selfId].score;
+		ctx.font = '20px Arial';
 		if(txt >= 1000) txt = (Math.round(txt / 1000 * 10) / 10).toFixed(2) + 'k';
 		ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 + 120, HEIGHT - 120);
 		
@@ -1221,7 +1291,7 @@ html, body, canvas {
 		ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 - 120, HEIGHT - 150);
 		
 		var lvl = Player.list[selfId].level;
-		ctx.font = '30px Arial';
+		ctx.font = '20px Arial';
 		ctx.fillText(lvl, WIDTH / 2 - ctx.measureText(lvl).width / 2 - 120, HEIGHT - 120);
 		
 		txt = '得分';
@@ -1964,6 +2034,8 @@ html, body, canvas {
 					socket.emit('maxSpd');
 				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*6, length, 20)){
 					socket.emit('bodyDamage');
+				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*7, length, 20)){
+					socket.emit('penetration');
 				}else socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
 			}else socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
 		}
@@ -1993,3 +2065,4 @@ html, body, canvas {
 		}
 	}
 </script>
+</body>
