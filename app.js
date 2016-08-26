@@ -18,7 +18,7 @@ var SOCKET_LIST = {};
 var WIDTH = 0;
 var HEIGHT = 0;
 
-var GAME_DIMENSION = 5000;
+var GAME_DIMENSION = 10000;
 
 var Entity = function(){
 	var self = {
@@ -32,6 +32,7 @@ var Entity = function(){
 		self.updatePosition();
 	}
 	self.updatePosition = function(){
+
 		if(self.x + self.spdX < GAME_DIMENSION && self.x + self.spdX > 0){
 			self.x += self.spdX;
 		}
@@ -218,7 +219,7 @@ var Player = function(id, name){
 		if(self.pressingAttack && self.timer % Math.round(self.reload) == 0){
 			self.shootBullet(self.mouseAngle,self.mouseX,self.mouseY);
 			
-		}else if(!self.pressingAttack && (self.tankType == 7 || self.tankType == 15)){
+		}/*else if(!self.pressingAttack && (self.tankType == 7 || self.tankType == 15)){
 			//console.log('hi');
 			for(var i in self.bullets){
 				var bullet = self.bullets[i];
@@ -231,7 +232,7 @@ var Player = function(id, name){
 				bullet.x = bulletX;
 				bullet.y = bulletY;
 			}
-		}
+		}*/
 		
 		//if(Math.abs(self.x - ox) > 0 || Math.abs(self.y - oy) > 0) self.needToUpdate = true;
 		//else self.needToUpdate = false;
@@ -1163,13 +1164,22 @@ Pentagon.updatePack = {};
 
 Pentagon.regUpdate = function(){
 	if(numOfAlphaPentagons < 4){
-		var x = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
-		var y = Math.floor(Math.random()*(GAME_DIMENSION * 2/3 - GAME_DIMENSION * 1/3+1)+GAME_DIMENSION * 1/3);
+		var x = Math.floor(Math.random()*(GAME_DIMENSION * 6/9 - GAME_DIMENSION * 3/9+1)+GAME_DIMENSION * 1/3);
+		var y = Math.floor(Math.random()*(GAME_DIMENSION * 6/9 - GAME_DIMENSION * 3/9+1)+GAME_DIMENSION * 1/3);
 		var ap = Pentagon(x,y,120);
 		numOfAlphaPentagons++;
 	}
-	if(Object.keys(Pentagon.list).length < 150){
+	if(Object.keys(Pentagon.list).length < 126){
+		for(var i = 0; i < 3; i++){
+			var x = Math.floor(Math.random()*(GAME_DIMENSION * 6/9 - GAME_DIMENSION * 3/9+1)+GAME_DIMENSION * 1/3);
+			var y = Math.floor(Math.random()*(GAME_DIMENSION * 6/9 - GAME_DIMENSION * 3/9+1)+GAME_DIMENSION * 1/3);
+			var t = Pentagon();
+			t.x = x;
+			t.y = y;
+		}
 		var t = Pentagon();
+		t.x = x;
+		t.y = y;
 	}
 	for(var i in Pentagon.list){
 		var pentagon = Pentagon.list[i];
@@ -1466,7 +1476,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 		return {
 			id:self.id,
 			x:self.x,
-			y:self.y,		
+			y:self.y,
 		};
 	}
 	

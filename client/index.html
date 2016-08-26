@@ -116,16 +116,17 @@ html, body, canvas {
 <div id="gameDiv" style="display:none;">
 	<canvas id="ctx" width="1" height="768" style=""></canvas>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="client/CanvasInput.min.js"></script>
-<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script src="client/siriwave.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
 <script>
 $(document).ready(function(){
     $("div").animate({top: $(document).height() / 2 - $("div").height() / 2 + 'px', opacity: 1}, 1000);
 });
 </script>
 <script>
-	var GAME_DIMENSION = 5000;
+	var GAME_DIMENSION = 10000;
 	
 	var WIDTH = document.body.clientWidth;
 	var HEIGHT = document.body.clientHeight;
@@ -133,6 +134,100 @@ $(document).ready(function(){
 	var canvas = document.getElementById("ctx");
 	canvas.width = WIDTH;
 	canvas.height = HEIGHT;
+	
+	var ctx = document.getElementById("ctx").getContext("2d");
+	
+	/*var siriWave = new SiriWave({
+	    canvas: canvas,
+	    width: 640,
+	    height: 200,
+	    autostart: true,
+	    
+	    speed: 0.04,
+	    color: 'red',
+	    frequency: 2
+	    
+	});*/
+	
+
+	var RADIUS = 180;
+	var mouseX = WIDTH / 2;
+	var mouseY = HEIGHT / 2;
+	var RADIUS_SCALE = 1;
+	var RADIUS_SCALE_MIN = 1;
+	var RADIUS_SCALE_MAX = 1.5;
+	
+	// The number of particles that are used to generate the trail
+	var QUANTITY = 25;
+	
+	var particles;
+	createParticles();
+	function createParticles() {
+		particles = [];
+		
+		for (var i = 0; i < QUANTITY; i++) {
+			var particle = {
+				position: { x: WIDTH / 2, y: HEIGHT / 2 },
+				shift: { x: mouseX, y: mouseY },
+				size: 30,
+				angle: 0,
+				speed: 0.01+Math.random()*0.04,
+				targetSize: 30,
+				fillColor: '#' + (Math.random() * 0x404040 + 0xaaaaaa | 0).toString(16),
+				orbit: RADIUS*.5 + (RADIUS * .5 * Math.random())
+			};
+			
+			particles.push( particle );
+		}
+	}
+	
+	function drawParticles(){
+			ctx.save();
+			ctx.fillStyle = 'rgba(0,0,0,0.01)';
+	   	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			
+			for (i = 0, len = particles.length; i < len; i++) {
+				var particle = particles[i];
+				
+				var lp = { x: particle.position.x, y: particle.position.y };
+				
+				// Offset the angle to keep the spin going
+				particle.angle += particle.speed;
+				
+				// Follow mouse with some lag
+				particle.shift.x += ( mouseX - particle.shift.x) * (particle.speed);
+				particle.shift.y += ( mouseY - particle.shift.y) * (particle.speed);
+				
+				// Apply position
+				particle.position.x = particle.shift.x + Math.cos(i + particle.angle) * (particle.orbit*RADIUS_SCALE);
+				particle.position.y = particle.shift.y + Math.sin(i + particle.angle) * (particle.orbit*RADIUS_SCALE);
+				
+				// Limit to screen bounds
+				particle.position.x = Math.max( Math.min( particle.position.x, WIDTH ), 0 );
+				particle.position.y = Math.max( Math.min( particle.position.y, HEIGHT ), 0 );
+				
+				/*particle.size += ( particle.targetSize - particle.size ) * 0.01;
+				
+				// If we're at the target size, set a new one. Think of it like a regular day at work.
+				if( Math.round( particle.size ) == Math.round( particle.targetSize ) ) {
+					particle.targetSize = 1 + Math.random() * 7;
+				}*/
+				
+				ctx.beginPath();
+				ctx.fillStyle = particle.fillColor;
+				ctx.strokeStyle = particle.fillColor;
+				ctx.lineWidth = 10;
+				ctx.moveTo(lp.x, lp.y);
+				ctx.lineTo(particle.position.x, particle.position.y);
+				ctx.stroke();
+				ctx.arc(particle.position.x, particle.position.y, particle.size/2, 0, Math.PI*2, true);
+				ctx.fill();
+				ctx.restore();
+			}
+	}
+	
+
+	
 	
 	
 	//browser.actions().keyDown(protractor.Key.CONTROL).sendKeys('+').perform();
@@ -360,6 +455,11 @@ $(document).ready(function(){
 					ctx.lineWidth = 3;
 					ctx.translate(x,y);
 					ctx.rotate(self.angle * Math.PI / 180);
+					if(self.toRemove){
+						//self.toRemoveTimer+=2;
+						ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+						ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+					}
 					var numberOfSides = 3,
 				    size = 15,
 				    Xcenter = 0,
@@ -375,18 +475,30 @@ $(document).ready(function(){
 					ctx.fill();
 					ctx.stroke();
 					ctx.restore();
+					
+					if(self.toRemove) self.toRemoveTimer+=3;
+					if(self.toRemoveTimer >= 45)
+						delete Bullet.list[self.id];
 				}else if(self.trap){
 					ctx.save();
 					//ctx.fillStyle = 'DeepSkyBlue';
 					ctx.lineWidth = 3;
 					ctx.translate(x,y);
 					ctx.rotate(self.angle * Math.PI / 180);
-					
+					if(self.toRemove){
+						//self.toRemoveTimer+=2;
+						ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+						ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+					}
 					polygon(ctx,0,0,10,3,0,false,"#000000");
 					
 					ctx.fill();
 					ctx.stroke();
 					ctx.restore();
+					
+					if(self.toRemove) self.toRemoveTimer+=3;
+					if(self.toRemoveTimer >= 45)
+						delete Bullet.list[self.id];
 				}else{
 					var tt = Player.list[selfId].tankType;
 					if(tt == 22)
@@ -950,14 +1062,18 @@ $(document).ready(function(){
 				return;
 			ctx.clearRect(0,0,WIDTH,HEIGHT);
 			//console.log('wefoih');
+			//siriWave._startDrawCycle();
 			drawMap();
 			
 			drawScore();
 			drawBars();
+			
 			for(var i in Bullet.list)
 				Bullet.list[i].draw();
+				
 			for(var i in Player.list)
 				Player.list[i].draw();
+			
 			for(var i in Square.list)
 				Square.list[i].draw();
 			for(var i in Pentagon.list)
@@ -973,6 +1089,7 @@ $(document).ready(function(){
 			input.render();
 			//ctx.strokeRect(starting - 100,height - 100,(newTanks.length) * 170,170);
 			drawChat();
+			
 			//input.y = HEIGHT - 40;
 		}
 		
@@ -980,9 +1097,151 @@ $(document).ready(function(){
 	}
 	draw();
 	
+	// wavy codepen wave javascript
+var WavyLine = function(level,bottom,right,height){
+	this.c = canvas;
+	this.ctx = ctx;
+	this.cw = 1280;
+	this.ch = 1024;
+	this.points = [];
+	this.tick = 0;
+	this.bottom = bottom;
+	this.opt = {
+  count: 3,
+  range: {
+    x: 0,
+    y: 7
+  },
+  duration: {
+    min: 15,
+    max: 25
+  },
+  thickness: 2,
+  strokeColor: '#444',
+  level: .25,
+  curved: true
+};
+  rand = function(min, max){
+      return Math.floor( (Math.random() * (max - min + 1) ) + min);
+  };
+  ease = function (t, b, c, d) {
+    if ((t/=d/2) < 1) return c/2*t*t + b;
+    return -c/2 * ((--t)*(t-2) - 1) + b;
+  };
+	
+	
+	
+	var Point = function(config, parent){
+		this.parent = parent;
+	  this.anchorX = config.x;
+	  this.anchorY = config.y;
+	  this.x = config.x;
+	  this.y = config.y;
+	  this.setTarget();  
+	};
+	
+	Point.prototype.setTarget = function(){
+	  this.initialX = this.x;
+	  this.initialY = this.y;
+	  //console.log(this.parent);
+	  this.targetX = this.anchorX + rand(0, this.parent.opt.range.x * 2) - this.parent.opt.range.x;
+	  this.targetY = this.anchorY + rand(0, this.parent.opt.range.y * 2) - this.parent.opt.range.y;
+	  this.tick = 0;
+	  this.duration = rand(this.parent.opt.duration.min, this.parent.opt.duration.max);
+	}
+	  
+	Point.prototype.update = function(){
+	  var dx = this.targetX - this.x;
+	  var dy = this.targetY - this.y;
+	  var dist = Math.sqrt(dx * dx + dy * dy);
+	  
+	  if(Math.abs(dist) <= 0){
+	    this.setTarget();
+	  } else {       
+	    var t = this.tick;
+	    var b = this.initialY;
+	    var c = this.targetY - this.initialY;
+	    var d = this.duration;
+	    this.y = ease(t, b, c, d);
+	    
+	    b = this.initialX;
+	    c = this.targetX - this.initialX;
+	    d = this.duration;
+	    this.x = ease(t, b, c, d);
+	  
+	    this.tick++;
+	  }
+	};
+	    
+	Point.prototype.render = function(){
+	  ctx.beginPath();
+	  ctx.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+	  ctx.fillStyle = '#000';
+	  ctx.fill();
+	};
+	
+	this.updatePoints = function(){
+	  var i = this.points.length;
+	  while(i--){
+	    this.points[i].update();
+	  }
+	};
+	
+	this.renderPoints = function(){
+	  var i = points.length;
+	  while(i--){
+	    points[i].render();
+	  }
+	};
+	
+	this.renderShape = function(){
+		this.ctx.save();
+		this.ctx.lineJoin = 'round';
+		this.ctx.lineWidth = this.opt.thickness;
+		this.ctx.strokeStyle = this.opt.strokeColor;
+	  this.ctx.beginPath();
+	  var pointCount = this.points.length;
+	  this.ctx.moveTo(this.points[0].x, this.points[0].y);	  
+	  var i;
+	  for (i = 0; i < pointCount - 1; i++) {
+	    var c = (this.points[i].x + this.points[i + 1].x) / 2;
+	    var d = (this.points[i].y + this.points[i + 1].y) / 2;
+	    this.ctx.quadraticCurveTo(this.points[i].x, this.points[i].y, c, d);
+	  }
+	  this.ctx.lineTo((this.points[pointCount - 2].x + this.points[pointCount - 1].x)/2, bottom + height);
+	  this.ctx.lineTo(this.points[0].x, bottom + height);
+	  
+	  //this.ctx.lineTo(50, bottom + 0);
+	  this.ctx.closePath();
+	  this.ctx.fillStyle = 'hsl('+(this.tick/2)+', 80%, 60%)';
+	  this.ctx.fill();  
+	  this.ctx.stroke();
+	  this.ctx.restore();
+	};
+	
+	this.clear = function(){
+	  this.ctx.clearRect(0, 0, this.cw, this.ch);
+	};
+	
+	var i = right;
+	var spacing = 10;
+	while(i--){
+		this.points.push(new Point({
+	    x: 180 + spacing * i,//(spacing * (i - 1)) - this.opt.range.x,
+	    y: bottom
+	  },this));
+	}
+}
+
+	var wl = new WavyLine(2,200, 16.5, 10);
+	var wl2 = new WavyLine(1,300, 25, 10);
+
+	
 	var levelUpCount = 8;
 	var levelUpVisible = false;
 	function drawLevelUp(){
+			
+		
 			
 		var spacing = 30;
 		var initial = 10;
@@ -1003,6 +1262,17 @@ $(document).ready(function(){
 		}
 		
 		if(levelUpVisible){
+			
+			wl.tick++;
+		  //wl.clear();
+		  wl.updatePoints();
+		  wl.renderShape();
+		  
+		  wl2.tick++;
+		  //wl2.clear();
+		  wl2.updatePoints();
+		  wl2.renderShape();
+		  
 			ctx.fillText('生命恢复',leftWordSpace, initial+spacing*1-w);
 			ctx.rect(leftSpace, initial+spacing*0, length, 20);
 
@@ -1052,6 +1322,12 @@ $(document).ready(function(){
 			ctx.moveTo(350,0);
 			ctx.lineTo(350,290);
 			ctx.lineTo(0,290);
+			
+			
+			
+			
+			
+			
 
 		}else{
 			ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 85, initial+spacing*1-10);
@@ -1120,7 +1396,7 @@ $(document).ready(function(){
 
     ctx.stroke();
     ctx.restore();
-}
+	}
 	var blackTheme = false;
 	var drawMap = function(){
 		drawgrid();
@@ -1325,6 +1601,7 @@ $(document).ready(function(){
 	 	var barrelColor = "#DCDCDC";
 	 	
 	 	if(tankType == 0){
+	 		
 	 		//ctx.save();
 	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
 	 		ctx.translate(x,y);
@@ -1335,6 +1612,7 @@ $(document).ready(function(){
 			ctx.fillRect(0, -12, 40, 20);
 			ctx.strokeRect(0, -12, 40, 20);
 			ctx.restore(); 
+			
 			
 		}	else if(tankType == 1){
 	 		rad = 30;
@@ -1789,7 +2067,9 @@ $(document).ready(function(){
 				ctx.restore(); 
 				
 			}
-	 	} 
+	 	} else if(tankType == 25){
+	 		drawParticles();
+	 	}
 		
 		var ch = true;
 		if(text){
@@ -2049,6 +2329,8 @@ $(document).ready(function(){
 		if(signDiv.style.display == 'none'){
 			var x = -(WIDTH / 2) + event.clientX - 8;
 			var y = -(HEIGHT / 2) + event.clientY - 8;
+			//mouseX = x + WIDTH / 2;
+			//mouseY = y + HEIGHT / 2;
 			var angle = Math.atan2(y,x) / Math.PI * 180;
 			Player.list[selfId].angle = angle;
 			socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
