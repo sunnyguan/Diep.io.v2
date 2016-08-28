@@ -79,7 +79,7 @@ var Player = function(id, name){
 	self.reload = 38;
 	self.maxSpd = 6;
 	self.bodyDamage = 10;
-	self.penetration = 80;
+	self.penetration = 10;
 	
 	self.minRegen = 8;
 	self.maxRegen = 21;
@@ -109,7 +109,7 @@ var Player = function(id, name){
 	self.maxBodyDamage = 200;
 	self.updateBodyDamage = true;
 	
-	self.minPenetration = 90;
+	self.minPenetration = 0;
 	self.maxPenetration = 90;
 	self.updateBodyDamage = true;
 	
@@ -1170,13 +1170,17 @@ Pentagon.regUpdate = function(){
 		numOfAlphaPentagons++;
 	}
 	if(Object.keys(Pentagon.list).length < 126){
+		var x = 0;
+		var y = 0;
 		for(var i = 0; i < 3; i++){
-			var x = Math.floor(Math.random()*(GAME_DIMENSION * 6/9 - GAME_DIMENSION * 3/9+1)+GAME_DIMENSION * 1/3);
-			var y = Math.floor(Math.random()*(GAME_DIMENSION * 6/9 - GAME_DIMENSION * 3/9+1)+GAME_DIMENSION * 1/3);
+			x = Math.floor(Math.random()*(GAME_DIMENSION * 6/9 - GAME_DIMENSION * 3/9+1)+GAME_DIMENSION * 1/3);
+			y = Math.floor(Math.random()*(GAME_DIMENSION * 6/9 - GAME_DIMENSION * 3/9+1)+GAME_DIMENSION * 1/3);
 			var t = Pentagon();
 			t.x = x;
 			t.y = y;
 		}
+		x = Math.floor(Math.random()*GAME_DIMENSION);
+		y = Math.floor(Math.random()*GAME_DIMENSION);
 		var t = Pentagon();
 		t.x = x;
 		t.y = y;
@@ -1401,7 +1405,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			}
 		}
 		
-		if(t % 3 == 0){
+		if(t % 1 == 0){
 			for(var i in Player.list){
 				var p = Player.list[i];
 				self.dealWithEntities(p);
@@ -1440,8 +1444,9 @@ var Bullet = function(parent,angle,hp,speed,drone){
 				if(typeof s !== "Player")
 					s.dirChange = true;
 				s.attacked = true;
-				s.hp -= self.hp;
-				self.hp -= s.maxhp * (1 - self.penetration / 100);
+				s.hp -= self.hp / 2;
+				self.hp -= s.maxhp * (1 - self.penetration / 100) / 4 / 2;
+				console.log(s.maxhp * (1 - self.penetration / 100) / 4);
 				if(self.hp <= 0) self.toRemove = true;
 				if(s.hp <= 0){
 					var shooter = Player.list[self.parent];

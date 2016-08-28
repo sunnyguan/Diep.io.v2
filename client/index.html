@@ -116,10 +116,10 @@ html, body, canvas {
 <div id="gameDiv" style="display:none;">
 	<canvas id="ctx" width="1" height="768" style=""></canvas>
 </div>
-<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="client/CanvasInput.min.js"></script>
 <script src="client/siriwave.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
 $(document).ready(function(){
     $("div").animate({top: $(document).height() / 2 - $("div").height() / 2 + 'px', opacity: 1}, 1000);
@@ -1104,7 +1104,7 @@ var WavyLine = function(level,bottom,right,height){
 	this.cw = 1280;
 	this.ch = 1024;
 	this.points = [];
-	this.tick = 0;
+	this.tick = Math.random() * 400;
 	this.bottom = bottom;
 	this.opt = {
   count: 3,
@@ -1222,7 +1222,7 @@ var WavyLine = function(level,bottom,right,height){
 	this.clear = function(){
 	  this.ctx.clearRect(0, 0, this.cw, this.ch);
 	};
-	
+	this.right = right;
 	var i = right;
 	var spacing = 10;
 	while(i--){
@@ -1232,10 +1232,11 @@ var WavyLine = function(level,bottom,right,height){
 	  },this));
 	}
 }
-
-	var wl = new WavyLine(2,200, 16.5, 10);
-	var wl2 = new WavyLine(1,300, 25, 10);
-
+	var wavyLines = [];
+	for(var ij = 20; ij <= 230; ij += 30){
+		var wl = new WavyLine(1,ij,16,10);
+		wavyLines.push(wl);
+	}
 	
 	var levelUpCount = 8;
 	var levelUpVisible = false;
@@ -1248,7 +1249,7 @@ var WavyLine = function(level,bottom,right,height){
 		var leftSpace = 185;
 		var leftWordSpace = 45;
 		var w = 15;
-		var length = 150;
+		var length = 145;
 		var divider = 6;
 		ctx.font = '20px Verdana';
 		ctx.strokeStyle = 'black';
@@ -1263,48 +1264,72 @@ var WavyLine = function(level,bottom,right,height){
 		
 		if(levelUpVisible){
 			
-			wl.tick++;
-		  //wl.clear();
-		  wl.updatePoints();
-		  wl.renderShape();
-		  
-		  wl2.tick++;
-		  //wl2.clear();
-		  wl2.updatePoints();
-		  wl2.renderShape();
-		  
+			var ij = 20;
+			var player = Player.list[selfId];
+			var prop = [
+				player.regen,
+				player.hpMax,
+				player.bulletSpeed,
+				player.bulletHp,
+				player.bulletReload,
+				player.movementSpeed,
+				player.bodyDamage,
+				player.penetration,
+			];
+			
+			for(var i in prop){
+				var pp = prop[i];
+				if(wavyLines[i].right != Math.round(pp * (14 / levelUpCount) + 2))
+					wavyLines[i] = new WavyLine(1, ij, Math.round(pp * (14 / levelUpCount)) + 2, 10);
+				ij += 30;
+			}
+			
+			for(var ind in wavyLines){
+				var wvLn = wavyLines[ind];
+				if(wvLn.right > 2){
+					wvLn.tick++;
+					wvLn.updatePoints();
+		  		wvLn.renderShape();
+				}
+			}
+			
+			var waveLength = 20;
+			
 			ctx.fillText('生命恢复',leftWordSpace, initial+spacing*1-w);
-			ctx.rect(leftSpace, initial+spacing*0, length, 20);
+			ctx.rect(leftSpace, initial+spacing*0, length, waveLength);
 
 			ctx.fillText('最大生命',leftWordSpace, initial+spacing*2-w);
-			ctx.rect(leftSpace, initial+spacing*1, length, 20);
+			ctx.rect(leftSpace, initial+spacing*1, length, waveLength);
 
 			ctx.fillText('炮弹速度',leftWordSpace, initial+spacing*3-w);
-			ctx.rect(leftSpace, initial+spacing*2, length, 20);
+			ctx.rect(leftSpace, initial+spacing*2, length, waveLength);
 
 			ctx.fillText('炮弹伤害',leftWordSpace, initial+spacing*4-w);
-			ctx.rect(leftSpace, initial+spacing*3, length, 20);
+			ctx.rect(leftSpace, initial+spacing*3, length, waveLength);
 
 			ctx.fillText('装填速度',leftWordSpace, initial+spacing*5-w);
-			ctx.rect(leftSpace, initial+spacing*4, length, 20);
+			ctx.rect(leftSpace, initial+spacing*4, length, waveLength);
 
 			ctx.fillText('移动速度',leftWordSpace, initial+spacing*6-w);
-			ctx.rect(leftSpace, initial+spacing*5, length, 20);
+			ctx.rect(leftSpace, initial+spacing*5, length, waveLength);
 
 			ctx.fillText('冲撞伤害',leftWordSpace, initial+spacing*7-w);
-			ctx.rect(leftSpace, initial+spacing*6, length, 20);
+			ctx.rect(leftSpace, initial+spacing*6, length, waveLength);
 			
 			ctx.fillText('炮弹渗透',leftWordSpace, initial+spacing*8-w);
-			ctx.rect(leftSpace, initial+spacing*7, length, 20);
+			ctx.rect(leftSpace, initial+spacing*7, length, waveLength);
 
-			ctx.fillRect(leftSpace, initial+spacing*0, Player.list[selfId].regen * (length / levelUpCount), 20);
-			ctx.fillRect(leftSpace, initial+spacing*1, Player.list[selfId].hpMax * (length / levelUpCount), 20);
-			ctx.fillRect(leftSpace, initial+spacing*2, Player.list[selfId].bulletSpeed * (length / levelUpCount), 20);
-			ctx.fillRect(leftSpace, initial+spacing*3, Player.list[selfId].bulletHp * (length / levelUpCount), 20);
-			ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * (length / levelUpCount), 20);
-			ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * (length / levelUpCount), 20);
-			ctx.fillRect(leftSpace, initial+spacing*6, Player.list[selfId].bodyDamage * (length / levelUpCount), 20);
-			ctx.fillRect(leftSpace, initial+spacing*7, Player.list[selfId].penetration * (length / levelUpCount), 20);
+			
+			
+
+			//ctx.fillRect(leftSpace, initial+spacing*0, Player.list[selfId].regen * (length / levelUpCount), 20);
+			//ctx.fillRect(leftSpace, initial+spacing*1, Player.list[selfId].hpMax * (length / levelUpCount), 20);
+			//ctx.fillRect(leftSpace, initial+spacing*2, Player.list[selfId].bulletSpeed * (length / levelUpCount), 20);
+			//ctx.fillRect(leftSpace, initial+spacing*3, Player.list[selfId].bulletHp * (length / levelUpCount), 20);
+			//ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * (length / levelUpCount), 20);
+			//ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * (length / levelUpCount), 20);
+			//ctx.fillRect(leftSpace, initial+spacing*6, Player.list[selfId].bodyDamage * (length / levelUpCount), 20);
+			//ctx.fillRect(leftSpace, initial+spacing*7, Player.list[selfId].penetration * (length / levelUpCount), 20);
 			ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 60, initial + spacing * 9);
 
 			//ctx.save();
