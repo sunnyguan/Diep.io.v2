@@ -72,6 +72,8 @@ var Player = function(id, name){
 	
 	self.timer = 0;
 	
+	
+	
 	self.regen = 21;
 	self.hpMax = 100;
 	self.bulletHp = 7;
@@ -1747,7 +1749,9 @@ io.sockets.on('connection', function(socket){
 var initPack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
 var removePack = {player:[],bullet:[],square:[],pentagon:[],triangle:[]};
 var allpack = {};
+var c = 0;
 setInterval(function(){
+	
 	Triangle.regUpdate();
 	Square.regUpdate();
 	Pentagon.regUpdate();
@@ -1755,19 +1759,20 @@ setInterval(function(){
 	var pack = {
 		bullet:Bullet.update(),
 	};
-	
-	for(var i in SOCKET_LIST){
-		var socket = SOCKET_LIST[i];
-		if(typeof Player.list[socket.id] !== 'undefined'){
-			pack.square = Square.update(Player.list[socket.id]);
-			pack.triangle = Triangle.update(Player.list[socket.id]);
-			pack.pentagon = Pentagon.update(Player.list[socket.id]);
-			pack.player = Player.update(Player.list[socket.id]);
-			//console.log(pack.player);
-			allpack["init"] = initPack;
-			allpack["update"] = pack;
-			allpack["remove"] = removePack;
-			socket.emit('allUpdate',allpack);
+	if(c % 4 == 0){
+		for(var i in SOCKET_LIST){
+			var socket = SOCKET_LIST[i];
+			if(typeof Player.list[socket.id] !== 'undefined'){
+				pack.square = Square.update(Player.list[socket.id]);
+				pack.triangle = Triangle.update(Player.list[socket.id]);
+				pack.pentagon = Pentagon.update(Player.list[socket.id]);
+				pack.player = Player.update(Player.list[socket.id]);
+				//console.log(pack.player);
+				allpack["init"] = initPack;
+				allpack["update"] = pack;
+				allpack["remove"] = removePack;
+				socket.emit('allUpdate',allpack);
+			}
 		}
 	}
 	for (var member in allpack) delete allpack[member];
@@ -1781,4 +1786,5 @@ setInterval(function(){
 	removePack.square = [];
 	removePack.pentagon = [];
 	removePack.triangle = [];
+	c++;
 },1000/45);

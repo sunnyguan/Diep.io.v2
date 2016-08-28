@@ -366,7 +366,10 @@ $(document).ready(function(){
 	ctx.font = '30px Arial';
 	
 	var my_id = 95555;
-	
+	var serverCurrentPosition = 0;
+	var serverNextPosition = 0;
+	var tickRate = 20;
+	var lastTick = 0;
 	var Player = function(initPack){
 		var self = {};
 		
@@ -383,6 +386,9 @@ $(document).ready(function(){
 		self.hpMax = initPack.hpMax;
 		self.score = initPack.score;
 		
+		self.newX = initPack.x;
+		self.newY = initPack.y;
+		
 		self.bulletSpeed = 0;
 		self.bulletHp = 0;
 		self.bulletReload = 0;
@@ -394,6 +400,7 @@ $(document).ready(function(){
 		self.pMaxHp = 0;
 		self.angle = 0;
 		my_id = self.id;
+		
 		self.evaluateNextLevelScore = function(x){
 			x++;
 			if(x == 0) return 0;
@@ -403,7 +410,9 @@ $(document).ready(function(){
 			else if(x == 4) return 65;
 			else return 0.46*x*x*x-12*x*x+170*x-529;
 		}
-		self.draw = function(){	
+		self.draw = function(){
+			self.x += (self.newX - self.x) / tickRate;
+			self.y += (self.newY - self.y) / tickRate;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			//console.log(focused);
@@ -427,7 +436,9 @@ $(document).ready(function(){
 		}
 		
 		Player.list[self.id] = self;
-		
+		self.getDistance = function(pt){
+			return Math.sqrt(Math.pow(self.x-pt.x,2) + Math.pow(self.y-pt.y,2));
+		}
 		
 		return self;
 	}
@@ -853,8 +864,8 @@ $(document).ready(function(){
 		}
 		//console.log(data);
 	}
-	
 	function update(data){
+		tickRate = tick - lastTick;
 		//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
 		for(var i = 0 ; i < data.player.length; i++){
 			var pack = data.player[i];
@@ -862,9 +873,9 @@ $(document).ready(function(){
 			var p = Player.list[pack.id];
 			if(p){
 				if(pack.x !== undefined)
-					p.x = pack.x;
+					p.newX = pack.x;
 				if(pack.y !== undefined)
-					p.y = pack.y;
+					p.newY = pack.y;
 				if(pack.hp !== undefined)
 					p.hp = pack.hp;
 				if(pack.score !== undefined)
@@ -957,6 +968,7 @@ $(document).ready(function(){
 					b.angle = pack.angle;
 			}
 		}
+		lastTick = tick;
 	}
 	
 	function remove(data){
@@ -1022,6 +1034,7 @@ $(document).ready(function(){
 	var drawDeath = false;
 	var lastCalledTime = 0;
 	var fps = 0;
+	var tick = 0;
 	function draw(){
 		/*if(!lastCalledTime) {
 			lastCalledTime = Date.now();
@@ -1032,7 +1045,7 @@ $(document).ready(function(){
 		lastCalledTime = Date.now();
 		fps = 1/delta;
 		console.log(fps);*/
-		
+		tick++;
 		//console.log('hi');
 		requestAnimationFrame(draw);
 		if(drawDeath){
