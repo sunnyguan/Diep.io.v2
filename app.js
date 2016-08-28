@@ -50,6 +50,7 @@ var Player = function(id, name){
 	var self = Entity();
 	
 	self.tankType = 0;
+	self.updateTankType = true;
 	self.reloadNum = 0;
 	// twin : 1
 	
@@ -76,6 +77,7 @@ var Player = function(id, name){
 	
 	self.regen = 21;
 	self.hpMax = 100;
+	self.updatehpMax = true;
 	self.bulletHp = 7;
 	self.bulletSpeed = 7;
 	self.reload = 38;
@@ -124,10 +126,13 @@ var Player = function(id, name){
 	self.bodyDamageCount = 0;
 	self.penetrationCount = 0;
 	
+	
+	
 	self.bullets = [];
 	self.moveTimer = 0;
 	self.friction = 0.96;
 	self.level = 1;
+	self.updateLevel = true;
 	self.mouseX = 0;
 	self.mouseY = 0;
 	
@@ -178,6 +183,7 @@ var Player = function(id, name){
 			}
 			self.upgrades+=maxUps;
 			self.level+=maxUps;
+			self.updateLevel = true;
 		}
 		self.checkForUpgrades();
 		//console.log(self.regen);
@@ -783,13 +789,22 @@ var Player = function(id, name){
 			x:self.x,
 			y:self.y,
 			hp:self.hp,
-			pMaxHp:self.hpMax,
 			score:self.score,
 			upgrades:self.upgrades,
-			tankType:self.tankType,
-			level:self.level,
 			mouseAngle:self.mouseAngle,
 		};
+		if(self.updatehpMax){
+			pack.pMaxHp = self.hpMax;
+			self.updatehpMax = false;
+		}
+		if(self.updateLevel){
+			pack.level = self.level;
+			self.updateLevel = false;
+		}
+		if(self.updateTankType){
+			pack.tankType = self.tankType;
+			self.updateTankType = false;
+		}
 		if(self.updateRegen){
 			pack.regen = self.regenCount;
 			self.updateRegen = false;
@@ -1638,6 +1653,7 @@ io.sockets.on('connection', function(socket){
 		
 		p.regen = (p.maxRegen - p.minRegen) / levelUpCount * (levelUpCount - p.regenCount) + p.minRegen;
 		p.hpMax = (p.maxHp - p.minHp) / levelUpCount * p.hpMaxCount + p.minHp;
+		p.updatehpMax = true;
 		p.bulletHp = (p.maxBulletHp - p.minBulletHp) / levelUpCount * p.bulletHpCount + p.minBulletHp;
 		p.bulletSpeed = (p.maxBulletSpeed - p.minBulletSpeed) / levelUpCount * p.bulletSpeedCount + p.minBulletSpeed;
 		p.reload = (p.maxReload - p.minReload) / levelUpCount * (levelUpCount - p.reloadCount) + p.minReload;
@@ -1713,6 +1729,7 @@ io.sockets.on('connection', function(socket){
 				        break;
 				    case 1:
 				        p.hpMax = newValue;
+				        p.updatehpMax = true;
 								p.hpMaxCount++;
 				        break;
 				    case 2:
@@ -1787,4 +1804,4 @@ setInterval(function(){
 	removePack.pentagon = [];
 	removePack.triangle = [];
 	c++;
-},1000/45);
+},1000/50);
