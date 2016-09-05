@@ -379,8 +379,9 @@ $(document).ready(function(){
 
 		self.name = initPack.name;
 		self.number = initPack.number;
-		self.x = initPack.x;
-		self.y = initPack.y;
+		console.log('hi');
+		self.x = 0;
+		self.y = 0;
 		self.hp = initPack.hp;
 		self.hpMax = initPack.hpMax;
 		self.score = initPack.score;
@@ -410,6 +411,7 @@ $(document).ready(function(){
 			else return 0.46*x*x*x-12*x*x+170*x-529;
 		}
 		self.draw = function(){
+			console.log(tickRate);
 			self.x += (self.newX - self.x) / tickRate;
 			self.y += (self.newY - self.y) / tickRate;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
@@ -453,7 +455,17 @@ $(document).ready(function(){
 		self.trap = initPack.trap;
 		self.toRemoveTimer = 0;
 		self.toRemove = false;
-		self.draw = function(){	
+		//console.log(initPack.x + ',' + initPack.y);
+		self.newX = initPack.x;
+		self.newY = initPack.y;
+		self.draw = function(){
+			if(self.x != 0 && self.y != 0){
+				self.x += (self.newX - self.x) / tickRate;
+				self.y += (self.newY - self.y) / tickRate;
+			}else{
+				self.x = self.newX;
+				self.y = self.newY;
+			}
 			//ctx.globalAlpha = 1;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
@@ -865,6 +877,7 @@ $(document).ready(function(){
 	}
 	function update(data){
 		tickRate = tick - lastTick;
+		if(tickRate == 0) tickRate = 1;
 		//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
 		for(var i = 0 ; i < data.player.length; i++){
 			var pack = data.player[i];
@@ -912,9 +925,9 @@ $(document).ready(function(){
 			var b = Bullet.list[data.bullet[i].id];
 			if(b){
 				if(pack.x !== undefined)
-					b.x = pack.x;
+					b.newX = pack.x;
 				if(pack.y !== undefined)
-					b.y = pack.y;
+					b.newY = pack.y;
 			}
 		}
 		for(var i = 0 ; i < data.square.length; i++){
@@ -1081,8 +1094,8 @@ $(document).ready(function(){
 			drawBars();
 			
 			for(var i in Bullet.list)
-				Bullet.list[i].draw();
-				
+			  Bullet.list[i].draw();
+			
 			for(var i in Player.list)
 				Player.list[i].draw();
 			
@@ -2282,21 +2295,23 @@ var WavyLine = function(level,bottom,right,height){
 	var autoFire = false;
 	var wasAutoFire = false;
 	document.onkeyup = function(event){
-		if(!focused){
-			if(event.keyCode === 68)	//d
-				socket.emit('keyPress',{inputId:'right',state:false});
-			if(event.keyCode === 83)	//s
-				socket.emit('keyPress',{inputId:'down',state:false});
-			if(event.keyCode === 65) //a
-				socket.emit('keyPress',{inputId:'left',state:false});
-			if(event.keyCode === 87) // w
-				socket.emit('keyPress',{inputId:'up',state:false});
-			if(event.keyCode > 47 && event.keyCode < 58)
-				socket.emit('changeType',{type:{type:event.keyCode - 48,r:1,g:1,b:1}});
-			if(event.keyCode == 69){
-				autoFire = !autoFire;
-				//wasAutoFire = !wasAutoFire;
-				console.log(autoFire);
+		if(gameDiv.style.display != 'none'){
+			if(!focused){
+				if(event.keyCode === 68)	//d
+					socket.emit('keyPress',{inputId:'right',state:false});
+				if(event.keyCode === 83)	//s
+					socket.emit('keyPress',{inputId:'down',state:false});
+				if(event.keyCode === 65) //a
+					socket.emit('keyPress',{inputId:'left',state:false});
+				if(event.keyCode === 87) // w
+					socket.emit('keyPress',{inputId:'up',state:false});
+				if(event.keyCode > 47 && event.keyCode < 58)
+					socket.emit('changeType',{type:{type:event.keyCode - 48,r:1,g:1,b:1}});
+				if(event.keyCode == 69){
+					autoFire = !autoFire;
+					//wasAutoFire = !wasAutoFire;
+					console.log(autoFire);
+				}
 			}
 		}
 	}

@@ -22,8 +22,8 @@ var GAME_DIMENSION = 10000;
 
 var Entity = function(){
 	var self = {
-		x:-1000,
-		y:-1000,
+		x:0,
+		y:0,
 		spdX:0,
 		spdY:0,
 		id:"",
@@ -1002,7 +1002,7 @@ Player.regUpdate = function(){
 		if(player.hp <= 0){
 			player.deathReset();
 		} else {
-			Player.updatePack[player.id] = player.update();
+			//Player.updatePack[player.id] = player.update();
 			//console.log(player.update());
 		}
 	}
@@ -1015,7 +1015,7 @@ Player.update = function(p){
 		var player = Player.list[i];
 		if((player.needToUpdate && objInViewOfPlayer(player, p)) || p.newScore){
 			//console.log('hi');
-			pack.push(Player.updatePack[player.id]);
+			pack.push(player.update());
 			//console.log(Player.updatePack[player.id]);
 			
 		}
@@ -1208,7 +1208,7 @@ Pentagon.regUpdate = function(){
 			delete Pentagon.list[i];
 			removePack.pentagon.push(pentagon.id);
 		} else {
-			Pentagon.updatePack[pentagon.id] = pentagon.update();
+			//Pentagon.updatePack[pentagon.id] = pentagon.update();
 		}
 	}
 }
@@ -1221,7 +1221,7 @@ Pentagon.update = function(player){
 		if(pentagon !== undefined && 
 		   pentagon.needToUpdate && objInViewOfPlayer(pentagon, player)){
 			//console.log(t++);
-			pack.push(Pentagon.updatePack[pentagon.id]);
+			pack.push(pentagon.update());
 		}
 	}
 	
@@ -1259,7 +1259,7 @@ Square.regUpdate = function(){
 			delete Square.list[i];
 			removePack.square.push(square.id);
 		} else {
-			Square.updatePack[square.id] = square.update();
+			//Square.updatePack[square.id] = square.update();
 		}
 	}
 }
@@ -1270,7 +1270,7 @@ Square.update = function(player){
 	for(var i in Square.updatePack){
 		var square = Square.list[i];
 		if(square !== undefined && square.needToUpdate && objInViewOfPlayer(square, player)){
-			pack.push(Square.updatePack[square.id]);
+			pack.push(square.update());
 		}
 	}
 	
@@ -1308,7 +1308,7 @@ Triangle.regUpdate = function(){
 			delete Triangle.list[i];
 			removePack.triangle.push(triangle.id);
 		} else {
-			Triangle.updatePack[triangle.id] = triangle.update();
+			//Triangle.updatePack[triangle.id] = triangle.update();
 		}
 	}
 }
@@ -1320,7 +1320,7 @@ Triangle.update = function(player){
 		var triangle = Triangle.list[i];
 		if(triangle !== undefined &&
 		   triangle.needToUpdate && objInViewOfPlayer(triangle, player)){
-			pack.push(Triangle.updatePack[triangle.id]);
+			pack.push(triangle.update());
 		}
 	}
 	
@@ -1422,7 +1422,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 			}
 		}
 		
-		if(t % 1 == 0){
+		if(t % 3 == 0){
 			for(var i in Player.list){
 				var p = Player.list[i];
 				self.dealWithEntities(p);
@@ -1622,6 +1622,7 @@ io.sockets.on('connection', function(socket){
 	
 	socket.on('changeType',function(data){
 		var p = Player.list[socket.id];
+		p.updateTankType = true;
 		if(p.availableUpgrades[0] == 1) p.availableUpgrades[0] = 0;
 		if(p.availableUpgrades[1] == 1) p.availableUpgrades[1] = 0;
 		if(p.availableUpgrades[2] == 1) p.availableUpgrades[2] = 0;
@@ -1774,9 +1775,10 @@ setInterval(function(){
 	Pentagon.regUpdate();
 	Player.regUpdate();
 	var pack = {
-		bullet:Bullet.update(),
+		
 	};
 	if(c % 4 == 0){
+		//console.log('here');
 		for(var i in SOCKET_LIST){
 			var socket = SOCKET_LIST[i];
 			if(typeof Player.list[socket.id] !== 'undefined'){
@@ -1784,6 +1786,7 @@ setInterval(function(){
 				pack.triangle = Triangle.update(Player.list[socket.id]);
 				pack.pentagon = Pentagon.update(Player.list[socket.id]);
 				pack.player = Player.update(Player.list[socket.id]);
+				pack.bullet = Bullet.update();
 				//console.log(pack.player);
 				allpack["init"] = initPack;
 				allpack["update"] = pack;
