@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 </head>
 <body>
@@ -55,7 +55,7 @@ input.focus {
 html, body, canvas {
 	margin: 0;
 	padding: 0;
-	background: url("https://files.gitter.im/sunnyguan/iZee/blob") no-repeat center center fixed;
+	background: url('/client/1.png') no-repeat center center fixed;
 	background-size: cover;
 	overflow: hidden;
 }
@@ -116,9 +116,10 @@ html, body, canvas {
 <div id="gameDiv" style="display:none;">
 	<canvas id="ctx" width="1" height="768" style=""></canvas>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="client/CanvasInput.min.js"></script>
-<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script src="client/siriwave.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.js"></script>
 <script>
 $(document).ready(function(){
     $("div").animate({top: $(document).height() / 2 - $("div").height() / 2 + 'px', opacity: 1}, 1000);
@@ -246,7 +247,7 @@ $(document).ready(function(){
 	  borderRadius: 3,
 	  boxShadow: '1px 1px 0px #fff',
 	  innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-	  placeHolder: 'Enter message here...',
+	  placeHolder: '输入...',
 		onsubmit: function(){
 			//console.log(input.value().length);
 			if(input.value().length > 23){
@@ -365,10 +366,9 @@ $(document).ready(function(){
 	ctx.font = '30px Arial';
 	
 	var my_id = 95555;
-	var serverCurrentPosition = 0;
-	var serverNextPosition = 0;
-	var tickRate = 20;
 	var lastTick = 0;
+	var tick = 0;
+	var tickRate = 20;
 	var Player = function(initPack){
 		var self = {};
 		
@@ -379,15 +379,11 @@ $(document).ready(function(){
 
 		self.name = initPack.name;
 		self.number = initPack.number;
-		console.log('hi');
-		self.x = 0;
-		self.y = 0;
+		self.x = initPack.x;
+		self.y = initPack.y;
 		self.hp = initPack.hp;
 		self.hpMax = initPack.hpMax;
 		self.score = initPack.score;
-		
-		self.newX = initPack.x;
-		self.newY = initPack.y;
 		
 		self.bulletSpeed = 0;
 		self.bulletHp = 0;
@@ -399,8 +395,11 @@ $(document).ready(function(){
 		self.upgrades = 0;
 		self.pMaxHp = 0;
 		self.angle = 0;
-		my_id = self.id;
 		
+		self.newX = initPack.x;
+		self.newY = initPack.y;
+		
+		my_id = self.id;
 		self.evaluateNextLevelScore = function(x){
 			x++;
 			if(x == 0) return 0;
@@ -411,9 +410,9 @@ $(document).ready(function(){
 			else return 0.46*x*x*x-12*x*x+170*x-529;
 		}
 		self.draw = function(){
-			console.log(tickRate);
 			self.x += (self.newX - self.x) / tickRate;
 			self.y += (self.newY - self.y) / tickRate;
+			
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			//console.log(focused);
@@ -437,9 +436,7 @@ $(document).ready(function(){
 		}
 		
 		Player.list[self.id] = self;
-		self.getDistance = function(pt){
-			return Math.sqrt(Math.pow(self.x-pt.x,2) + Math.pow(self.y-pt.y,2));
-		}
+		
 		
 		return self;
 	}
@@ -455,10 +452,10 @@ $(document).ready(function(){
 		self.trap = initPack.trap;
 		self.toRemoveTimer = 0;
 		self.toRemove = false;
-		//console.log(initPack.x + ',' + initPack.y);
+		
 		self.newX = initPack.x;
 		self.newY = initPack.y;
-		self.draw = function(){
+		self.draw = function(){	
 			if(self.x != 0 && self.y != 0){
 				self.x += (self.newX - self.x) / tickRate;
 				self.y += (self.newY - self.y) / tickRate;
@@ -466,10 +463,11 @@ $(document).ready(function(){
 				self.x = self.newX;
 				self.y = self.newY;
 			}
-			//ctx.globalAlpha = 1;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
-			
+			if(self.toRemove) self.toRemoveTimer+=3;
+			if(self.toRemoveTimer >= 45)
+				delete Bullet.list[self.id];
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
 				if(self.drone){
 					ctx.save();
@@ -477,16 +475,17 @@ $(document).ready(function(){
 					ctx.lineWidth = 3;
 					ctx.translate(x,y);
 					ctx.rotate(self.angle * Math.PI / 180);
+					var numberOfSides = 3,
+				    size = 15,
+				    Xcenter = 0,
+				    Ycenter = 0;
+					
 					if(self.toRemove){
 						//self.toRemoveTimer+=2;
 						ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
 						ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
 					}
-					var numberOfSides = 3,
-				    size = 15,
-				    Xcenter = 0,
-				    Ycenter = 0;
-				
+					
 					//ctx.save();
 					ctx.beginPath();
 					ctx.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));          
@@ -498,30 +497,28 @@ $(document).ready(function(){
 					ctx.stroke();
 					ctx.restore();
 					
-					if(self.toRemove) self.toRemoveTimer+=3;
-					if(self.toRemoveTimer >= 45)
-						delete Bullet.list[self.id];
+					
 				}else if(self.trap){
 					ctx.save();
 					//ctx.fillStyle = 'DeepSkyBlue';
 					ctx.lineWidth = 3;
 					ctx.translate(x,y);
 					ctx.rotate(self.angle * Math.PI / 180);
+					polygon(ctx,0,0,10,3,0,false,"#000000");
+					
 					if(self.toRemove){
 						//self.toRemoveTimer+=2;
 						ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
 						ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
 					}
-					polygon(ctx,0,0,10,3,0,false,"#000000");
 					
 					ctx.fill();
 					ctx.stroke();
 					ctx.restore();
 					
-					if(self.toRemove) self.toRemoveTimer+=3;
-					if(self.toRemoveTimer >= 45)
-						delete Bullet.list[self.id];
+					
 				}else{
+					ctx.save();
 					var tt = Player.list[selfId].tankType;
 					if(tt == 22)
 						ctx.fillStyle = 'gray';
@@ -542,7 +539,6 @@ $(document).ready(function(){
 					}else{
 						rad = 10;
 					}
-					ctx.save();
 					ctx.translate(x-10/2,y-10/2);
 					if(self.toRemove){
 						//self.toRemoveTimer+=2;
@@ -555,13 +551,12 @@ $(document).ready(function(){
 					ctx.stroke();
 					ctx.restore();
 					
-					if(self.toRemove) self.toRemoveTimer+=3;
-					if(self.toRemoveTimer >= 45)
-						delete Bullet.list[self.id];
 				}
 				
 				//console.log('whowhowoh');
 			}
+			
+			
 			
 		}
 		
@@ -583,12 +578,17 @@ $(document).ready(function(){
 		self.attacked = false;
 		self.toRemove = false;
 		self.toRemoveTimer = 0;
-		//self.angle = initPack.angle;
+		self.newX = initPack.x;
+		self.newY = initPack.y;
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
-			//console.log(self.id);		
-			//self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
-			//self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
+			if(self.x != 0 && self.y != 0){
+				self.x += (self.newX - self.x) / tickRate;
+				self.y += (self.newY - self.y) / tickRate;
+			}else{
+				self.x = self.newX;
+				self.y = self.newY;
+			}
 			
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
@@ -656,13 +656,17 @@ $(document).ready(function(){
 		self.attacked = false;
 		self.toRemove = false;
 		self.toRemoveTimer = 0;
-		//self.angle = initPack.angle;
-		
+		self.newX = initPack.x;
+		self.newY = initPack.y;
 		self.draw = function(){	
 			ctx.globalAlpha = 1;
-			//console.log(self.id);		
-			//self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
-			//self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
+			if(self.x != 0 && self.y != 0){
+				self.x += (self.newX - self.x) / tickRate;
+				self.y += (self.newY - self.y) / tickRate;
+			}else{
+				self.x = self.newX;
+				self.y = self.newY;
+			}
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
@@ -731,8 +735,16 @@ $(document).ready(function(){
 		self.attacked = false;
 		self.toRemove = false;
 		self.toRemoveTimer = 0;
-		//self.angle = initPack.angle;
+		self.newX = initPack.x;
+		self.newY = initPack.y;
 		self.draw = function(){	
+			if(self.x != 0 && self.y != 0){
+				self.x += (self.newX - self.x) / tickRate;
+				self.y += (self.newY - self.y) / tickRate;
+			}else{
+				self.x = self.newX;
+				self.y = self.newY;
+			}
 			ctx.globalAlpha = 1;
 			//console.log(self.id);		
 			//self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
@@ -875,6 +887,7 @@ $(document).ready(function(){
 		}
 		//console.log(data);
 	}
+	
 	function update(data){
 		tickRate = tick - lastTick;
 		if(tickRate == 0) tickRate = 1;
@@ -935,9 +948,9 @@ $(document).ready(function(){
 			var b = Square.list[data.square[i].id];
 			if(b){
 				if(pack.x !== undefined)
-					b.x = pack.x;
+					b.newX = pack.x;
 				if(pack.y !== undefined)
-					b.y = pack.y;
+					b.newY = pack.y;
 				if(pack.hp !== undefined)
 					b.hp = pack.hp;
 				if(pack.attacked !== undefined)
@@ -951,9 +964,9 @@ $(document).ready(function(){
 			var b = Pentagon.list[data.pentagon[i].id];
 			if(b){
 				if(pack.x !== undefined)
-					b.x = pack.x;
+					b.newX = pack.x;
 				if(pack.y !== undefined)
-					b.y = pack.y;
+					b.newY = pack.y;
 				if(pack.hp !== undefined)
 					b.hp = pack.hp;
 				if(pack.attacked !== undefined)
@@ -969,9 +982,9 @@ $(document).ready(function(){
 			var b = Triangle.list[data.triangle[i].id];
 			if(b){
 				if(pack.x !== undefined)
-					b.x = pack.x;
+					b.newX = pack.x;
 				if(pack.y !== undefined)
-					b.y = pack.y;
+					b.newY = pack.y;
 				if(pack.hp !== undefined)
 					b.hp = pack.hp;
 				if(pack.attacked !== undefined)
@@ -1046,7 +1059,6 @@ $(document).ready(function(){
 	var drawDeath = false;
 	var lastCalledTime = 0;
 	var fps = 0;
-	var tick = 0;
 	function draw(){
 		/*if(!lastCalledTime) {
 			lastCalledTime = Date.now();
@@ -1057,8 +1069,9 @@ $(document).ready(function(){
 		lastCalledTime = Date.now();
 		fps = 1/delta;
 		console.log(fps);*/
-		tick++;
+		
 		//console.log('hi');
+		tick++;
 		requestAnimationFrame(draw);
 		if(drawDeath){
 			ctx.fillStyle = 'red';
@@ -1080,8 +1093,8 @@ $(document).ready(function(){
 			}
 			u++;
 			
-			canvas.width = WIDTH;
-			canvas.height = HEIGHT;
+			//canvas.width = WIDTH;
+			//canvas.height = HEIGHT;
 			
 			if(!selfId)
 				return;
@@ -1094,8 +1107,8 @@ $(document).ready(function(){
 			drawBars();
 			
 			for(var i in Bullet.list)
-			  Bullet.list[i].draw();
-			
+				Bullet.list[i].draw();
+				
 			for(var i in Player.list)
 				Player.list[i].draw();
 			
@@ -2118,7 +2131,40 @@ var WavyLine = function(level,bottom,right,height){
 				
 			}
 	 	} else if(tankType == 25){
-	 		drawParticles();
+	 		//drawParticles();
+	 		rad = 30;
+	 		ctx.restore();
+	 		ctx.strokeStyle = 'black';
+	 		
+	 		for(var i = -360 / 5; i < 0; i += 360 / 15){
+	 			ctx.save();
+	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle+i) * Math.PI / 180);
+			  ctx.fillStyle = barrelColor;
+				ctx.fillRect(0+i * 11 / 360 * 5, -12, 55, 24);
+				ctx.strokeRect(0+i * 11 / 360 * 5, -12, 55, 24);
+				ctx.restore();
+				ctx.save();
+	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
+	 			ctx.translate(x,y);
+	 			ctx.rotate((angle-i) * Math.PI / 180);
+			  ctx.fillStyle = barrelColor;
+				ctx.fillRect(0+i * 11 / 360 * 5, -12, 55, 24);
+				ctx.strokeRect(0+i * 11 / 360 * 5, -12, 55, 24);
+				ctx.restore();
+	 		}
+	 		ctx.save();
+ 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
+ 			ctx.translate(x,y);
+ 			ctx.rotate((angle) * Math.PI / 180);
+		  	ctx.fillStyle = barrelColor;
+			ctx.fillRect(0, -12, 55, 24);
+			ctx.strokeRect(0, -12, 55, 24);
+			ctx.restore();
+			
+			ctx.save();
+	 		
 	 	}
 		
 		var ch = true;
@@ -2170,6 +2216,7 @@ var WavyLine = function(level,bottom,right,height){
 	'高射加农炮',
 	'地雷',
 	'夹兽者',
+	'七连小炮'
 	];
 	
 	var ENGLISH = [
@@ -2198,6 +2245,7 @@ var WavyLine = function(level,bottom,right,height){
 		'flak cannon',
 		'landmine',
 		'trapper',
+		'heptashot',
 	];
 	
 	
@@ -2295,23 +2343,21 @@ var WavyLine = function(level,bottom,right,height){
 	var autoFire = false;
 	var wasAutoFire = false;
 	document.onkeyup = function(event){
-		if(gameDiv.style.display != 'none'){
-			if(!focused){
-				if(event.keyCode === 68)	//d
-					socket.emit('keyPress',{inputId:'right',state:false});
-				if(event.keyCode === 83)	//s
-					socket.emit('keyPress',{inputId:'down',state:false});
-				if(event.keyCode === 65) //a
-					socket.emit('keyPress',{inputId:'left',state:false});
-				if(event.keyCode === 87) // w
-					socket.emit('keyPress',{inputId:'up',state:false});
-				if(event.keyCode > 47 && event.keyCode < 58)
-					socket.emit('changeType',{type:{type:event.keyCode - 48,r:1,g:1,b:1}});
-				if(event.keyCode == 69){
-					autoFire = !autoFire;
-					//wasAutoFire = !wasAutoFire;
-					console.log(autoFire);
-				}
+		if(!focused){
+			if(event.keyCode === 68)	//d
+				socket.emit('keyPress',{inputId:'right',state:false});
+			if(event.keyCode === 83)	//s
+				socket.emit('keyPress',{inputId:'down',state:false});
+			if(event.keyCode === 65) //a
+				socket.emit('keyPress',{inputId:'left',state:false});
+			if(event.keyCode === 87) // w
+				socket.emit('keyPress',{inputId:'up',state:false});
+			if(event.keyCode > 47 && event.keyCode < 58)
+				socket.emit('changeType',{type:{type:event.keyCode - 48,r:1,g:1,b:1}});
+			if(event.keyCode == 69){
+				autoFire = !autoFire;
+				//wasAutoFire = !wasAutoFire;
+				console.log(autoFire);
 			}
 		}
 	}
