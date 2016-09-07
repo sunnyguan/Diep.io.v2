@@ -140,6 +140,7 @@ var Player = function(id, name){
 		if(x == 2) return 10;
 		else if(x == 3) return 25;
 		else if(x == 4) return 65;
+		else if(x > 45) return 500000 + (x - 45) * 1000;
 		else return 0.46*x*x*x-12*x*x+170*x-529;
 	}
 	self.update = function(){
@@ -257,7 +258,7 @@ var Player = function(id, name){
 		//if(Math.abs(self.x - ox) > 0 || Math.abs(self.y - oy) > 0) self.needToUpdate = true;
 		//else self.needToUpdate = false;
 			
-		return self.getUpdatePack();
+		
 	}
 	self.checkForUpgrades = function(){
 		var tanks = [];
@@ -1078,7 +1079,7 @@ Player.regUpdate = function(){
 		if(player.hp <= 0){
 			player.deathReset();
 		} else {
-			Player.updatePack[player.id] = player.update();
+			player.update();
 			//console.log(player.update());
 		}
 		
@@ -1114,6 +1115,7 @@ Player.update = function(p){
 		var player = Player.list[i];
 		if((player.needToUpdate && objInViewOfPlayer(player, p)) || p.newScore){
 			//console.log('hi');
+			Player.updatePack[player.id] = player.getUpdatePack();
 			pack.push(Player.updatePack[player.id]);
 			//console.log(Player.updatePack[player.id]);
 		}
@@ -1148,8 +1150,6 @@ var Shape = function(){
 	}
 	
 	self.update = function(){
-		
-		//console.log(self.angle);
 		var oriX = self.x;
 		var oriY = self.y;
 		var x = Math.cos(self.angle/180*Math.PI) * self.speed;
@@ -1567,7 +1567,7 @@ var Bullet = function(parent,angle,hp,speed,drone){
 				s.attacked = true;
 				s.hp -= self.hp;
 				self.hp -= s.maxhp * (1 - self.penetration / 100) / 4;
-				console.log(s.maxhp * (1 - self.penetration / 100) / 4);
+				//console.log(s.maxhp * (1 - self.penetration / 100) / 4);
 				if(self.hp <= 0) self.toRemove = true;
 				if(s.hp <= 0){
 					var shooter = Player.list[self.parent];

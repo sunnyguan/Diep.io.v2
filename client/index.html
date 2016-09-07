@@ -429,8 +429,17 @@ $(document).ready(function(){
 			//ctx.fillStyle = 'black';
 			//ctx.fillRect(x - 40 + hpWidth, y + 40, 80 - hpWidth, 4);
 			
+			ctx.save();
 			var name = Player.list[selfId].name;
+			var blur = 1;
+			var width = ctx.measureText(name).width + blur * 2;
+			ctx.textBaseline = "top";
+			ctx.shadowColor = "#000";
+			ctx.shadowOffsetX = 5; 
+			ctx.shadowOffsetY = 5; 
+			ctx.shadowBlur = 7;
 			ctx.fillText(name, WIDTH / 2 - ctx.measureText(name).width / 2, HEIGHT / 2 - 60);
+			ctx.restore();
 			
 			drawMinis(x, y, self.angle, false, self.tankType);
 		}
@@ -1314,14 +1323,14 @@ var WavyLine = function(level,bottom,right,height){
 				player.bodyDamage,
 				player.penetration,
 			];
-			
+			//console.log(player.hpMax);
 			for(var i in prop){
 				var pp = prop[i];
 				if(wavyLines[i].right != Math.round(pp * (14 / levelUpCount) + 2))
 					wavyLines[i] = new WavyLine(1, ij, Math.round(pp * (14 / levelUpCount)) + 2, 10);
 				ij += 30;
 			}
-			
+			console.log(player);
 			for(var ind in wavyLines){
 				var wvLn = wavyLines[ind];
 				if(wvLn.right > 2){
