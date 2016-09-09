@@ -1880,16 +1880,29 @@ setInterval(function(){
 	for(var i in SOCKET_LIST){
 		var socket = SOCKET_LIST[i];
 		if(typeof Player.list[socket.id] !== 'undefined'){
-			if(c % 4 == 0){
+			if(c % 5 == 0){
 				pack.square = Square.update(Player.list[socket.id]);
 				pack.triangle = Triangle.update(Player.list[socket.id]);
 				pack.pentagon = Pentagon.update(Player.list[socket.id]);
 				pack.player = Player.update(Player.list[socket.id]);
 				allpack["update"] = pack;
 			}
-			allpack["init"] = initPack;
+			if(initPack.player.length == 0 ||
+					initPack.bullet.length == 0 ||
+					initPack.square.length == 0 ||
+					initPack.pentagon.length == 0 ||
+					initPack.triangle.length == 0){
+				
+			}else allpack["init"] = initPack;
 			
-			allpack["remove"] = removePack;
+			if(removePack.player == 0 ||
+					removePack.bullet == 0 ||
+					removePack.square == 0 ||
+					removePack.pentagon == 0 ||
+					removePack.triangle == 0){
+				
+			}else allpack["remove"] = removePack;
+			
 			socket.emit('allUpdate',allpack);
 		}
 	}
