@@ -1887,18 +1887,18 @@ setInterval(function(){
 				pack.player = Player.update(Player.list[socket.id]);
 				allpack["update"] = pack;
 			}
-			if(initPack.player.length == 0 ||
-					initPack.bullet.length == 0 ||
-					initPack.square.length == 0 ||
-					initPack.pentagon.length == 0 ||
+			if(initPack.player.length == 0 &&
+					initPack.bullet.length == 0 &&
+					initPack.square.length == 0 &&
+					initPack.pentagon.length == 0 &&
 					initPack.triangle.length == 0){
 				
 			}else allpack["init"] = initPack;
 			
-			if(removePack.player == 0 ||
-					removePack.bullet == 0 ||
-					removePack.square == 0 ||
-					removePack.pentagon == 0 ||
+			if(removePack.player == 0 &&
+					removePack.bullet == 0 &&
+					removePack.square == 0 &&
+					removePack.pentagon == 0 &&
 					removePack.triangle == 0){
 				
 			}else allpack["remove"] = removePack;

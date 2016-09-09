@@ -2431,27 +2431,30 @@ var WavyLine = function(level,bottom,right,height){
 		if(signDiv.style.display == 'none')
 			socket.emit('keyPress',{inputId:'attack',state:false});
 	}
-	
+	var moveTimes = 0;
 	document.onmousemove = function(event){
-		if(signDiv.style.display == 'none'){
-			var x = -(WIDTH / 2) + event.clientX - 8;
-			var y = -(HEIGHT / 2) + event.clientY - 8;
-			//mouseX = x + WIDTH / 2;
-			//mouseY = y + HEIGHT / 2;
-			var angle = Math.atan2(y,x) / Math.PI * 180;
-			Player.list[selfId].angle = angle;
-			socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
-			if(autoFire){
-				socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
-				wasAutoFire = true;
-			}else if(!autoFire && wasAutoFire){
-				socket.emit('keyPress',{inputId:'attack',state:false});
-				wasAutoFire = false;
-			}else if(autoFire && !wasAutoFire){
-				socket.emit('keyPress',{inputId:'attack',state:false});
-				wasAutoFire = true;
+		if(moveTimes % 10 == 0){
+			if(signDiv.style.display == 'none'){
+				var x = -(WIDTH / 2) + event.clientX - 8;
+				var y = -(HEIGHT / 2) + event.clientY - 8;
+				//mouseX = x + WIDTH / 2;
+				//mouseY = y + HEIGHT / 2;
+				var angle = Math.atan2(y,x) / Math.PI * 180;
+				Player.list[selfId].angle = angle;
+				socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
+				if(autoFire){
+					socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
+					wasAutoFire = true;
+				}else if(!autoFire && wasAutoFire){
+					socket.emit('keyPress',{inputId:'attack',state:false});
+					wasAutoFire = false;
+				}else if(autoFire && !wasAutoFire){
+					socket.emit('keyPress',{inputId:'attack',state:false});
+					wasAutoFire = true;
+				}
 			}
 		}
+		moveTimes++;
 	}
 </script>
 </body>
