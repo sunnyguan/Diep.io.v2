@@ -2,153 +2,155 @@
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 </head>
 <body>
-<div id="signDiv" style="display: table; margin: 0 auto;">
-	<input id="signDiv-username" placeholder="Username" type="text"></input>
-	<!--Password: <input id="signDiv-password" type="password"></input>!-->
-	<button id="signDiv-signIn">Sign In</button>
-	<!--<button id="signDiv-signUp">Sign Up</button>!-->
-</div>
+	<div id="signDiv" style="display: table; margin: 0 auto;">
+		<input id="signDiv-username" placeholder="Username" type="text"></input>
+		<!--Password: <input id="signDiv-password" type="password"></input>!-->
+		<button id="signDiv-signIn">Sign In</button>
+		<!--<button id="signDiv-signUp">Sign Up</button>!-->
+	</div>
 
-<style type="text/css">
+	<style type="text/css">
 * {
 	-webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none;   /* Chrome/Safari/Opera */
-  -khtml-user-select: none;    /* Konqueror */
-  -moz-user-select: none;      /* Firefox */
-  -ms-user-select: none;       /* Internet Explorer/Edge */
-  user-select: none;           /* Non-prefixed version, currently
+	-webkit-user-select: none; /* Chrome/Safari/Opera */
+	-khtml-user-select: none; /* Konqueror */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
                                   not supported by any browser */
 }
-#signDiv.outer{
-    display:inline-block;
-    position:relative;
-    left:50%;
+
+#signDiv.outer {
+	display: inline-block;
+	position: relative;
+	left: 50%;
 }
 
-#signDiv.inner{
-    position:relative;
-    left:-50%;
+#signDiv.inner {
+	position: relative;
+	left: -50%;
 }
-::-webkit-input-placeholder { /* Chrome */
-  color: lightgray;
+
+::-webkit-input-placeholder {
+	color: lightgray;
 }
+
 input {
 	color: white;
 	outline: none;
-	width:300px;
-	height:100px;
-	font-size:50px;
-	text-align:center;
-  padding: 5px;
-  border: none;
-  border-bottom: solid 2px #c9c9c9;
-  transition: border 0.3s;
-  
+	width: 300px;
+	height: 100px;
+	font-size: 50px;
+	text-align: center;
+	padding: 5px;
+	border: none;
+	border-bottom: solid 2px #c9c9c9;
+	transition: border 0.3s;
 }
+
 #signDiv-username[type="text"] {
-	background-color:black;
+	background-color: black;
 }
-input:focus,
-input.focus {
-  border: solid 2px #969696;
+
+input:focus, input.focus {
+	border: solid 2px #969696;
 }
+
 html, body, canvas {
 	margin: 0;
 	padding: 0;
-	background: url('/client/1.png') no-repeat center center fixed;
+	background: url('https://files.gitter.im/sunnyguan/YqxF/Picture0002.png') no-repeat center center fixed;
 	background-size: cover;
 	overflow: hidden;
 }
+
 #signDiv-signIn {
-	height:100px;
+	height: 100px;
 	-moz-box-shadow: 0px 10px 14px -7px #04e030;
 	-webkit-box-shadow: 0px 10px 14px -7px #04e030;
 	box-shadow: 0px 10px 14px -7px #04e030;
-	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #00ffea), color-stop(1, #00ccff));
-	background:-moz-linear-gradient(top, #00ffea 5%, #00ccff 100%);
-	background:-webkit-linear-gradient(top, #00ffea 5%, #00ccff 100%);
-	background:-o-linear-gradient(top, #00ffea 5%, #00ccff 100%);
-	background:-ms-linear-gradient(top, #00ffea 5%, #00ccff 100%);
-	background:linear-gradient(to bottom, #00ffea 5%, #00ccff 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffea', endColorstr='#00ccff',GradientType=0);
-	background-color:#00ffea;
-	-moz-border-radius:4px;
-	-webkit-border-radius:4px;
-	border-radius:4px;
-	border:1px solid #ad754f;
-	display:inline-block;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:13px;
-	font-weight:bold;
-	padding:6px 12px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #0000ff;
-	width:300px;
-	margin-top:20px;
-	font-size:40px;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #00ffea
+		), color-stop(1, #00ccff));
+	background: -moz-linear-gradient(top, #00ffea 5%, #00ccff 100%);
+	background: -webkit-linear-gradient(top, #00ffea 5%, #00ccff 100%);
+	background: -o-linear-gradient(top, #00ffea 5%, #00ccff 100%);
+	background: -ms-linear-gradient(top, #00ffea 5%, #00ccff 100%);
+	background: linear-gradient(to bottom, #00ffea 5%, #00ccff 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffea',
+		endColorstr='#00ccff', GradientType=0);
+	background-color: #00ffea;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	border: 1px solid #ad754f;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 13px;
+	font-weight: bold;
+	padding: 6px 12px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #0000ff;
+	width: 300px;
+	margin-top: 20px;
+	font-size: 40px;
 }
+
 #signDiv-signIn:hover {
-	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #00ccff), color-stop(1, #00ffea));
-	background:-moz-linear-gradient(top, #00ccff 5%, #00ffea 100%);
-	background:-webkit-linear-gradient(top, #00ccff 5%, #00ffea 100%);
-	background:-o-linear-gradient(top, #00ccff 5%, #00ffea 100%);
-	background:-ms-linear-gradient(top, #00ccff 5%, #00ffea 100%);
-	background:linear-gradient(to bottom, #00ccff 5%, #00ffea 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ccff', endColorstr='#00ffea',GradientType=0);
-	background-color:#00ccff;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #00ccff
+		), color-stop(1, #00ffea));
+	background: -moz-linear-gradient(top, #00ccff 5%, #00ffea 100%);
+	background: -webkit-linear-gradient(top, #00ccff 5%, #00ffea 100%);
+	background: -o-linear-gradient(top, #00ccff 5%, #00ffea 100%);
+	background: -ms-linear-gradient(top, #00ccff 5%, #00ffea 100%);
+	background: linear-gradient(to bottom, #00ccff 5%, #00ffea 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ccff',
+		endColorstr='#00ffea', GradientType=0);
+	background-color: #00ccff;
 }
+
 #signDiv-signIn:active {
-	position:relative;
-	top:1px;
+	position: relative;
+	top: 1px;
 }
 
 #signDiv {
-	text-align:center;
+	text-align: center;
 	position: relative;
-  opacity:0;
-  width: 200px;
-  height: 150px;
- 	border-radius: 3px;
+	opacity: 0;
+	width: 200px;
+	height: 150px;
+	border-radius: 3px;
 }
 </style>
-<div id="gameDiv" style="display:none;">
-	<canvas id="ctx" width="1" height="768" style=""></canvas>
-</div>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="client/CanvasInput.min.js"></script>
-<script src="client/siriwave.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.js"></script>
-<script>
+	<div id="gameDiv" style="display: none;">
+		<canvas id="ctx" width="1" height="768" style=""></canvas>
+	</div>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script src="client/CanvasInput.min.js"></script>
+	<script src="client/siriwave.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.js"></script>
+	<script>
 $(document).ready(function(){
     $("div").animate({top: $(document).height() / 2 - $("div").height() / 2 + 'px', opacity: 1}, 1000);
 });
 </script>
-<script>
+	<script>
 	var GAME_DIMENSION = 10000;
-	
+
 	var WIDTH = document.body.clientWidth;
 	var HEIGHT = document.body.clientHeight;
-	
+
 	var canvas = document.getElementById("ctx");
 	canvas.width = WIDTH;
 	canvas.height = HEIGHT;
-	
+
 	var ctx = document.getElementById("ctx").getContext("2d");
-	
-	/*var siriWave = new SiriWave({
-	    canvas: canvas,
-	    width: 640,
-	    height: 200,
-	    autostart: true,
-	    
-	    speed: 0.04,
-	    color: 'red',
-	    frequency: 2
-	    
-	});*/
-	
+
+
+
 
 	var RADIUS = 180;
 	var mouseX = WIDTH / 2;
@@ -156,911 +158,942 @@ $(document).ready(function(){
 	var RADIUS_SCALE = 1;
 	var RADIUS_SCALE_MIN = 1;
 	var RADIUS_SCALE_MAX = 1.5;
-	
-	// The number of particles that are used to generate the trail
+
+
 	var QUANTITY = 25;
-	
+
 	var particles;
 	createParticles();
-	function createParticles() {
-		particles = [];
-		
-		for (var i = 0; i < QUANTITY; i++) {
-			var particle = {
-				position: { x: WIDTH / 2, y: HEIGHT / 2 },
-				shift: { x: mouseX, y: mouseY },
-				size: 30,
-				angle: 0,
-				speed: 0.01+Math.random()*0.04,
-				targetSize: 30,
-				fillColor: '#' + (Math.random() * 0x404040 + 0xaaaaaa | 0).toString(16),
-				orbit: RADIUS*.5 + (RADIUS * .5 * Math.random())
-			};
-			
-			particles.push( particle );
-		}
-	}
-	
-	function drawParticles(){
-			ctx.save();
-			ctx.fillStyle = 'rgba(0,0,0,0.01)';
-	   	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-			
-			for (i = 0, len = particles.length; i < len; i++) {
-				var particle = particles[i];
-				
-				var lp = { x: particle.position.x, y: particle.position.y };
-				
-				// Offset the angle to keep the spin going
-				particle.angle += particle.speed;
-				
-				// Follow mouse with some lag
-				particle.shift.x += ( mouseX - particle.shift.x) * (particle.speed);
-				particle.shift.y += ( mouseY - particle.shift.y) * (particle.speed);
-				
-				// Apply position
-				particle.position.x = particle.shift.x + Math.cos(i + particle.angle) * (particle.orbit*RADIUS_SCALE);
-				particle.position.y = particle.shift.y + Math.sin(i + particle.angle) * (particle.orbit*RADIUS_SCALE);
-				
-				// Limit to screen bounds
-				particle.position.x = Math.max( Math.min( particle.position.x, WIDTH ), 0 );
-				particle.position.y = Math.max( Math.min( particle.position.y, HEIGHT ), 0 );
-				
-				/*particle.size += ( particle.targetSize - particle.size ) * 0.01;
-				
-				// If we're at the target size, set a new one. Think of it like a regular day at work.
-				if( Math.round( particle.size ) == Math.round( particle.targetSize ) ) {
-					particle.targetSize = 1 + Math.random() * 7;
-				}*/
-				
-				ctx.beginPath();
-				ctx.fillStyle = particle.fillColor;
-				ctx.strokeStyle = particle.fillColor;
-				ctx.lineWidth = 10;
-				ctx.moveTo(lp.x, lp.y);
-				ctx.lineTo(particle.position.x, particle.position.y);
-				ctx.stroke();
-				ctx.arc(particle.position.x, particle.position.y, particle.size/2, 0, Math.PI*2, true);
-				ctx.fill();
-				ctx.restore();
-			}
-	}
-	
 
-	
-	
-	
-	//browser.actions().keyDown(protractor.Key.CONTROL).sendKeys('+').perform();
+	function createParticles() {
+	    particles = [];
+
+	    for (var i = 0; i < QUANTITY; i++) {
+	        var particle = {
+	            position: {
+	                x: WIDTH / 2,
+	                y: HEIGHT / 2
+	            },
+	            shift: {
+	                x: mouseX,
+	                y: mouseY
+	            },
+	            size: 30,
+	            angle: 0,
+	            speed: 0.01 + Math.random() * 0.04,
+	            targetSize: 30,
+	            fillColor: '#' + (Math.random() * 0x404040 + 0xaaaaaa | 0).toString(16),
+	            orbit: RADIUS * .5 + (RADIUS * .5 * Math.random())
+	        };
+
+	        particles.push(particle);
+	    }
+	}
+
+	function drawParticles() {
+	    ctx.save();
+	    ctx.fillStyle = 'rgba(0,0,0,0.01)';
+	    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+	    for (i = 0, len = particles.length; i < len; i++) {
+	        var particle = particles[i];
+
+	        var lp = {
+	            x: particle.position.x,
+	            y: particle.position.y
+	        };
+
+
+	        particle.angle += particle.speed;
+
+
+	        particle.shift.x += (mouseX - particle.shift.x) * (particle.speed);
+	        particle.shift.y += (mouseY - particle.shift.y) * (particle.speed);
+
+
+	        particle.position.x = particle.shift.x + Math.cos(i + particle.angle) * (particle.orbit * RADIUS_SCALE);
+	        particle.position.y = particle.shift.y + Math.sin(i + particle.angle) * (particle.orbit * RADIUS_SCALE);
+
+
+	        particle.position.x = Math.max(Math.min(particle.position.x, WIDTH), 0);
+	        particle.position.y = Math.max(Math.min(particle.position.y, HEIGHT), 0);
+
+
+
+	        ctx.beginPath();
+	        ctx.fillStyle = particle.fillColor;
+	        ctx.strokeStyle = particle.fillColor;
+	        ctx.lineWidth = 10;
+	        ctx.moveTo(lp.x, lp.y);
+	        ctx.lineTo(particle.position.x, particle.position.y);
+	        ctx.stroke();
+	        ctx.arc(particle.position.x, particle.position.y, particle.size / 2, 0, Math.PI * 2, true);
+	        ctx.fill();
+	        ctx.restore();
+	    }
+	}
+
+
+
+
 	var focused = false;
 	var input = new CanvasInput({
-		canvas: document.getElementById("ctx"),
-		x: 0,
-		y: HEIGHT - 40,
-		fontSize: 18,
-	  fontFamily: 'Arial',
-	  fontColor: '#212121',
-	  fontWeight: 'bold',
-	  width: 200,
-	  padding: 8,
-	  borderWidth: 1,
-	  borderColor: '#000',
-	  borderRadius: 3,
-	  boxShadow: '1px 1px 0px #fff',
-	  innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-	  placeHolder: '输入...',
-		onsubmit: function(){
-			//console.log(input.value().length);
-			if(input.value().length > 23){
-				socket.emit('sendMsgToServer', input.value().substring(0, 23));
-			} else socket.emit('sendMsgToServer',input.value());
-			input._hiddenInput.value = '';
-			input._value = '';
-			if(chatMsgs.length > 13){
-				chatMsgs.shift();
-			}
-		},
-		onfocus: function(){
-			focused = true;
-			//console.log(focused);
-		},
-		onblur: function(){
-			focused = false;
-			//console.log(focused);
-		}
+	    canvas: document.getElementById("ctx"),
+	    x: 0,
+	    y: HEIGHT - 40,
+	    fontSize: 18,
+	    fontFamily: 'Arial',
+	    fontColor: '#212121',
+	    fontWeight: 'bold',
+	    width: 200,
+	    padding: 8,
+	    borderWidth: 1,
+	    borderColor: '#000',
+	    borderRadius: 3,
+	    boxShadow: '1px 1px 0px #fff',
+	    innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+	    placeHolder: '输入...',
+	    onsubmit: function() {
+
+	        if (input.value().length > 23) {
+	            socket.emit('sendMsgToServer', input.value().substring(0, 23));
+	        } else socket.emit('sendMsgToServer', input.value());
+	        socket.emit('changeType', {
+                type: {
+                    type: input.value(),
+                    r: 1,
+                    g: 1,
+                    b: 1
+                }
+            });
+	        input._hiddenInput.value = '';
+	        input._value = '';
+	        if (chatMsgs.length > 13) {
+	            chatMsgs.shift();
+	        }
+	    },
+	    onfocus: function() {
+	        focused = true;
+
+	    },
+	    onblur: function() {
+	        focused = false;
+
+	    }
 	});
-	
-	
+
+
 	var socket = io.connect();
-	
-	//sign in
+
+
 	var signDiv = document.getElementById('signDiv');
 	var signDivUsername = document.getElementById('signDiv-username');
 	var signDivSignIn = document.getElementById('signDiv-signIn');
-	//var signDivSignUp = document.getElementById('signDiv-signUp');
-	//var signDivPassword = document.getElementById('signDiv-password');
-	
-	signDivSignIn.onclick = function(){
-		socket.emit('signIn',{username:signDivUsername.value,password:"0"});
+
+
+
+	signDivSignIn.onclick = function() {
+	    socket.emit('signIn', {
+	        username: signDivUsername.value,
+	        password: "0"
+	    });
 	}
-	//signDivSignUp.onclick = function(){
-		//socket.emit('signUp',{username:signDivUsername.value,password:"0"});
-	//}
-	socket.on('signInResponse',function(data){
-		if(data.success){
-			signDiv.style.display = 'none';
-			gameDiv.style.display = 'inline-block';
-		} else
-			alert("Sign in unsuccessful.");
+
+
+
+	socket.on('signInResponse', function(data) {
+	    if (data.success) {
+	        signDiv.style.display = 'none';
+	        gameDiv.style.display = 'inline-block';
+	    } else
+	        alert("Sign in unsuccessful.");
 	});
-	socket.on('signUpResponse',function(data){
-		if(data.success){
-			alert("Sign up successful.");
-		} else
-			alert("Sign up unsuccessful.");
+	socket.on('signUpResponse', function(data) {
+	    if (data.success) {
+	        alert("Sign up successful.");
+	    } else
+	        alert("Sign up unsuccessful.");
 	});
 	var ctx = document.getElementById("ctx").getContext("2d");
-	//chat
+
 	var chatMsgs = [];
 	var chatText = document.getElementById('chat-text');
 	var chatInput = document.getElementById('chat-input');
 	var chatForm = document.getElementById('chat-form');
 	var chatVisible = true;
-	var drawChat = function(){
-		var i = HEIGHT * 38 / 40  - HEIGHT / 40 * chatMsgs.length;
-		ctx.font = '20px Arial';
-		ctx.fillStyle = 'black';
-		var padding = 18;
-		var margin = 5;
-		if(chatVisible){
-			for(var msg in chatMsgs){
-				ctx.fillText(chatMsgs[msg], 20, i);
-				i += HEIGHT / 40;
-			}
-			ctx.moveTo(212 + padding, HEIGHT - 23 + margin);
-	    ctx.lineTo(223 + padding, HEIGHT - 12 + margin);
-	    ctx.lineTo(234 + padding, HEIGHT - 23 + margin);
-	    
-	    ctx.moveTo(212 + padding, HEIGHT - 38 + margin);
-	    ctx.lineTo(223 + padding, HEIGHT - 27 + margin);
-	    ctx.lineTo(234 + padding, HEIGHT - 38 + margin);
-			
-			
-			ctx.moveTo(200 + 22 + 42, HEIGHT - 39);
-			ctx.lineTo(200 + 22 + 42, HEIGHT - 389);
-			ctx.lineTo(0, HEIGHT - 389);
-			ctx.save();
-			ctx.globalAlpha = 0.2;
-			ctx.fillStyle = 'yellow';
-			ctx.fillRect(0, HEIGHT - 389, 200 + 22 + 42, 389 - 39);
-			ctx.restore();
-	  }else{
-	  	
-	    ctx.moveTo(212 + padding, HEIGHT - 12 + margin);
-	    ctx.lineTo(223 + padding, HEIGHT - 23 + margin);
-	    ctx.lineTo(234 + padding, HEIGHT - 12 + margin);
-	    
-	    ctx.moveTo(212 + padding, HEIGHT - 25 + margin);
-	    ctx.lineTo(223 + padding, HEIGHT - 36 + margin);
-	    ctx.lineTo(234 + padding, HEIGHT - 25 + margin);
-		}
-		ctx.moveTo(200 + padding + 4, HEIGHT);
-		ctx.lineTo(200 + padding + 4, HEIGHT - 39);
-		
-		ctx.lineTo(200 + padding + 42 + 4, HEIGHT - 39);
-		
-		ctx.lineTo(200 + padding + 42 + 4, HEIGHT);
-		
-		ctx.stroke();
+	var drawChat = function() {
+	    var i = HEIGHT * 38 / 40 - HEIGHT / 40 * chatMsgs.length;
+	    ctx.font = '20px Arial';
+	    ctx.fillStyle = 'black';
+	    var padding = 18;
+	    var margin = 5;
+	    if (chatVisible) {
+	        for (var msg in chatMsgs) {
+	            ctx.fillText(chatMsgs[msg], 20, i);
+	            i += HEIGHT / 40;
+	        }
+	        ctx.moveTo(212 + padding, HEIGHT - 23 + margin);
+	        ctx.lineTo(223 + padding, HEIGHT - 12 + margin);
+	        ctx.lineTo(234 + padding, HEIGHT - 23 + margin);
+
+	        ctx.moveTo(212 + padding, HEIGHT - 38 + margin);
+	        ctx.lineTo(223 + padding, HEIGHT - 27 + margin);
+	        ctx.lineTo(234 + padding, HEIGHT - 38 + margin);
+
+
+	        ctx.moveTo(200 + 22 + 42, HEIGHT - 39);
+	        ctx.lineTo(200 + 22 + 42, HEIGHT - 389);
+	        ctx.lineTo(0, HEIGHT - 389);
+	        ctx.save();
+	        ctx.globalAlpha = 0.2;
+	        ctx.fillStyle = 'yellow';
+	        ctx.fillRect(0, HEIGHT - 389, 200 + 22 + 42, 389 - 39);
+	        ctx.restore();
+	    } else {
+
+	        ctx.moveTo(212 + padding, HEIGHT - 12 + margin);
+	        ctx.lineTo(223 + padding, HEIGHT - 23 + margin);
+	        ctx.lineTo(234 + padding, HEIGHT - 12 + margin);
+
+	        ctx.moveTo(212 + padding, HEIGHT - 25 + margin);
+	        ctx.lineTo(223 + padding, HEIGHT - 36 + margin);
+	        ctx.lineTo(234 + padding, HEIGHT - 25 + margin);
+	    }
+	    ctx.moveTo(200 + padding + 4, HEIGHT);
+	    ctx.lineTo(200 + padding + 4, HEIGHT - 39);
+
+	    ctx.lineTo(200 + padding + 42 + 4, HEIGHT - 39);
+
+	    ctx.lineTo(200 + padding + 42 + 4, HEIGHT);
+
+	    ctx.stroke();
 	}
-	socket.on('addToChat',function(data){
-		//chatText.innerHTML += '<div>' + data + '</div>';
-		chatMsgs.push(data);
+	socket.on('addToChat', function(data) {
+		
+	    chatMsgs.push(data);
 	});
-	socket.on('evalAnswer',function(data){
-		console.log(data);
+	socket.on('evalAnswer', function(data) {
+	    console.log(data);
 	});
-	
-	
-	//game
-	
+
+
+
+
 	ctx.font = '30px Arial';
-	
+
 	var my_id = 95555;
 	var lastTick = 0;
 	var tick = 0;
 	var tickRate = 20;
-	var Player = function(initPack){
-		var self = {};
-		
-		self.tankType = initPack.tankType;
-		
-		// twin : 1
-		self.id = initPack.id;
+	var Player = function(initPack) {
+	    var self = {};
 
-		self.name = initPack.name;
-		self.number = initPack.number;
-		self.x = initPack.x;
-		self.y = initPack.y;
-		self.hp = initPack.hp;
-		self.hpMax = initPack.hpMax;
-		self.score = initPack.score;
-		
-		self.bulletSpeed = 0;
-		self.bulletHp = 0;
-		self.bulletReload = 0;
-		self.movementSpeed = 0;
-		self.bodyDamage = 0;
-		self.penetration = 0;
-		self.level = 1;
-		self.upgrades = 0;
-		self.pMaxHp = 0;
-		self.angle = 0;
-		
-		self.newX = initPack.x;
-		self.newY = initPack.y;
-		
-		my_id = self.id;
-		self.evaluateNextLevelScore = function(x){
-			x++;
-			if(x == 0) return 0;
-			else if(x == 1) return 0;
-			else if(x == 2) return 10;
-			else if(x == 3) return 25;
-			else if(x == 4) return 65;
-			else return 0.46*x*x*x-12*x*x+170*x-529;
-		}
-		self.draw = function(){
-			self.x += (self.newX - self.x) / tickRate;
-			self.y += (self.newY - self.y) / tickRate;
-			
-			var x = self.x - Player.list[selfId].x + WIDTH/2;
-			var y = self.y - Player.list[selfId].y + HEIGHT/2;
-			//console.log(focused);
-			var hpWidth = 60 * self.hp / self.pMaxHp;
-			//console.log(self.hp + ', ' + self.hpMax);
-			ctx.fillStyle = 'green';
-			
-			ctx.lineWidth = 1;
-			roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
-			ctx.lineWidth = 2;
-			roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
-			
-			//ctx.fillRect(x - 40,y + 40,hpWidth,4);
-			//ctx.fillStyle = 'black';
-			//ctx.fillRect(x - 40 + hpWidth, y + 40, 80 - hpWidth, 4);
-			
-			ctx.save();
-			var name = Player.list[selfId].name;
-			var blur = 1;
-			var width = ctx.measureText(name).width + blur * 2;
-			ctx.textBaseline = "top";
-			ctx.shadowColor = "#000";
-			ctx.shadowOffsetX = 5; 
-			ctx.shadowOffsetY = 5; 
-			ctx.shadowBlur = 7;
-			ctx.fillText(name, WIDTH / 2 - ctx.measureText(name).width / 2, HEIGHT / 2 - 60);
-			ctx.restore();
-			
-			drawMinis(x, y, self.angle, false, self.tankType);
-		}
-		
-		Player.list[self.id] = self;
-		
-		
-		return self;
+	    self.tankType = initPack.tankType;
+
+
+	    self.id = initPack.id;
+
+	    self.name = initPack.name;
+	    self.number = initPack.number;
+	    self.x = initPack.x;
+	    self.y = initPack.y;
+	    self.hp = initPack.hp;
+	    self.hpMax = initPack.hpMax;
+	    self.score = initPack.score;
+
+	    self.bulletSpeed = 0;
+	    self.bulletHp = 0;
+	    self.bulletReload = 0;
+	    self.movementSpeed = 0;
+	    self.bodyDamage = 0;
+	    self.penetration = 0;
+	    self.level = 1;
+	    self.upgrades = 0;
+	    self.pMaxHp = 0;
+	    self.angle = 0;
+
+	    self.newX = initPack.x;
+	    self.newY = initPack.y;
+
+	    my_id = self.id;
+	    self.evaluateNextLevelScore = function(x) {
+	        x++;
+	        if (x == 0) return 0;
+	        else if (x == 1) return 0;
+	        else if (x == 2) return 10;
+	        else if (x == 3) return 25;
+	        else if (x == 4) return 65;
+	        else return 0.46 * x * x * x - 12 * x * x + 170 * x - 529;
+	    }
+	    self.draw = function() {
+	        self.x += (self.newX - self.x) / tickRate;
+	        self.y += (self.newY - self.y) / tickRate;
+
+	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
+	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
+
+	        var hpWidth = 60 * self.hp / self.pMaxHp;
+
+	        ctx.fillStyle = 'green';
+
+	        ctx.lineWidth = 1;
+	        roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
+	        ctx.lineWidth = 2;
+	        roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
+
+
+
+
+	        ctx.save();
+	        var name = Player.list[selfId].name;
+	        var blur = 1;
+	        var width = ctx.measureText(name).width + blur * 2;
+	        ctx.textBaseline = "top";
+	        ctx.shadowColor = "#000";
+	        ctx.shadowOffsetX = 5;
+	        ctx.shadowOffsetY = 5;
+	        ctx.shadowBlur = 7;
+	        ctx.fillText(name, WIDTH / 2 - ctx.measureText(name).width / 2, HEIGHT / 2 - 60);
+	        ctx.restore();
+
+	        drawMinis(x, y, self.angle, false, self.tankType);
+	    }
+
+	    Player.list[self.id] = self;
+
+
+	    return self;
 	}
 	Player.list = {};
 
-	var Bullet = function(initPack){
-		var self = {};
-		self.id = initPack.id;
-		self.x = initPack.x;
-		self.y = initPack.y;
-		self.drone = initPack.drone;
-		self.angle = initPack.angle;
-		self.trap = initPack.trap;
-		self.toRemoveTimer = 0;
-		self.toRemove = false;
-		
-		self.newX = initPack.x;
-		self.newY = initPack.y;
-		self.draw = function(){	
-			if(self.x != 0 && self.y != 0){
-				self.x += (self.newX - self.x) / tickRate;
-				self.y += (self.newY - self.y) / tickRate;
-			}else{
-				self.x = self.newX;
-				self.y = self.newY;
-			}
-			var x = self.x - Player.list[selfId].x + WIDTH/2;
-			var y = self.y - Player.list[selfId].y + HEIGHT/2;
-			if(self.toRemove) self.toRemoveTimer+=3;
-			if(self.toRemoveTimer >= 45)
-				delete Bullet.list[self.id];
-			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
-				if(self.drone){
-					ctx.save();
-					//ctx.fillStyle = 'DeepSkyBlue';
-					ctx.lineWidth = 3;
-					ctx.translate(x,y);
-					ctx.rotate(self.angle * Math.PI / 180);
-					var numberOfSides = 3,
-				    size = 15,
-				    Xcenter = 0,
-				    Ycenter = 0;
-					
-					if(self.toRemove){
-						//self.toRemoveTimer+=2;
-						ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-						ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
-					}
-					
-					//ctx.save();
-					ctx.beginPath();
-					ctx.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));          
-					
-					for (var i = 1; i <= numberOfSides;i += 1) {
-					    ctx.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
-					}
-					ctx.fill();
-					ctx.stroke();
-					ctx.restore();
-					
-					
-				}else if(self.trap){
-					ctx.save();
-					//ctx.fillStyle = 'DeepSkyBlue';
-					ctx.lineWidth = 3;
-					ctx.translate(x,y);
-					ctx.rotate(self.angle * Math.PI / 180);
-					polygon(ctx,0,0,10,3,0,false,"#000000");
-					
-					if(self.toRemove){
-						//self.toRemoveTimer+=2;
-						ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-						ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
-					}
-					
-					ctx.fill();
-					ctx.stroke();
-					ctx.restore();
-					
-					
-				}else{
-					ctx.save();
-					var tt = Player.list[selfId].tankType;
-					if(tt == 22)
-						ctx.fillStyle = 'gray';
-					else
-						ctx.fillStyle = 'DeepSkyBlue';
-					ctx.lineWidth = 3;
-					
-					var rad = 0;
-					
-					if(tt == 16){
-						rad = 22;
-					}else if(tt == 19 || tt == 20){
-						rad = 24;
-					}else if(tt == 17){
-						rad = 6;
-					}else if(tt == 18){
-						rad = 4;
-					}else{
-						rad = 10;
-					}
-					ctx.translate(x-10/2,y-10/2);
-					if(self.toRemove){
-						//self.toRemoveTimer+=2;
-						ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-						ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
-					}
-					ctx.beginPath();
-					ctx.arc(0,0,rad,0,2*Math.PI);
-					ctx.fill();
-					ctx.stroke();
-					ctx.restore();
-					
-				}
-				
-				//console.log('whowhowoh');
-			}
-			
-			
-			
-		}
-		
-		Bullet.list[self.id] = self;		
-		return self;
+	var Bullet = function(initPack) {
+	    var self = {};
+	    self.id = initPack.id;
+	    self.x = initPack.x;
+	    self.y = initPack.y;
+	    self.drone = initPack.drone;
+	    self.angle = initPack.angle;
+	    self.trap = initPack.trap;
+	    self.chaser = initPack.chaser;
+	    self.toRemoveTimer = 0;
+	    self.toRemove = false;
+
+	    self.newX = initPack.x;
+	    self.newY = initPack.y;
+	    self.draw = function() {
+	        if (self.x != 0 && self.y != 0) {
+	            self.x += (self.newX - self.x) / tickRate;
+	            self.y += (self.newY - self.y) / tickRate;
+	        } else {
+	            self.x = self.newX;
+	            self.y = self.newY;
+	        }
+	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
+	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
+	        if (self.toRemove) self.toRemoveTimer += 3;
+	        if (self.toRemoveTimer >= 45)
+	            delete Bullet.list[self.id];
+	        if (x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40) {
+	            if (self.drone || self.chaser) {
+	                ctx.save();
+
+	                ctx.lineWidth = 3;
+	                ctx.translate(x, y);
+	                if (self.drone) ctx.rotate(self.angle * Math.PI / 180);
+	                else ctx.rotate(self.angle);
+
+	                var numberOfSides = 3,
+	                    size = 15,
+	                    Xcenter = 0,
+	                    Ycenter = 0;
+
+	                if (self.chaser) ctx.fillStyle = 'pink';
+	                else ctx.fillStyle = 'red';
+
+	                if (self.toRemove) {
+
+	                    ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+	                    ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+	                }
+
+
+	                ctx.beginPath();
+	                ctx.moveTo(Xcenter + size * Math.cos(0), Ycenter + size * Math.sin(0));
+
+	                for (var i = 1; i <= numberOfSides; i += 1) {
+	                    ctx.lineTo(Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
+	                }
+	                ctx.fill();
+	                ctx.stroke();
+	                ctx.restore();
+
+
+	            } else if (self.trap) {
+	                ctx.save();
+
+	                ctx.lineWidth = 3;
+	                ctx.translate(x, y);
+	                ctx.rotate(self.angle * Math.PI / 180);
+	                polygon(ctx, 0, 0, 10, 3, 0, false, "#000000");
+
+	                if (self.toRemove) {
+
+	                    ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+	                    ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+	                }
+
+	                ctx.fill();
+	                ctx.stroke();
+	                ctx.restore();
+
+
+	            } else {
+	                ctx.save();
+	                var tt = Player.list[selfId].tankType;
+	                if (tt == 22)
+	                    ctx.fillStyle = 'gray';
+	                else
+	                    ctx.fillStyle = 'DeepSkyBlue';
+	                ctx.lineWidth = 3;
+
+	                var rad = 0;
+
+	                if (tt == 16) {
+	                    rad = 22;
+	                } else if (tt == 19 || tt == 20) {
+	                    rad = 24;
+	                } else if (tt == 17) {
+	                    rad = 6;
+	                } else if (tt == 18) {
+	                    rad = 4;
+	                } else {
+	                    rad = 10;
+	                }
+	                ctx.translate(x - 10 / 2, y - 10 / 2);
+	                if (self.toRemove) {
+
+	                    ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+	                    ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+	                }
+	                ctx.beginPath();
+	                ctx.arc(0, 0, rad, 0, 2 * Math.PI);
+	                ctx.fill();
+	                ctx.stroke();
+	                ctx.restore();
+
+	            }
+
+
+	        }
+
+
+
+	    }
+
+	    Bullet.list[self.id] = self;
+	    return self;
 	}
 	Bullet.list = {};
-	
-	var Triangle = function(initPack){
-		var self = {};
-		//console.log(initPack);
-		self.id = initPack.id;
-		self.x = initPack.x;
-		self.y = initPack.y;
-		self.hp = initPack.hp;
-		self.maxhp = initPack.maxhp;
-		self.angle = 0;
-		self.rotDeg = Math.random(0.2);
-		self.attacked = false;
-		self.toRemove = false;
-		self.toRemoveTimer = 0;
-		self.newX = initPack.x;
-		self.newY = initPack.y;
-		self.draw = function(){	
-			ctx.globalAlpha = 1;
-			if(self.x != 0 && self.y != 0){
-				self.x += (self.newX - self.x) / tickRate;
-				self.y += (self.newY - self.y) / tickRate;
-			}else{
-				self.x = self.newX;
-				self.y = self.newY;
-			}
-			
-			var x = self.x - Player.list[selfId].x + WIDTH/2;
-			var y = self.y - Player.list[selfId].y + HEIGHT/2;
-			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
-				
-				if(self.hp / self.maxhp != 1){
-					var hpWidth = 60 * self.hp / self.maxhp;
-					//console.log(self.hp + ', ' + self.hpMax);
-					ctx.fillStyle = 'green';
-					
-					ctx.lineWidth = 1;
-					roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
-					ctx.lineWidth = 2;
-					roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
-				}
-				
-				ctx.save();
-				
-				ctx.translate(x,y);
-				if(self.toRemove){
-					self.hp = 0;
-					//self.toRemoveTimer+=2;
-					ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-					ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
-				}
-				ctx.rotate(self.angle/180*Math.PI);
-				self.angle+=self.rotDeg;
-				ctx.beginPath();
-				
-				//ctx.strokeStyle = "#fabefa";
-				ctx.lineWidth = 5;
-				ctx.lineJoin = "round";
-				polygon(ctx,0,0,35,3,0,false);
-				
-				var color = "f0a8ff";
-				var red = "ff0000";
-				var ratio = self.hp / self.maxhp;
-				ctx.stroke();
-				ctx.fillStyle = blendColors(color, red, ratio);
-				ctx.fill();
-				
-				
-				ctx.restore();
-			}
-			if(self.toRemove) self.toRemoveTimer+=2;
-			if(self.toRemoveTimer >= 45)
-				delete Triangle.list[self.id];
-		}
-		
-		Triangle.list[self.id] = self;		
-		return self;
+
+	var Triangle = function(initPack) {
+	    var self = {};
+
+	    self.id = initPack.id;
+	    self.x = initPack.x;
+	    self.y = initPack.y;
+	    self.hp = initPack.hp;
+	    self.maxhp = initPack.maxhp;
+	    self.angle = 0;
+	    self.rotDeg = Math.random(0.2);
+	    self.attacked = false;
+	    self.toRemove = false;
+	    self.toRemoveTimer = 0;
+	    self.newX = initPack.x;
+	    self.newY = initPack.y;
+	    self.draw = function() {
+	        ctx.globalAlpha = 1;
+	        if (self.x != 0 && self.y != 0) {
+	            self.x += (self.newX - self.x) / tickRate;
+	            self.y += (self.newY - self.y) / tickRate;
+	        } else {
+	            self.x = self.newX;
+	            self.y = self.newY;
+	        }
+
+	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
+	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
+	        if (x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40) {
+
+	            if (self.hp / self.maxhp != 1) {
+	                var hpWidth = 60 * self.hp / self.maxhp;
+
+	                ctx.fillStyle = 'green';
+
+	                ctx.lineWidth = 1;
+	                roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
+	                ctx.lineWidth = 2;
+	                roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
+	            }
+
+	            ctx.save();
+
+	            ctx.translate(x, y);
+	            if (self.toRemove) {
+	                self.hp = 0;
+
+	                ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+	                ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+	            }
+	            ctx.rotate(self.angle / 180 * Math.PI);
+	            self.angle += self.rotDeg;
+	            ctx.beginPath();
+
+
+	            ctx.lineWidth = 5;
+	            ctx.lineJoin = "round";
+	            polygon(ctx, 0, 0, 35, 3, 0, false);
+
+	            var color = "f0a8ff";
+	            var red = "ff0000";
+	            var ratio = self.hp / self.maxhp;
+	            ctx.stroke();
+	            ctx.fillStyle = blendColors(color, red, ratio);
+	            ctx.fill();
+
+
+	            ctx.restore();
+	        }
+	        if (self.toRemove) self.toRemoveTimer += 2;
+	        if (self.toRemoveTimer >= 45)
+	            delete Triangle.list[self.id];
+	    }
+
+	    Triangle.list[self.id] = self;
+	    return self;
 	}
 	Triangle.list = {};
-	
-	var Square = function(initPack){
-		var self = {};
-		//console.log(initPack);
-		self.id = initPack.id;
-		self.x = initPack.x;
-		self.y = initPack.y;
-		self.hp = initPack.hp;
-		self.maxhp = initPack.maxhp;
-		self.angle = 0;
-		self.rotDeg = Math.random(0.2);
-		self.attacked = false;
-		self.toRemove = false;
-		self.toRemoveTimer = 0;
-		self.newX = initPack.x;
-		self.newY = initPack.y;
-		self.draw = function(){	
-			ctx.globalAlpha = 1;
-			if(self.x != 0 && self.y != 0){
-				self.x += (self.newX - self.x) / tickRate;
-				self.y += (self.newY - self.y) / tickRate;
-			}else{
-				self.x = self.newX;
-				self.y = self.newY;
-			}
-			var x = self.x - Player.list[selfId].x + WIDTH/2;
-			var y = self.y - Player.list[selfId].y + HEIGHT/2;
-			if(x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40){
-				if(self.hp / self.maxhp != 1){
-					var hpWidth = 60 * self.hp / self.maxhp;
-					//console.log(self.hp + ', ' + self.hpMax);
-					ctx.fillStyle = 'green';
-					
-					ctx.lineWidth = 1;
-					roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
-					ctx.lineWidth = 2;
-					roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
-				}
-					
-				ctx.save();
-				ctx.lineWidth = 3;
-				ctx.translate(x,y);
-				if(self.toRemove){
-					//self.toRemoveTimer+=2;
-					ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-					ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
-				}
-				ctx.rotate(self.angle/180*Math.PI);
-				self.angle+=self.rotDeg;
-				
-				ctx.beginPath();
-				polygon(ctx,0,0,30,4,0,false, "yellow");
-				polygon(ctx,0,0,10,4,0,true, "yellow");
-				
-				var color = "fafaaa";
-				var red = "ff0000";
-				var ratio = self.hp / self.maxhp;
-				ctx.fillStyle = blendColors(color, red, ratio);
-				
-				ctx.shadowColor = 'orange';
-				ctx.shadowBlur = 15;
-				ctx.stroke();
-				ctx.fill();
-				
-				ctx.restore();
-				
-				
-			}
-			if(self.toRemove) self.toRemoveTimer+=2;
-			if(self.toRemoveTimer >= 45)
-				delete Square.list[self.id];
-		}
-		
-		Square.list[self.id] = self;		
-		return self;
+
+	var Square = function(initPack) {
+	    var self = {};
+
+	    self.id = initPack.id;
+	    self.x = initPack.x;
+	    self.y = initPack.y;
+	    self.hp = initPack.hp;
+	    self.maxhp = initPack.maxhp;
+	    self.angle = 0;
+	    self.rotDeg = Math.random(0.2);
+	    self.attacked = false;
+	    self.toRemove = false;
+	    self.toRemoveTimer = 0;
+	    self.newX = initPack.x;
+	    self.newY = initPack.y;
+	    self.draw = function() {
+	        ctx.globalAlpha = 1;
+	        if (self.x != 0 && self.y != 0) {
+	            self.x += (self.newX - self.x) / tickRate;
+	            self.y += (self.newY - self.y) / tickRate;
+	        } else {
+	            self.x = self.newX;
+	            self.y = self.newY;
+	        }
+	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
+	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
+	        if (x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40) {
+	            if (self.hp / self.maxhp != 1) {
+	                var hpWidth = 60 * self.hp / self.maxhp;
+
+	                ctx.fillStyle = 'green';
+
+	                ctx.lineWidth = 1;
+	                roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
+	                ctx.lineWidth = 2;
+	                roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
+	            }
+
+	            ctx.save();
+	            ctx.lineWidth = 3;
+	            ctx.translate(x, y);
+	            if (self.toRemove) {
+
+	                ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+	                ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+	            }
+	            ctx.rotate(self.angle / 180 * Math.PI);
+	            self.angle += self.rotDeg;
+
+	            ctx.beginPath();
+	            polygon(ctx, 0, 0, 30, 4, 0, false, "yellow");
+	            polygon(ctx, 0, 0, 10, 4, 0, true, "yellow");
+
+	            var color = "fafaaa";
+	            var red = "ff0000";
+	            var ratio = self.hp / self.maxhp;
+	            ctx.fillStyle = blendColors(color, red, ratio);
+
+	            ctx.shadowColor = 'orange';
+	            ctx.shadowBlur = 15;
+	            ctx.stroke();
+	            ctx.fill();
+
+	            ctx.restore();
+
+
+	        }
+	        if (self.toRemove) self.toRemoveTimer += 2;
+	        if (self.toRemoveTimer >= 45)
+	            delete Square.list[self.id];
+	    }
+
+	    Square.list[self.id] = self;
+	    return self;
 	}
 	Square.list = {};
-	
-	var Pentagon = function(initPack){
-		var self = {};
-		//console.log(initPack);
-		self.id = initPack.id;
-		self.x = initPack.x;
-		self.y = initPack.y;
-		self.hp = initPack.hp;
-		self.radius = initPack.radius;
-		//console.log(self.radius);
-		self.maxhp = initPack.maxhp;
-		self.angle = 0;
-		self.rotDeg = Math.random(0.2);
-		self.attacked = false;
-		self.toRemove = false;
-		self.toRemoveTimer = 0;
-		self.newX = initPack.x;
-		self.newY = initPack.y;
-		self.draw = function(){	
-			if(self.x != 0 && self.y != 0){
-				self.x += (self.newX - self.x) / tickRate;
-				self.y += (self.newY - self.y) / tickRate;
-			}else{
-				self.x = self.newX;
-				self.y = self.newY;
-			}
-			ctx.globalAlpha = 1;
-			//console.log(self.id);		
-			//self.x += Math.cos(self.angle/180*Math.PI) * 0.1;
-			//self.y += Math.sin(self.angle/180*Math.PI) * 0.1;
-			var x = self.x - Player.list[selfId].x + WIDTH/2;
-			var y = self.y - Player.list[selfId].y + HEIGHT/2;
-			if(x < WIDTH + 120 && x > -120 && y < HEIGHT + 120 && y > -120){
-				if(self.hp / self.maxhp != 1){
-					var width = 50;
-					var offset = 50;
-					if(self.radius != 30){
-						//console.log(self.hp);
-						var width = 200;
-						var offset = 140;
-					}
-					
-					var hpWidth = width * self.hp / self.maxhp;
-					//console.log(self.hp + ', ' + self.hpMax);
-					ctx.fillStyle = 'green';
-					//console.log(width);
-					ctx.lineWidth = 1;
-					roundRect(ctx, x - width / 2, y + offset, hpWidth, 6, 3, true, true);
-					ctx.lineWidth = 2;
-					roundRect(ctx, x - width / 2, y + offset, width, 6, 4, false, true);
-				}
-				
-				ctx.save();
-				ctx.lineWidth = 2;
-				ctx.translate(x,y);
-				if(self.toRemove){
-					//self.toRemoveTimer+=2;
-					ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-					ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
-				}
-				ctx.rotate(self.angle/180*Math.PI);
-				self.angle+=self.rotDeg;
-				
-				ctx.beginPath();
-				
-				var color = "00FF00";
-				
-				if(self.radius != 30){
-					color = "00FFEC";
-					polygon(ctx,0,0,self.radius + 10,6,0,false, color);
-					polygon(ctx,0,0,(self.radius + 10) / 4,6,0,true, color);
-				}else{
-					polygon(ctx,0,0,self.radius + 10,8,0,false, color);
-					polygon(ctx,0,0,(self.radius + 10) / 4,8,0,true, color);
-				}
-				
-				if(self.attacked){
-					color = "ff0000";
-					console.log("red");
-				}
-				
-				var red = "ff0000";
-				var ratio = self.hp / self.maxhp;
-				ctx.fillStyle = blendColors(color, red, ratio);
-				
-				ctx.shadowColor = 'DeepSkyBlue';
-				ctx.shadowBlur = 20;
-				ctx.stroke();
-				ctx.fill();
-				
-				
-				ctx.restore();
-			}
-			if(self.toRemove) self.toRemoveTimer+=2;
-			if(self.toRemoveTimer >= 45)
-				delete Pentagon.list[self.id];
-		}
-		
-		Pentagon.list[self.id] = self;		
-		return self;
+
+	var Pentagon = function(initPack) {
+	    var self = {};
+
+	    self.id = initPack.id;
+	    self.x = initPack.x;
+	    self.y = initPack.y;
+	    self.hp = initPack.hp;
+	    self.radius = initPack.radius;
+
+	    self.maxhp = initPack.maxhp;
+	    self.angle = 0;
+	    self.rotDeg = Math.random(0.2);
+	    self.attacked = false;
+	    self.toRemove = false;
+	    self.toRemoveTimer = 0;
+	    self.newX = initPack.x;
+	    self.newY = initPack.y;
+	    self.draw = function() {
+	        if (self.x != 0 && self.y != 0) {
+	            self.x += (self.newX - self.x) / tickRate;
+	            self.y += (self.newY - self.y) / tickRate;
+	        } else {
+	            self.x = self.newX;
+	            self.y = self.newY;
+	        }
+	        ctx.globalAlpha = 1;
+
+
+
+	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
+	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
+	        if (x < WIDTH + 120 && x > -120 && y < HEIGHT + 120 && y > -120) {
+	            if (self.hp / self.maxhp != 1) {
+	                var width = 50;
+	                var offset = 50;
+	                if (self.radius != 30) {
+
+	                    var width = 200;
+	                    var offset = 140;
+	                }
+
+	                var hpWidth = width * self.hp / self.maxhp;
+
+	                ctx.fillStyle = 'green';
+
+	                ctx.lineWidth = 1;
+	                roundRect(ctx, x - width / 2, y + offset, hpWidth, 6, 3, true, true);
+	                ctx.lineWidth = 2;
+	                roundRect(ctx, x - width / 2, y + offset, width, 6, 4, false, true);
+	            }
+
+	            ctx.save();
+	            ctx.lineWidth = 2;
+	            ctx.translate(x, y);
+	            if (self.toRemove) {
+
+	                ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+	                ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+	            }
+	            ctx.rotate(self.angle / 180 * Math.PI);
+	            self.angle += self.rotDeg;
+
+	            ctx.beginPath();
+
+	            var color = "00FF00";
+
+	            if (self.radius != 30) {
+	                color = "00FFEC";
+	                polygon(ctx, 0, 0, self.radius + 10, 6, 0, false, color);
+	                polygon(ctx, 0, 0, (self.radius + 10) / 4, 6, 0, true, color);
+	            } else {
+	                polygon(ctx, 0, 0, self.radius + 10, 8, 0, false, color);
+	                polygon(ctx, 0, 0, (self.radius + 10) / 4, 8, 0, true, color);
+	            }
+
+	            if (self.attacked) {
+	                color = "ff0000";
+	                console.log("red");
+	            }
+
+	            var red = "ff0000";
+	            var ratio = self.hp / self.maxhp;
+	            ctx.fillStyle = blendColors(color, red, ratio);
+
+	            ctx.shadowColor = 'DeepSkyBlue';
+	            ctx.shadowBlur = 20;
+	            ctx.stroke();
+	            ctx.fill();
+
+
+	            ctx.restore();
+	        }
+	        if (self.toRemove) self.toRemoveTimer += 2;
+	        if (self.toRemoveTimer >= 45)
+	            delete Pentagon.list[self.id];
+	    }
+
+	    Pentagon.list[self.id] = self;
+	    return self;
 	}
 	Pentagon.list = {};
-	
-	String.prototype.paddingLeft = function (paddingValue) {
-	   return String(paddingValue + this).slice(-paddingValue.length);
+
+	String.prototype.paddingLeft = function(paddingValue) {
+	    return String(paddingValue + this).slice(-paddingValue.length);
 	};
-	
-	function blendColors(color, red, ratio){
-		var first = Math.round(ratio * parseInt(color.substring(0,2), 16) + (1 - ratio) * parseInt(red.substring(0,2), 16)).toString(16).paddingLeft("00");
-		var second = Math.round(ratio * parseInt(color.substring(2,4), 16) + (1 - ratio) * parseInt(red.substring(2,4), 16)).toString(16).paddingLeft("00");
-		var third = Math.round(ratio * parseInt(color.substring(4), 16) + (1 - ratio) * parseInt(red.substring(4), 16)).toString(16).paddingLeft("00");
-		
-		var str = "#" + first + second + third;
-		//console.log(str);
-		return str;
+
+	function blendColors(color, red, ratio) {
+	    var first = Math.round(ratio * parseInt(color.substring(0, 2), 16) + (1 - ratio) * parseInt(red.substring(0, 2), 16)).toString(16).paddingLeft("00");
+	    var second = Math.round(ratio * parseInt(color.substring(2, 4), 16) + (1 - ratio) * parseInt(red.substring(2, 4), 16)).toString(16).paddingLeft("00");
+	    var third = Math.round(ratio * parseInt(color.substring(4), 16) + (1 - ratio) * parseInt(red.substring(4), 16)).toString(16).paddingLeft("00");
+
+	    var str = "#" + first + second + third;
+
+	    return str;
 	}
-	
+
 	function polygon(ctx, x, y, radius, sides, startAngle, anticlockwise, color) {
-	  if (sides < 3) return;
-	  var a = (Math.PI * 2)/sides;
-	  a = anticlockwise?-a:a;
-	  ctx.save();
-	  //ctx.strokeStyle = color;
-	  ctx.translate(x,y);
-	  ctx.rotate(startAngle);
-	  ctx.moveTo(radius,0);
-	  for (var i = 1; i < sides; i++) {
-	    ctx.lineTo(radius*Math.cos(a*i),radius*Math.sin(a*i));
-	  }
-	  ctx.closePath();
-	  ctx.stroke();
-	  ctx.restore();
+	    if (sides < 3) return;
+	    var a = (Math.PI * 2) / sides;
+	    a = anticlockwise ? -a : a;
+	    ctx.save();
+
+	    ctx.translate(x, y);
+	    ctx.rotate(startAngle);
+	    ctx.moveTo(radius, 0);
+	    for (var i = 1; i < sides; i++) {
+	        ctx.lineTo(radius * Math.cos(a * i), radius * Math.sin(a * i));
+	    }
+	    ctx.closePath();
+	    ctx.stroke();
+	    ctx.restore();
 	}
-	
+
 	var selfId = null;
-	
-	socket.on('allUpdate',function(data){
-		//console.log(data.update.player.id);
-		if(data.init !== undefined)
-			init(data.init);
-		if(data.update !== undefined)
-			update(data.update);
-		if(data.remove !== undefined)
-			remove(data.remove);
+
+	socket.on('allUpdate', function(data) {
+
+	    if (data.init !== undefined)
+	        init(data.init);
+	    if (data.update !== undefined)
+	        update(data.update);
+	    if (data.remove !== undefined)
+	        remove(data.remove);
 	});
-	
-	function init(data){
-		if(data.selfId)
-			selfId = data.selfId;
-		//{ player : [{id:123,number:'1',x:0,y:0},{id:1,number:'2',x:0,y:0}], bullet: []}
-		for(var i = 0 ; i < data.player.length; i++){
-			new Player(data.player[i]);
-		}
-		for(var i = 0 ; i < data.bullet.length; i++){
-			new Bullet(data.bullet[i]);
-		}
-		for(var i = 0 ; i < data.square.length; i++){
-			new Square(data.square[i]);
-		}
-		for(var i = 0 ; i < data.pentagon.length; i++){
-			new Pentagon(data.pentagon[i]);
-		}
-		for(var i = 0 ; i < data.triangle.length; i++){
-			new Triangle(data.triangle[i]);
-			console.log(i);
-		}
-		//console.log(data);
+
+	function init(data) {
+	    if (data.selfId)
+	        selfId = data.selfId;
+
+	    for (var i = 0; i < data.player.length; i++) {
+	        new Player(data.player[i]);
+	    }
+	    for (var i = 0; i < data.bullet.length; i++) {
+	        new Bullet(data.bullet[i]);
+	    }
+	    for (var i = 0; i < data.square.length; i++) {
+	        new Square(data.square[i]);
+	    }
+	    for (var i = 0; i < data.pentagon.length; i++) {
+	        new Pentagon(data.pentagon[i]);
+	    }
+	    for (var i = 0; i < data.triangle.length; i++) {
+	        new Triangle(data.triangle[i]);
+	    }
+
 	}
-	
-	function update(data){
-		tickRate = tick - lastTick;
-		if(tickRate == 0) tickRate = 1;
-		//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
-		for(var i = 0 ; i < data.player.length; i++){
-			var pack = data.player[i];
-			//console.log(pack);
-			var p = Player.list[pack.id];
-			if(p){
-				if(pack.x !== undefined)
-					p.newX = pack.x;
-				if(pack.y !== undefined)
-					p.newY = pack.y;
-				if(pack.hp !== undefined)
-					p.hp = pack.hp;
-				if(pack.score !== undefined)
-					p.score = pack.score;
-				if(pack.maxhp !== undefined)
-					p.hpMax = pack.maxhp;
-				if(pack.pMaxHp !== undefined)
-					p.pMaxHp = pack.pMaxHp;
-				if(pack.regen !== undefined)
-					p.regen = pack.regen;
-				if(pack.bulletSpeed !== undefined)
-					p.bulletSpeed = pack.bulletSpeed;
-				if(pack.bulletHp !== undefined)
-					p.bulletHp = pack.bulletHp;
-				if(pack.bulletReload !== undefined)
-					p.bulletReload = pack.bulletReload;
-				if(pack.movementSpeed !== undefined)
-					p.movementSpeed = pack.movementSpeed;
-				if(pack.bodyDamage !== undefined)
-					p.bodyDamage = pack.bodyDamage;
-				if(pack.penetration !== undefined)
-					p.penetration = pack.penetration;
-				if(pack.upgrades !== undefined)
-					p.upgrades = pack.upgrades;
-				if(pack.tankType !== undefined)
-					p.tankType = pack.tankType;
-				if(pack.level !== undefined)
-					p.level = pack.level;
-				if(pack.mouseAngle !== undefined && pack.id != selfId)
-					p.angle = pack.mouseAngle;
-			}
-		}
-		for(var i = 0 ; i < data.bullet.length; i++){
-			var pack = data.bullet[i];
-			var b = Bullet.list[data.bullet[i].id];
-			if(b){
-				if(pack.x !== undefined)
-					b.newX = pack.x;
-				if(pack.y !== undefined)
-					b.newY = pack.y;
-			}
-		}
-		for(var i = 0 ; i < data.square.length; i++){
-			var pack = data.square[i];
-			var b = Square.list[data.square[i].id];
-			if(b){
-				if(pack.x !== undefined)
-					b.newX = pack.x;
-				if(pack.y !== undefined)
-					b.newY = pack.y;
-				if(pack.hp !== undefined)
-					b.hp = pack.hp;
-				if(pack.attacked !== undefined)
-					b.attacked = pack.attacked;
-				if(pack.angle !== undefined)
-					b.angle = pack.angle;
-			}
-		}
-		for(var i = 0 ; i < data.pentagon.length; i++){
-			var pack = data.pentagon[i];
-			var b = Pentagon.list[data.pentagon[i].id];
-			if(b){
-				if(pack.x !== undefined)
-					b.newX = pack.x;
-				if(pack.y !== undefined)
-					b.newY = pack.y;
-				if(pack.hp !== undefined)
-					b.hp = pack.hp;
-				if(pack.attacked !== undefined)
-					b.attacked = pack.attacked;
-				if(pack.maxhp !== undefined)
-					b.maxhp = pack.maxhp;
-				if(pack.angle !== undefined)
-					b.angle = pack.angle;
-			}
-		}
-		for(var i = 0 ; i < data.triangle.length; i++){
-			var pack = data.triangle[i];
-			var b = Triangle.list[data.triangle[i].id];
-			if(b){
-				if(pack.x !== undefined)
-					b.newX = pack.x;
-				if(pack.y !== undefined)
-					b.newY = pack.y;
-				if(pack.hp !== undefined)
-					b.hp = pack.hp;
-				if(pack.attacked !== undefined)
-					b.attacked = pack.attacked;
-				if(pack.angle !== undefined)
-					b.angle = pack.angle;
-			}
-		}
-		lastTick = tick;
+
+	function update(data) {
+	    tickRate = tick - lastTick;
+	    if (tickRate == 0) tickRate = 1;
+
+	    for (var i = 0; i < data.player.length; i++) {
+	        var pack = data.player[i];
+
+	        var p = Player.list[pack.id];
+	        if (p) {
+	            if (pack.x !== undefined)
+	                p.newX = pack.x;
+	            if (pack.y !== undefined)
+	                p.newY = pack.y;
+	            if (pack.hp !== undefined)
+	                p.hp = pack.hp;
+	            if (pack.score !== undefined)
+	                p.score = pack.score;
+	            if (pack.maxhp !== undefined)
+	                p.hpMax = pack.maxhp;
+	            if (pack.pMaxHp !== undefined)
+	                p.pMaxHp = pack.pMaxHp;
+	            if (pack.regen !== undefined)
+	                p.regen = pack.regen;
+	            if (pack.bulletSpeed !== undefined)
+	                p.bulletSpeed = pack.bulletSpeed;
+	            if (pack.bulletHp !== undefined)
+	                p.bulletHp = pack.bulletHp;
+	            if (pack.bulletReload !== undefined)
+	                p.bulletReload = pack.bulletReload;
+	            if (pack.movementSpeed !== undefined)
+	                p.movementSpeed = pack.movementSpeed;
+	            if (pack.bodyDamage !== undefined)
+	                p.bodyDamage = pack.bodyDamage;
+	            if (pack.penetration !== undefined)
+	                p.penetration = pack.penetration;
+	            if (pack.upgrades !== undefined)
+	                p.upgrades = pack.upgrades;
+	            if (pack.tankType !== undefined)
+	                p.tankType = pack.tankType;
+	            if (pack.level !== undefined)
+	                p.level = pack.level;
+	            if (pack.mouseAngle !== undefined && pack.id != selfId)
+	                p.angle = pack.mouseAngle;
+	        }
+	    }
+	    for (var i = 0; i < data.bullet.length; i++) {
+	        var pack = data.bullet[i];
+	        var b = Bullet.list[data.bullet[i].id];
+	        if (b) {
+	            if (pack.x !== undefined)
+	                b.newX = pack.x;
+	            if (pack.y !== undefined)
+	                b.newY = pack.y;
+	            if (pack.angle !== undefined)
+	                b.angle = pack.angle;
+	        }
+	    }
+	    for (var i = 0; i < data.square.length; i++) {
+	        var pack = data.square[i];
+	        var b = Square.list[data.square[i].id];
+	        if (b) {
+	            if (pack.x !== undefined)
+	                b.newX = pack.x;
+	            if (pack.y !== undefined)
+	                b.newY = pack.y;
+	            if (pack.hp !== undefined)
+	                b.hp = pack.hp;
+	            if (pack.attacked !== undefined)
+	                b.attacked = pack.attacked;
+	            if (pack.angle !== undefined)
+	                b.angle = pack.angle;
+	        }
+	    }
+	    for (var i = 0; i < data.pentagon.length; i++) {
+	        var pack = data.pentagon[i];
+	        var b = Pentagon.list[data.pentagon[i].id];
+	        if (b) {
+	            if (pack.x !== undefined)
+	                b.newX = pack.x;
+	            if (pack.y !== undefined)
+	                b.newY = pack.y;
+	            if (pack.hp !== undefined)
+	                b.hp = pack.hp;
+	            if (pack.attacked !== undefined)
+	                b.attacked = pack.attacked;
+	            if (pack.maxhp !== undefined)
+	                b.maxhp = pack.maxhp;
+	            if (pack.angle !== undefined)
+	                b.angle = pack.angle;
+	        }
+	    }
+	    for (var i = 0; i < data.triangle.length; i++) {
+	        var pack = data.triangle[i];
+	        var b = Triangle.list[data.triangle[i].id];
+	        if (b) {
+	            if (pack.x !== undefined)
+	                b.newX = pack.x;
+	            if (pack.y !== undefined)
+	                b.newY = pack.y;
+	            if (pack.hp !== undefined)
+	                b.hp = pack.hp;
+	            if (pack.attacked !== undefined)
+	                b.attacked = pack.attacked;
+	            if (pack.angle !== undefined)
+	                b.angle = pack.angle;
+	        }
+	    }
+	    lastTick = tick;
 	}
-	
-	function remove(data){
-		//{player:[12323],bullet:[12323,123123]}
-		for(var i = 0 ; i < data.player.length; i++){
-			if(data.player[i] == selfId) drawDeath = true;
-			else delete Player.list[data.player[i]];
-		}
-		for(var i = 0 ; i < data.bullet.length; i++){
-			Bullet.list[data.bullet[i]].toRemove = true;
-			//delete Bullet.list[data.bullet[i]];
-		}
-		for(var i = 0 ; i < data.square.length; i++){
-			Square.list[data.square[i]].toRemove = true;
-			//delete Square.list[data.square[i]];
-		}
-		for(var i = 0 ; i < data.pentagon.length; i++){
-			Pentagon.list[data.pentagon[i]].toRemove = true;
-			//delete Pentagon.list[data.pentagon[i]];
-		}
-		for(var i = 0 ; i < data.triangle.length; i++){
-			Triangle.list[data.triangle[i]].toRemove = true;
-			//delete Triangle.list[data.triangle[i]];
-		}
+
+	function remove(data) {
+
+	    for (var i = 0; i < data.player.length; i++) {
+	        if (data.player[i] == selfId) drawDeath = true;
+	        else delete Player.list[data.player[i]];
+	    }
+	    for (var i = 0; i < data.bullet.length; i++) {
+	        Bullet.list[data.bullet[i]].toRemove = true;
+
+	    }
+	    for (var i = 0; i < data.square.length; i++) {
+	        Square.list[data.square[i]].toRemove = true;
+
+	    }
+	    for (var i = 0; i < data.pentagon.length; i++) {
+	        Pentagon.list[data.pentagon[i]].toRemove = true;
+
+	    }
+	    for (var i = 0; i < data.triangle.length; i++) {
+	        Triangle.list[data.triangle[i]].toRemove = true;
+
+	    }
 	}
-	
-	socket.on('newTanks', function(data){
-		newTankVisible = true;
-		newTanks = data.tanks;
-		for(var i in newTanks){
-			var r; var g; var b;
-			r = Math.round(Math.random() * 255);
-			g = Math.round(Math.random() * 255);
-			b = Math.round(Math.random() * 255);
-			newTanks[i] = {type:newTanks[i],r:r,g:g,b:b};
-		}
+
+	socket.on('newTanks', function(data) {
+	    newTankVisible = true;
+	    newTanks = data.tanks;
+	    for (var i in newTanks) {
+	        var r;
+	        var g;
+	        var b;
+	        r = Math.round(Math.random() * 255);
+	        g = Math.round(Math.random() * 255);
+	        b = Math.round(Math.random() * 255);
+	        newTanks[i] = {
+	            type: newTanks[i],
+	            r: r,
+	            g: g,
+	            b: b
+	        };
+	    }
 	});
-	var drawTankUpgrades = function(){
-		var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170 + 50;
-		var height = 133;
-		for(var i in newTanks){
-			var index = newTanks[i].type;
-			ctx.save();
-			ctx.globalAlpha = 0.3;
-			ctx.rect(starting + i * 170 - 85, height - 85, 170, 170);
-			
-			ctx.globalAlpha = 0.6;
-			var r = newTanks[i].r;
-			var g = newTanks[i].g;
-			var b = newTanks[i].b;
-			ctx.fillStyle = 'rgba('+r+', '+g+', '+b+', 1)';
-			ctx.fillRect(starting + i * 170 - 85, height - 85, 170, 85);
-			ctx.fillStyle = 'rgba('+r+', '+g+', '+b+', 0.5)';
-			ctx.fillRect(starting + i * 170 - 85, height, 170, 85);
-			ctx.restore();
-			ctx.stroke();
-			drawMinis(starting + i * 170, height, demoAngle, true, index);
-		}
+	var drawTankUpgrades = function() {
+	    var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170 + 50;
+	    var height = 133;
+	    
+	    for (var i in newTanks) {
+	        var index = newTanks[i].type;
+	        ctx.save();
+	        ctx.globalAlpha = 0.3;
+	        ctx.lineWidth = 13;
+	        var size = 130;
+	        
+	        ctx.rect(starting + i * size - size / 2, height - size / 2, size, size);
+
+	        ctx.globalAlpha = 0.6;
+	        var r = newTanks[i].r;
+	        var g = newTanks[i].g;
+	        var b = newTanks[i].b;
+	        ctx.fillStyle = 'rgba(' + r + ', ' + g + ', ' + b + ', 0.5)';
+	        ctx.fillRect(starting + i * size - size / 2, height - size / 2, size, size / 2);
+	        ctx.fillStyle = 'rgba(' + r + ', ' + g + ', ' + b + ', 1)';
+	        ctx.fillRect(starting + i * size - size / 2, height, size, size / 2);
+	        ctx.restore();
+	        ctx.stroke();
+	        drawMinis(starting + i * size, height, demoAngle, true, index);
+	    }
 	}
 	var u = 0;
 	var newTankVisible = false;
@@ -1068,1197 +1101,1119 @@ $(document).ready(function(){
 	var drawDeath = false;
 	var lastCalledTime = 0;
 	var fps = 0;
-	function draw(){
-		/*if(!lastCalledTime) {
-			lastCalledTime = Date.now();
-			fps = 0;
-			//return;
-		}
-		delta = (Date.now() - lastCalledTime)/1000;
-		lastCalledTime = Date.now();
-		fps = 1/delta;
-		console.log(fps);*/
-		
-		//console.log('hi');
-		tick++;
-		requestAnimationFrame(draw);
-		if(drawDeath){
-			ctx.fillStyle = 'red';
-			ctx.font = "100px Arial";
-			var text = 'You died, refresh to restart';
-			ctx.fillText(text, WIDTH / 2 - ctx.measureText(text).width / 2, HEIGHT / 2);
-			delete Player.list[data.player[i]];
-		}else{
-			var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
-			var height = 100;
-			
-			
-			WIDTH = document.body.clientWidth;
-			HEIGHT = document.body.clientHeight;
-			
-			if(u % 100 == 0){
-				socket.emit('dimension', {width:WIDTH,height:HEIGHT});
-				u-=100;
-			}
-			u++;
-			
-			//canvas.width = WIDTH;
-			//canvas.height = HEIGHT;
-			
-			if(!selfId)
-				return;
-			ctx.clearRect(0,0,WIDTH,HEIGHT);
-			//console.log('wefoih');
-			//siriWave._startDrawCycle();
-			drawMap();
-			
-			drawScore();
-			drawBars();
-			
-			for(var i in Bullet.list)
-				Bullet.list[i].draw();
-				
-			for(var i in Player.list)
-				Player.list[i].draw();
-			
-			for(var i in Square.list)
-				Square.list[i].draw();
-			for(var i in Pentagon.list)
-				Pentagon.list[i].draw();
-			for(var i in Triangle.list)
-				Triangle.list[i].draw();
-			//console.log(Square.list.size());
-			drawLevelUp();
-			
-			if(newTankVisible){
-				drawTankUpgrades();
-			}
-			input.render();
-			//ctx.strokeRect(starting - 100,height - 100,(newTanks.length) * 170,170);
-			drawChat();
-			
-			//input.y = HEIGHT - 40;
-		}
-		
-		
+
+	function draw() {
+
+
+
+	    tick++;
+	    requestAnimationFrame(draw);
+	    if (drawDeath) {
+	        ctx.fillStyle = 'red';
+	        ctx.font = "100px Arial";
+	        var text = 'You died, refresh to restart';
+	        ctx.fillText(text, WIDTH / 2 - ctx.measureText(text).width / 2, HEIGHT / 2);
+	        delete Player.list[data.player[i]];
+	    } else {
+	        var starting = WIDTH / 2 - (newTanks.length / 2) * 170;
+	        var height = 100;
+
+
+	        WIDTH = document.body.clientWidth;
+	        HEIGHT = document.body.clientHeight;
+
+	        if (u % 100 == 0) {
+	            socket.emit('dimension', {
+	                width: WIDTH,
+	                height: HEIGHT
+	            });
+	            u -= 100;
+	        }
+	        u++;
+	        if (!selfId)
+	            return;
+	        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+	        drawMap();
+	        drawScore();
+	        drawBars();
+	        if (newTankVisible) {
+	            drawTankUpgrades();
+	        }
+	        for (var i in Bullet.list)
+	            Bullet.list[i].draw();
+	        for (var i in Player.list)
+	            Player.list[i].draw();
+	        for (var i in Square.list)
+	            Square.list[i].draw();
+	        for (var i in Pentagon.list)
+	            Pentagon.list[i].draw();
+	        for (var i in Triangle.list)
+	            Triangle.list[i].draw();
+
+	        drawLevelUp();
+
+	        input.render();
+
+	        drawChat();
+	    }
 	}
 	draw();
-	
-	// wavy codepen wave javascript
-var WavyLine = function(level,bottom,right,height){
-	this.c = canvas;
-	this.ctx = ctx;
-	this.cw = 1280;
-	this.ch = 1024;
-	this.points = [];
-	this.tick = Math.random() * 400;
-	this.bottom = bottom;
-	this.opt = {
-  count: 3,
-  range: {
-    x: 0,
-    y: 7
-  },
-  duration: {
-    min: 15,
-    max: 25
-  },
-  thickness: 2,
-  strokeColor: '#444',
-  level: .25,
-  curved: true
-};
-  rand = function(min, max){
-      return Math.floor( (Math.random() * (max - min + 1) ) + min);
-  };
-  ease = function (t, b, c, d) {
-    if ((t/=d/2) < 1) return c/2*t*t + b;
-    return -c/2 * ((--t)*(t-2) - 1) + b;
-  };
-	
-	
-	
-	var Point = function(config, parent){
-		this.parent = parent;
-	  this.anchorX = config.x;
-	  this.anchorY = config.y;
-	  this.x = config.x;
-	  this.y = config.y;
-	  this.setTarget();  
-	};
-	
-	Point.prototype.setTarget = function(){
-	  this.initialX = this.x;
-	  this.initialY = this.y;
-	  //console.log(this.parent);
-	  this.targetX = this.anchorX + rand(0, this.parent.opt.range.x * 2) - this.parent.opt.range.x;
-	  this.targetY = this.anchorY + rand(0, this.parent.opt.range.y * 2) - this.parent.opt.range.y;
-	  this.tick = 0;
-	  this.duration = rand(this.parent.opt.duration.min, this.parent.opt.duration.max);
+
+	var WavyLine = function(level, bottom, right, height) {
+	    this.c = canvas;
+	    this.ctx = ctx;
+	    this.cw = 1280;
+	    this.ch = 1024;
+	    this.points = [];
+	    this.tick = Math.random() * 400;
+	    this.bottom = bottom;
+	    this.newX = 0;
+	    this.opt = {
+	        count: 3,
+	        range: {
+	            x: 0,
+	            y: 7
+	        },
+	        duration: {
+	            min: 15,
+	            max: 25
+	        },
+	        thickness: 2,
+	        strokeColor: '#444',
+	        level: .25,
+	        curved: true
+	    };
+	    rand = function(min, max) {
+	        return Math.floor((Math.random() * (max - min + 1)) + min);
+	    };
+	    ease = function(t, b, c, d) {
+	        if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+	        return -c / 2 * ((--t) * (t - 2) - 1) + b;
+	    };
+
+
+
+	    var Point = function(config, parent) {
+	        this.parent = parent;
+	        this.anchorX = config.x;
+	        this.anchorY = config.y;
+	        this.x = config.x;
+	        this.y = config.y;
+	        this.setTarget();
+	    };
+
+	    Point.prototype.setTarget = function() {
+	        this.initialX = this.x;
+	        this.initialY = this.y;
+
+	        this.targetX = this.anchorX + rand(0, this.parent.opt.range.x * 2) - this.parent.opt.range.x;
+	        this.targetY = this.anchorY + rand(0, this.parent.opt.range.y * 2) - this.parent.opt.range.y;
+	        this.tick = 0;
+	        this.duration = rand(this.parent.opt.duration.min, this.parent.opt.duration.max);
+	    }
+
+	    Point.prototype.update = function() {
+	        var dx = this.targetX - this.x;
+	        var dy = this.targetY - this.y;
+	        var dist = Math.sqrt(dx * dx + dy * dy);
+
+	        if (Math.abs(dist) <= 0) {
+	            this.setTarget();
+	        } else {
+	            var t = this.tick;
+	            var b = this.initialY;
+	            var c = this.targetY - this.initialY;
+	            var d = this.duration;
+	            this.y = ease(t, b, c, d);
+
+	            b = this.initialX;
+	            c = this.targetX - this.initialX;
+	            d = this.duration;
+	            this.x = ease(t, b, c, d);
+
+	            this.tick++;
+	        }
+	    };
+
+	    Point.prototype.render = function() {
+	        ctx.beginPath();
+	        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+	        ctx.fillStyle = '#000';
+	        ctx.fill();
+	    };
+
+	    this.updatePoints = function() {
+	        var i = this.points.length;
+	        while (i--) {
+	            this.points[i].update();
+	        }
+	    };
+
+	    this.renderPoints = function() {
+	        var i = points.length;
+	        while (i--) {
+	            points[i].render();
+	        }
+	    };
+
+	    this.renderShape = function() {
+	        this.ctx.save();
+	        this.ctx.translate(this.newX, 0);
+	        this.ctx.lineJoin = 'round';
+	        this.ctx.lineWidth = this.opt.thickness;
+	        this.ctx.strokeStyle = this.opt.strokeColor;
+	        this.ctx.beginPath();
+	        var pointCount = this.points.length;
+	        this.ctx.moveTo(this.points[0].x, this.points[0].y);
+	        var i;
+	        for (i = 0; i < pointCount - 1; i++) {
+	            var c = (this.points[i].x + this.points[i + 1].x) / 2;
+	            var d = (this.points[i].y + this.points[i + 1].y) / 2;
+	            this.ctx.quadraticCurveTo(this.points[i].x, this.points[i].y, c, d);
+	        }
+	        this.ctx.lineTo((this.points[pointCount - 2].x + this.points[pointCount - 1].x) / 2, bottom + height);
+	        this.ctx.lineTo(this.points[0].x, bottom + height);
+
+
+	        this.ctx.closePath();
+	        this.ctx.fillStyle = 'hsl(' + (this.tick / 2) + ', 80%, 60%)';
+	        this.ctx.fill();
+	        this.ctx.stroke();
+	        this.ctx.restore();
+	    };
+
+	    this.clear = function() {
+	        this.ctx.clearRect(0, 0, this.cw, this.ch);
+	    };
+	    this.right = right;
+	    var i = right;
+	    var spacing = 10;
+	    while (i--) {
+	        this.points.push(new Point({
+	            x: 180 + spacing * i,
+	            y: bottom
+	        }, this));
+	    }
 	}
-	  
-	Point.prototype.update = function(){
-	  var dx = this.targetX - this.x;
-	  var dy = this.targetY - this.y;
-	  var dist = Math.sqrt(dx * dx + dy * dy);
-	  
-	  if(Math.abs(dist) <= 0){
-	    this.setTarget();
-	  } else {       
-	    var t = this.tick;
-	    var b = this.initialY;
-	    var c = this.targetY - this.initialY;
-	    var d = this.duration;
-	    this.y = ease(t, b, c, d);
-	    
-	    b = this.initialX;
-	    c = this.targetX - this.initialX;
-	    d = this.duration;
-	    this.x = ease(t, b, c, d);
-	  
-	    this.tick++;
-	  }
-	};
-	    
-	Point.prototype.render = function(){
-	  ctx.beginPath();
-	  ctx.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
-	  ctx.fillStyle = '#000';
-	  ctx.fill();
-	};
-	
-	this.updatePoints = function(){
-	  var i = this.points.length;
-	  while(i--){
-	    this.points[i].update();
-	  }
-	};
-	
-	this.renderPoints = function(){
-	  var i = points.length;
-	  while(i--){
-	    points[i].render();
-	  }
-	};
-	
-	this.renderShape = function(){
-		this.ctx.save();
-		this.ctx.lineJoin = 'round';
-		this.ctx.lineWidth = this.opt.thickness;
-		this.ctx.strokeStyle = this.opt.strokeColor;
-	  this.ctx.beginPath();
-	  var pointCount = this.points.length;
-	  this.ctx.moveTo(this.points[0].x, this.points[0].y);	  
-	  var i;
-	  for (i = 0; i < pointCount - 1; i++) {
-	    var c = (this.points[i].x + this.points[i + 1].x) / 2;
-	    var d = (this.points[i].y + this.points[i + 1].y) / 2;
-	    this.ctx.quadraticCurveTo(this.points[i].x, this.points[i].y, c, d);
-	  }
-	  this.ctx.lineTo((this.points[pointCount - 2].x + this.points[pointCount - 1].x)/2, bottom + height);
-	  this.ctx.lineTo(this.points[0].x, bottom + height);
-	  
-	  //this.ctx.lineTo(50, bottom + 0);
-	  this.ctx.closePath();
-	  this.ctx.fillStyle = 'hsl('+(this.tick/2)+', 80%, 60%)';
-	  this.ctx.fill();  
-	  this.ctx.stroke();
-	  this.ctx.restore();
-	};
-	
-	this.clear = function(){
-	  this.ctx.clearRect(0, 0, this.cw, this.ch);
-	};
-	this.right = right;
-	var i = right;
-	var spacing = 10;
-	while(i--){
-		this.points.push(new Point({
-	    x: 180 + spacing * i,//(spacing * (i - 1)) - this.opt.range.x,
-	    y: bottom
-	  },this));
-	}
-}
 	var wavyLines = [];
-	for(var ij = 20; ij <= 230; ij += 30){
-		var wl = new WavyLine(1,ij,16,10);
-		wavyLines.push(wl);
+	for (var ij = 20; ij <= 230; ij += 30) {
+	    var wl = new WavyLine(1, ij - 350, 16, 10);
+	    wavyLines.push(wl);
 	}
-	
+
 	var levelUpCount = 8;
 	var levelUpVisible = false;
-	function drawLevelUp(){
-			
-		
-			
-		var spacing = 30;
-		var initial = 10;
-		var leftSpace = 185;
-		var leftWordSpace = 45;
-		var w = 15;
-		var length = 145;
-		var divider = 6;
-		ctx.font = '20px Verdana';
-		ctx.strokeStyle = 'black';
-		ctx.lineWidth = 1;
-		if(Player.list[selfId].upgrades != 0){
-			ctx.fillStyle = 'red';
-			
-		} else {
-			ctx.fillStyle = 'Gray';
-			ctx.globalAlpha = 0.5;
-		}
-		
+	var leftTick = 0;
+	var left = 0;
+	function drawLevelUp() {
 		if(levelUpVisible){
-			
-			var ij = 20;
-			var player = Player.list[selfId];
-			var prop = [
-				player.regen,
-				player.hpMax,
-				player.bulletSpeed,
-				player.bulletHp,
-				player.bulletReload,
-				player.movementSpeed,
-				player.bodyDamage,
-				player.penetration,
-			];
-			//console.log(player.hpMax);
-			for(var i in prop){
-				var pp = prop[i];
-				if(wavyLines[i].right != Math.round(pp * (14 / levelUpCount) + 2))
-					wavyLines[i] = new WavyLine(1, ij, Math.round(pp * (14 / levelUpCount)) + 2, 10);
-				ij += 30;
-			}
-			console.log(player);
-			for(var ind in wavyLines){
-				var wvLn = wavyLines[ind];
-				if(wvLn.right > 2){
-					wvLn.tick++;
-					wvLn.updatePoints();
-		  		wvLn.renderShape();
-				}
-			}
-			
-			var waveLength = 20;
-			
-			ctx.fillText('生命恢复',leftWordSpace, initial+spacing*1-w);
-			ctx.rect(leftSpace, initial+spacing*0, length, waveLength);
-
-			ctx.fillText('最大生命',leftWordSpace, initial+spacing*2-w);
-			ctx.rect(leftSpace, initial+spacing*1, length, waveLength);
-
-			ctx.fillText('炮弹速度',leftWordSpace, initial+spacing*3-w);
-			ctx.rect(leftSpace, initial+spacing*2, length, waveLength);
-
-			ctx.fillText('炮弹伤害',leftWordSpace, initial+spacing*4-w);
-			ctx.rect(leftSpace, initial+spacing*3, length, waveLength);
-
-			ctx.fillText('装填速度',leftWordSpace, initial+spacing*5-w);
-			ctx.rect(leftSpace, initial+spacing*4, length, waveLength);
-
-			ctx.fillText('移动速度',leftWordSpace, initial+spacing*6-w);
-			ctx.rect(leftSpace, initial+spacing*5, length, waveLength);
-
-			ctx.fillText('冲撞伤害',leftWordSpace, initial+spacing*7-w);
-			ctx.rect(leftSpace, initial+spacing*6, length, waveLength);
-			
-			ctx.fillText('炮弹渗透',leftWordSpace, initial+spacing*8-w);
-			ctx.rect(leftSpace, initial+spacing*7, length, waveLength);
-
-			
-			
-
-			//ctx.fillRect(leftSpace, initial+spacing*0, Player.list[selfId].regen * (length / levelUpCount), 20);
-			//ctx.fillRect(leftSpace, initial+spacing*1, Player.list[selfId].hpMax * (length / levelUpCount), 20);
-			//ctx.fillRect(leftSpace, initial+spacing*2, Player.list[selfId].bulletSpeed * (length / levelUpCount), 20);
-			//ctx.fillRect(leftSpace, initial+spacing*3, Player.list[selfId].bulletHp * (length / levelUpCount), 20);
-			//ctx.fillRect(leftSpace, initial+spacing*4, Player.list[selfId].bulletReload * (length / levelUpCount), 20);
-			//ctx.fillRect(leftSpace, initial+spacing*5, Player.list[selfId].movementSpeed * (length / levelUpCount), 20);
-			//ctx.fillRect(leftSpace, initial+spacing*6, Player.list[selfId].bodyDamage * (length / levelUpCount), 20);
-			//ctx.fillRect(leftSpace, initial+spacing*7, Player.list[selfId].penetration * (length / levelUpCount), 20);
-			ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 60, initial + spacing * 9);
-
-			//ctx.save();
-			//ctx.lineWidth = 0.1;
-			/*for(var j = initial + spacing*0; j <= initial + spacing * 6; j += spacing){
-			 for(var i = leftSpace; i < leftSpace + length; i += length / levelUpCount){
-			 ctx.moveTo(i, j);
-			 ctx.lineTo(i, j+20);
-			 }
-			 }*/
-			//ctx.lineWidth = 1;
-			//ctx.stroke();
-			//ctx.restore();
-
-			ctx.moveTo(350,0);
-			ctx.lineTo(350,290);
-			ctx.lineTo(0,290);
-			
-			
-			
-			
-			
-			
-
-		}else{
-			ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 85, initial+spacing*1-10);
-			ctx.moveTo(350,0);
-			ctx.lineTo(350,50);
-			ctx.lineTo(0,50);
+			left = easingInOutQuad(leftTick, 0, 350, 50);
+			if(leftTick <= 50) leftTick++;
+		}else if(left > -349){
+			left = easingInOutQuad(leftTick, 0, 350, 50);
+			if(leftTick >= 0) leftTick--;
 		}
-		
-		var prev = 100;
-		ctx.moveTo(400, 0);
-    ctx.lineTo(400, 50);
-    ctx.lineTo(350, 50);
-		if(levelUpVisible == true){
-			ctx.moveTo(312 + length - prev, 23);
-	    ctx.lineTo(323 + length - prev, 12);
-	    ctx.lineTo(334 + length - prev, 23);
-	    
-	    ctx.moveTo(312 + length - prev, 38);
-	    ctx.lineTo(323 + length - prev, 27);
-	    ctx.lineTo(334 + length - prev, 38);
-		} else {
-    	ctx.moveTo(312 + length - prev, 12);
-	    ctx.lineTo(323 + length - prev, 23);
-	    ctx.lineTo(334 + length - prev, 12);
-	    
-	    ctx.moveTo(312 + length - prev, 25);
-	    ctx.lineTo(323 + length - prev, 36);
-	    ctx.lineTo(334 + length - prev, 25);
-    }
-    
-    
-    ctx.stroke();
-    ctx.globalAlpha = 1;
+		left -= 350;
+	    var spacing = 30;
+	    var initial = 10;
+	    var leftSpace = 185;
+	    var leftWordSpace = 45;
+	    var w = 15;
+	    var length = 145;
+	    var divider = 6;
+	    ctx.font = '20px Verdana';
+	    ctx.strokeStyle = 'black';
+	    ctx.lineWidth = 1;
+	    if (Player.list[selfId].upgrades != 0) {
+	        ctx.fillStyle = 'red';
+	        levelUpVisible = true;
+	    } else {
+	        ctx.fillStyle = 'Gray';
+	        ctx.globalAlpha = 0.5;
+	    }
+
+        var ij = 20 + left;
+        var player = Player.list[selfId];
+        var prop = [
+            player.regen,
+            player.hpMax,
+            player.bulletSpeed,
+            player.bulletHp,
+            player.bulletReload,
+            player.movementSpeed,
+            player.bodyDamage,
+            player.penetration,
+        ];
+
+        for (var i in prop) {
+            var pp = prop[i];
+            pp.newX = left;
+            if (wavyLines[i].right != Math.round(pp * (14 / levelUpCount) + 2))
+                wavyLines[i] = new WavyLine(1, ij, Math.round(pp * (14 / levelUpCount)) + 2, 10);
+            ij += 30;
+        }
+        for (var ind in wavyLines) {
+            var wvLn = wavyLines[ind];
+            if (wvLn.right > 2) {
+                wvLn.tick++;
+                wvLn.updatePoints();
+                wvLn.renderShape();
+            }
+        }
+
+        var waveLength = 20;
+
+        ctx.fillText('生命恢复', leftWordSpace + left, initial + spacing * 1 - w);
+        ctx.rect(leftSpace + left, initial + spacing * 0, length, waveLength);
+
+        ctx.fillText('最大生命', leftWordSpace + left, initial + spacing * 2 - w);
+        ctx.rect(leftSpace + left, initial + spacing * 1, length, waveLength);
+
+        ctx.fillText('炮弹速度', leftWordSpace + left, initial + spacing * 3 - w);
+        ctx.rect(leftSpace + left, initial + spacing * 2, length, waveLength);
+
+        ctx.fillText('炮弹伤害', leftWordSpace + left, initial + spacing * 4 - w);
+        ctx.rect(leftSpace + left, initial + spacing * 3, length, waveLength);
+
+        ctx.fillText('装填速度', leftWordSpace + left, initial + spacing * 5 - w);
+        ctx.rect(leftSpace + left, initial + spacing * 4, length, waveLength);
+
+        ctx.fillText('移动速度', leftWordSpace + left, initial + spacing * 6 - w);
+        ctx.rect(leftSpace + left, initial + spacing * 5, length, waveLength);
+
+        ctx.fillText('冲撞伤害', leftWordSpace + left, initial + spacing * 7 - w);
+        ctx.rect(leftSpace + left, initial + spacing * 6, length, waveLength);
+
+        ctx.fillText('炮弹渗透', leftWordSpace + left, initial + spacing * 8 - w);
+        ctx.rect(leftSpace + left, initial + spacing * 7, length, waveLength);
+
+        ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 60 + left, initial + spacing * 9);
+
+        ctx.moveTo(350 + left, 0);
+        ctx.lineTo(350 + left, 290);
+        ctx.lineTo(0 + left, 290);
+
+	    //} else {
+	        /*ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 85, initial + spacing * 1 - 10);
+	        ctx.moveTo(350, 0);
+	        ctx.lineTo(350, 50);
+	        ctx.lineTo(0, 50);*/
+	    //}
+
+	    var prev = 100;
+	    /*ctx.moveTo(400, 0);
+	    ctx.lineTo(400, 50);
+	    ctx.lineTo(350, 50);
+	    if (levelUpVisible == true) {
+	        ctx.moveTo(312 + length - prev, 23);
+	        ctx.lineTo(323 + length - prev, 12);
+	        ctx.lineTo(334 + length - prev, 23);
+
+	        ctx.moveTo(312 + length - prev, 38);
+	        ctx.lineTo(323 + length - prev, 27);
+	        ctx.lineTo(334 + length - prev, 38);
+	    } else {
+	        ctx.moveTo(312 + length - prev, 12);
+	        ctx.lineTo(323 + length - prev, 23);
+	        ctx.lineTo(334 + length - prev, 12);
+
+	        ctx.moveTo(312 + length - prev, 25);
+	        ctx.lineTo(323 + length - prev, 36);
+	        ctx.lineTo(334 + length - prev, 25);
+	    }*/
+
+
+	    ctx.stroke();
+	    ctx.globalAlpha = 1;
 	}
-	
+	function easingInOutQuad(t, b, c, d) {
+		if ((t/=d/2) < 1) return c/2*t*t + b;
+		return -c/2 * ((--t)*(t-2) - 1) + b;
+	}
 	function drawgrid() {
-		if(!blackTheme){
-			ctx.fillStyle = '#D9D9D9';
-		}else{
-			ctx.fillStyle = 'black';
-		}
-		ctx.fillRect(0,0,WIDTH,HEIGHT);
-		ctx.save();
-		//ctx.globalCompositeOperation='destination-atop';
-   ctx.lineWidth = 0.5;
-		if(!blackTheme){
-			ctx.strokeStyle = '#bfbfbf';
-		}else{
-			ctx.strokeStyle = 'black';
-		}
-   //ctx.strokeStyle = '#CCCCCC';
-   
-   ctx.beginPath();
-   var sx = WIDTH/2 - Player.list[selfId].x;
-		var sy = HEIGHT/2 - Player.list[selfId].y;
-		//console.log((sx - WIDTH) + ', ' + (sy - HEIGHT));
-		for (var x = sx - WIDTH; x < WIDTH; x += WIDTH / 45) {
-				ctx.moveTo(x, 0);
-        ctx.lineTo(x, HEIGHT);
-    }
+	    if (!blackTheme) {
+	        ctx.fillStyle = '#D9D9D9';
+	    } else {
+	        ctx.fillStyle = 'black';
+	    }
+	    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+	    ctx.save();
 
-    for (var y = sy - HEIGHT ; y < HEIGHT; y += HEIGHT / 40) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(WIDTH, y);
-    }
+	    ctx.lineWidth = 0.5;
+	    if (!blackTheme) {
+	        ctx.strokeStyle = '#bfbfbf';
+	    } else {
+	        ctx.strokeStyle = 'black';
+	    }
 
-    ctx.stroke();
-    ctx.restore();
+
+	    ctx.beginPath();
+	    var sx = WIDTH / 2 - Player.list[selfId].x;
+	    var sy = HEIGHT / 2 - Player.list[selfId].y;
+
+	    for (var x = sx - WIDTH; x < WIDTH; x += WIDTH / 45) {
+	        ctx.moveTo(x, 0);
+	        ctx.lineTo(x, HEIGHT);
+	    }
+
+	    for (var y = sy - HEIGHT; y < HEIGHT; y += HEIGHT / 40) {
+	        ctx.moveTo(0, y);
+	        ctx.lineTo(WIDTH, y);
+	    }
+
+	    ctx.stroke();
+	    ctx.restore();
 	}
 	var blackTheme = false;
-	var drawMap = function(){
-		drawgrid();
-		//ctx.drawImage(Img.map,x,y, 3000,3000);
+	var drawMap = function() {
+	    drawgrid();
+
 	}
 	var demoAngle = 0;
 	var lengthOfLevelBar = 0;
-	
-	var drawGradientLoader = function(x,y,radius,percent,width){
-		var startAngle = -0.5 * Math.PI;
-		var endAngle = percent * 2 * Math.PI - 0.5 * Math.PI;
-		/*alert(endAngle)*/
-		var counterClockwise = false;
-		var grad1 = ctx.createLinearGradient(x-75, y-75, x+75, y+75);
-		grad1.addColorStop(0, "red");
-		grad1.addColorStop(0.25, "orange");
-		grad1.addColorStop(0.5, "yellow");
-		grad1.addColorStop(0.75, "palegreen");
-		grad1.addColorStop(1, "green");
-		ctx.beginPath();
-		ctx.arc(x, y, radius, startAngle, endAngle, counterClockwise);
-		ctx.moveTo(x+Math.cos(endAngle) * radius,y+Math.sin(endAngle) * radius);
-		ctx.lineWidth = 20;
-		ctx.closePath();
-		ctx.strokeStyle = grad1;
-		// context.lineCap = 'round';
-		ctx.stroke();	
+
+	var drawGradientLoader = function(x, y, radius, percent, width) {
+	    var startAngle = -0.5 * Math.PI;
+	    var endAngle = percent * 2 * Math.PI - 0.5 * Math.PI;
+
+	    var counterClockwise = false;
+	    var grad1 = ctx.createLinearGradient(x - 75, y - 75, x + 75, y + 75);
+	    grad1.addColorStop(0, "red");
+	    grad1.addColorStop(0.25, "orange");
+	    grad1.addColorStop(0.5, "yellow");
+	    grad1.addColorStop(0.75, "palegreen");
+	    grad1.addColorStop(1, "green");
+	    ctx.beginPath();
+	    ctx.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+	    ctx.moveTo(x + Math.cos(endAngle) * radius, y + Math.sin(endAngle) * radius);
+	    ctx.lineWidth = 20;
+	    ctx.closePath();
+	    ctx.strokeStyle = grad1;
+
+	    ctx.stroke();
 	}
 	var doneGoingUp = false;
-	var drawBars = function(){
-		ctx.save();
-		var wa = 400;
-		
-		var p = Player.list[selfId];
-		
-		var levelWidth = wa * (p.score - p.evaluateNextLevelScore(p.level - 1)) / (p.evaluateNextLevelScore(p.level) - p.evaluateNextLevelScore(p.level - 1));
-		//console.log((Player.list[selfId].score - Player.list[selfId].evaluateNextLevelScore(Player.list[selfId].level - 1)) + ',' + Player.list[selfId].evaluateNextLevelScore(Player.list[selfId].level));
-		var ll = lengthOfLevelBar - levelWidth;
-		//console.log(ll);
-		if(ll < -2){
-			lengthOfLevelBar+=3;
-		}else if(ll > 2){
-			lengthOfLevelBar-=3;
-		}
-		//console.log('foijwef ' + Player.list[selfId].evaluateNextLevelScore(Player.list[selfId].level));
-		ctx.lineWidth = 3;
-		roundRect(ctx, WIDTH / 2 - wa / 2, HEIGHT - 70, lengthOfLevelBar, 16, 9, true, true);
-		ctx.lineWidth = 6;
-		roundRect(ctx, WIDTH / 2 - wa / 2, HEIGHT - 70, wa, 16, 10, false, true);
-	
-		var x = WIDTH / 2 - 120;
-		var y = HEIGHT - 150;
-		var radius = 50;
-		var width = 20;
-		
-		drawConcentricCircles(x,y,radius,width);
-		drawGradientLoader(x,y,radius,Player.list[selfId].level / 45, width);
-		x = WIDTH / 2 + 120;
-		drawConcentricCircles(x,y,radius,width);
-		drawGradientLoader(x,y,radius,Player.list[selfId].score / highScore, width);
-		
-		ctx.restore();
+	var drawBars = function() {
+	    ctx.save();
+	    var wa = 400;
+
+	    var p = Player.list[selfId];
+
+	    var levelWidth = wa * (p.score - p.evaluateNextLevelScore(p.level - 1)) / (p.evaluateNextLevelScore(p.level) - p.evaluateNextLevelScore(p.level - 1));
+
+	    var ll = lengthOfLevelBar - levelWidth;
+
+	    if (ll < -2) {
+	        lengthOfLevelBar += 3;
+	    } else if (ll > 2) {
+	        lengthOfLevelBar -= 3;
+	    }
+
+	    ctx.lineWidth = 3;
+	    roundRect(ctx, WIDTH / 2 - wa / 2, HEIGHT - 70, lengthOfLevelBar, 16, 9, true, true);
+	    ctx.lineWidth = 6;
+	    roundRect(ctx, WIDTH / 2 - wa / 2, HEIGHT - 70, wa, 16, 10, false, true);
+
+	    var x = WIDTH / 2 - 120;
+	    var y = HEIGHT - 150;
+	    var radius = 50;
+	    var width = 20;
+
+	    drawConcentricCircles(x, y, radius, width);
+	    drawGradientLoader(x, y, radius, Player.list[selfId].level / 45, width);
+	    x = WIDTH / 2 + 120;
+	    drawConcentricCircles(x, y, radius, width);
+	    drawGradientLoader(x, y, radius, Player.list[selfId].score / highScore, width);
+
+	    ctx.restore();
 	}
-	
-	function drawConcentricCircles(x,y,radius,width){
-		ctx.strokeStyle = 'black';
-		
-		ctx.beginPath();
-		ctx.arc(x,y,radius + width / 2 + 2,0,2*Math.PI);
-		ctx.closePath();
-		ctx.lineWidth = 4;
-		ctx.stroke();
-		
-		ctx.beginPath();
-		ctx.arc(x,y,radius - width / 2 - 2,0,2*Math.PI);
-		ctx.closePath();
-		ctx.stroke();
+
+	function drawConcentricCircles(x, y, radius, width) {
+	    ctx.strokeStyle = 'black';
+
+	    ctx.beginPath();
+	    ctx.arc(x, y, radius + width / 2 + 2, 0, 2 * Math.PI);
+	    ctx.closePath();
+	    ctx.lineWidth = 4;
+	    ctx.stroke();
+
+	    ctx.beginPath();
+	    ctx.arc(x, y, radius - width / 2 - 2, 0, 2 * Math.PI);
+	    ctx.closePath();
+	    ctx.stroke();
 	}
-	
-	
+
+
 	var highScore = 1;
-  
-	var drawScore = function(){
-		demoAngle+= 1;
-		ctx.fillStyle = 'red';
-		ctx.font = '30px Arial';
-		
-		ctx.beginPath();
-		ctx.lineWidth = 3;
-		
-	
-		ctx.arc(3 * WIDTH / 4 + 70, HEIGHT, 70, 1 * Math.PI, 1.5 * Math.PI);
-		
-		ctx.moveTo(3 * WIDTH / 4 + 70, HEIGHT - 70);
-		ctx.lineTo(7 * WIDTH / 8, HEIGHT - 70);
-		ctx.moveTo(7 * WIDTH / 8 + 140, HEIGHT - 70);
-		
-		ctx.arc(7 * WIDTH / 8 + 70, HEIGHT - 70, 70, 0 * Math.PI, 2 * Math.PI);
-		
-		ctx.moveTo(7 * WIDTH / 8 + 70, HEIGHT - 70 - 70);
-		ctx.lineTo(WIDTH, HEIGHT - 70 - 70);
-		
-		ctx.moveTo(7 * WIDTH / 8 + 70 + 70, HEIGHT - 70);
-		ctx.lineTo(WIDTH, HEIGHT - 70);
-		
-		//billboard
-		
-		ctx.moveTo(3 * WIDTH / 4 + 80, HEIGHT - 70);
-		ctx.lineTo(3 * WIDTH / 4 + 80, HEIGHT - 70 - 20);
-		
-		ctx.moveTo(3 * WIDTH / 4 + 130, HEIGHT - 70);
-		ctx.lineTo(3 * WIDTH / 4 + 130, HEIGHT - 70 - 20);
-		
-		ctx.moveTo(3 * WIDTH / 4 + 70 - 1.5, HEIGHT - 70 - 20);
-		ctx.lineTo(3 * WIDTH / 4 + 140 + 1.5, HEIGHT - 70 - 20);
-		
-		ctx.moveTo(3 * WIDTH / 4 + 70 - 1.5, HEIGHT - 70 - 20 - 30);
-		ctx.lineTo(3 * WIDTH / 4 + 140 + 1.5, HEIGHT - 70 - 20 - 30);
-		
-		ctx.moveTo(3 * WIDTH / 4 + 70, HEIGHT - 70 - 20);
-		ctx.lineTo(3 * WIDTH / 4 + 70, HEIGHT - 70 - 20 - 30);
-		
-		ctx.moveTo(3 * WIDTH / 4 + 140, HEIGHT - 70 - 20);
-		ctx.lineTo(3 * WIDTH / 4 + 140, HEIGHT - 70 - 20 - 30);
-		
-		var sortable = [];
-		for (var i in Player.list){
-				var player = Player.list[i];
-				sortable.push([player, player.score]);
-		}
-		sortable.sort(
-		    function(a, b) {
-		        return a[1] - b[1]
-		    }
-		);
-		sortable.reverse();
-		var y = 0;
-		
-		for(var i in sortable){
-			if(y > 300) break;
-			var pla = sortable[i][0];
-			
-			if((y / 30 + 1) == 1) highScore = pla.score;
-			
-			ctx.moveTo(WIDTH - 200, 0);
-			ctx.lineTo(WIDTH - 200, 200);
-			ctx.lineTo(WIDTH, 200);
-			ctx.moveTo(WIDTH - 200 + 200 * pla.x / GAME_DIMENSION + 5, 200 * pla.y / GAME_DIMENSION);
-			
-			if(pla.id == selfId)
-				ctx.arc(WIDTH - 200 + 200 * pla.x / GAME_DIMENSION, 200 * pla.y / GAME_DIMENSION, 5, 0, 2 * Math.PI);
-			
-			var scoreText = (y / 30 + 1) + '. ' + pla.name + ': ' + Math.max( Math.round(pla.score * 10) / 10, 0 ).toFixed(2);;
-			ctx.fillText(scoreText, WIDTH - ctx.measureText(scoreText).width, HEIGHT / 2 - 150 + y);
-			y += 30;
-			//ctx.stroke();
-		}
-		
-		
-		
-		var txt = Player.list[selfId].score;
-		ctx.font = '20px Arial';
-		if(txt >= 1000) txt = (Math.round(txt / 1000 * 10) / 10).toFixed(2) + 'k';
-		ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 + 120, HEIGHT - 120);
-		
-		txt = '级别';
-		ctx.font = '20px Arial';
-		ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 - 120, HEIGHT - 150);
-		
-		var lvl = Player.list[selfId].level;
-		ctx.font = '20px Arial';
-		ctx.fillText(lvl, WIDTH / 2 - ctx.measureText(lvl).width / 2 - 120, HEIGHT - 120);
-		
-		txt = '得分';
-		ctx.font = '20px Arial';
-		ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 + 120, HEIGHT - 150);
-		
-		ctx.stroke();
-		/*ctx.save();
-		var level = 'level';
-		ctx.font = '20px Arial';
-		ctx.fillText(level, 3 * WIDTH / 4 + 105 - ctx.measureText(level).width / 2, HEIGHT - 130);
-		
-		ctx.font = '25px Arial';
-		var score = 'score';
-		ctx.fillText(score, 3 * WIDTH / 4 + 105 - ctx.measureText(score).width / 2, HEIGHT - 52);
-		ctx.restore();*/
-		
-		// draw mini
-		drawMinis(7 * WIDTH / 8 + 70, HEIGHT - 70, demoAngle, true, Player.list[selfId].tankType);
+
+	var drawScore = function() {
+	    demoAngle += 1;
+	    ctx.fillStyle = 'red';
+	    ctx.font = '30px Arial';
+
+	    ctx.beginPath();
+	    ctx.lineWidth = 3;
+
+
+	    ctx.arc(3 * WIDTH / 4 + 70, HEIGHT, 70, 1 * Math.PI, 1.5 * Math.PI);
+
+	    ctx.moveTo(3 * WIDTH / 4 + 70, HEIGHT - 70);
+	    ctx.lineTo(7 * WIDTH / 8, HEIGHT - 70);
+	    ctx.moveTo(7 * WIDTH / 8 + 140, HEIGHT - 70);
+
+	    ctx.arc(7 * WIDTH / 8 + 70, HEIGHT - 70, 70, 0 * Math.PI, 2 * Math.PI);
+
+	    ctx.moveTo(7 * WIDTH / 8 + 70, HEIGHT - 70 - 70);
+	    ctx.lineTo(WIDTH, HEIGHT - 70 - 70);
+
+	    ctx.moveTo(7 * WIDTH / 8 + 70 + 70, HEIGHT - 70);
+	    ctx.lineTo(WIDTH, HEIGHT - 70);
+
+
+
+	    ctx.moveTo(3 * WIDTH / 4 + 80, HEIGHT - 70);
+	    ctx.lineTo(3 * WIDTH / 4 + 80, HEIGHT - 70 - 20);
+
+	    ctx.moveTo(3 * WIDTH / 4 + 130, HEIGHT - 70);
+	    ctx.lineTo(3 * WIDTH / 4 + 130, HEIGHT - 70 - 20);
+
+	    ctx.moveTo(3 * WIDTH / 4 + 70 - 1.5, HEIGHT - 70 - 20);
+	    ctx.lineTo(3 * WIDTH / 4 + 140 + 1.5, HEIGHT - 70 - 20);
+
+	    ctx.moveTo(3 * WIDTH / 4 + 70 - 1.5, HEIGHT - 70 - 20 - 30);
+	    ctx.lineTo(3 * WIDTH / 4 + 140 + 1.5, HEIGHT - 70 - 20 - 30);
+
+	    ctx.moveTo(3 * WIDTH / 4 + 70, HEIGHT - 70 - 20);
+	    ctx.lineTo(3 * WIDTH / 4 + 70, HEIGHT - 70 - 20 - 30);
+
+	    ctx.moveTo(3 * WIDTH / 4 + 140, HEIGHT - 70 - 20);
+	    ctx.lineTo(3 * WIDTH / 4 + 140, HEIGHT - 70 - 20 - 30);
+
+	    var sortable = [];
+	    for (var i in Player.list) {
+	        var player = Player.list[i];
+	        sortable.push([player, player.score]);
+	    }
+	    sortable.sort(
+	        function(a, b) {
+	            return a[1] - b[1]
+	        }
+	    );
+	    sortable.reverse();
+	    var y = 0;
+
+	    for (var i in sortable) {
+	        if (y > 300) break;
+	        var pla = sortable[i][0];
+
+	        if ((y / 30 + 1) == 1) highScore = pla.score;
+
+	        ctx.moveTo(WIDTH - 200, 0);
+	        ctx.lineTo(WIDTH - 200, 200);
+	        ctx.lineTo(WIDTH, 200);
+	        ctx.moveTo(WIDTH - 200 + 200 * pla.x / GAME_DIMENSION + 5, 200 * pla.y / GAME_DIMENSION);
+
+	        if (pla.id == selfId)
+	            ctx.arc(WIDTH - 200 + 200 * pla.x / GAME_DIMENSION, 200 * pla.y / GAME_DIMENSION, 5, 0, 2 * Math.PI);
+
+	        var scoreText = (y / 30 + 1) + '. ' + pla.name + ': ' + Math.max(Math.round(pla.score * 10) / 10, 0).toFixed(2);;
+	        ctx.fillText(scoreText, WIDTH - ctx.measureText(scoreText).width, HEIGHT / 2 - 150 + y);
+	        y += 30;
+
+	    }
+
+
+
+	    var txt = Player.list[selfId].score;
+	    ctx.font = '20px Arial';
+	    if (txt >= 1000) txt = (Math.round(txt / 1000 * 10) / 10).toFixed(2) + 'k';
+	    ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 + 120, HEIGHT - 120);
+
+	    txt = '级别';
+	    ctx.font = '20px Arial';
+	    ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 - 120, HEIGHT - 150);
+
+	    var lvl = Player.list[selfId].level;
+	    ctx.font = '20px Arial';
+	    ctx.fillText(lvl, WIDTH / 2 - ctx.measureText(lvl).width / 2 - 120, HEIGHT - 120);
+
+	    txt = '得分';
+	    ctx.font = '20px Arial';
+	    ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 + 120, HEIGHT - 150);
+
+	    ctx.stroke();
+
+
+
+	    drawMinis(7 * WIDTH / 8 + 70, HEIGHT - 70, demoAngle, true, Player.list[selfId].tankType);
 	}
-	
-	var drawMinis = function(x, y, angle, text, tankType){
-		var width = 66;
-		var height = 44;
-		//ctx.globalAlpha = 1;
-		ctx.save();
-		//ctx.scale(2,2);
-	 	var rad = 22;
-	 	ctx.lineWidth = 2.5;
-	 	
-	 	var barrelColor = "#DCDCDC";
-	 	
-	 	if(tankType == 0){
-	 		
-	 		//ctx.save();
-	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
-	 		ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -12, 40, 20);
-			ctx.strokeRect(0, -12, 40, 20);
-			ctx.restore(); 
-			
-			
-		}	else if(tankType == 1){
-	 		rad = 30;
-	 		ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -27, 55, 26);
-			ctx.fillRect(0, 3, 55, 26);
-			ctx.strokeRect(0, -27, 55, 26);
-			ctx.strokeRect(0, 3, 55, 26);
-			ctx.restore(); 
-			
-	 	} else if(tankType == 2){
-	 		rad = 31;
-	 		ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-		  
-		  ctx.fillStyle = barrelColor;
-			
-			ctx.fillRect(0, -30, 56, 20);
-			ctx.fillRect(0, 5, 56, 20);
-		  
-			ctx.strokeRect(0, -12, 66, 20);
-			ctx.strokeRect(0, -30, 56, 20);
-			ctx.strokeRect(0, 5, 56, 20);
-			ctx.fillRect(0, -12, 66, 20);
-			
-			ctx.restore();
-			
-	 	}else if(tankType == 3){
-	 		rad = 30;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
-	 		
-	 		for(var i = 0; i <= 360; i += 360 / 8){
-	 			ctx.save();
-	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = barrelColor;
-				ctx.fillRect(0, -12, 55, 24);
-				ctx.strokeRect(0, -12, 55, 24);
-				ctx.restore();
-	 		}
-	 		
-	 	}else if(tankType == 4){
-	 		rad = 30;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
-	 		for(var i = 0; i <= 360; i+=120){
-	 			ctx.save();
-	 			ctx.fillStyle = barrelColor;
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			 	ctx.fillRect(0, -27, 55, 26);
-				ctx.fillRect(0, 3, 55, 26);
-				ctx.strokeRect(0, -27, 55, 26);
-				ctx.strokeRect(0, 3, 55, 26);
-				ctx.restore();
-	 		}
-	 		ctx.strokeColor = 'red';
-	 		
-	 	} else if(tankType == 5){
-	 		rad = 26.5;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
-	 		for(var i = -150; i <= 150; i+=300){
-	 			ctx.save();
-	 			ctx.fillStyle = barrelColor;
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			 	ctx.fillRect(0, -12, 42, 20);
-				ctx.strokeRect(0, -12, 42, 20);
-				ctx.restore();
-	 		}
-	 		ctx.save();
-	 		ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -12, 48, 20);
-			ctx.strokeRect(0, -12, 48, 20);
-			ctx.restore(); 
-			ctx.strokeColor = 'red';
-	 		
-	 	} else if(tankType == 6){
-	 		rad = 26.5;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
-	 		
-	 		for(var i = -150; i <= 150; i+=300){
-	 			ctx.save();
-	 			ctx.fillStyle = barrelColor;
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			 	ctx.fillRect(0, -12, 42, 20);
-				ctx.strokeRect(0, -12, 42, 20);
-				ctx.restore();
-	 		}
-	 		for(var i = -135; i <= 135; i+=270){
-	 			ctx.save();
-	 			ctx.fillStyle = barrelColor;
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			 	ctx.fillRect(0, -12, 42, 20);
-				ctx.strokeRect(0, -12, 42, 20);
-				ctx.restore();
-	 		}
-	 		ctx.save();
-	 		ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -12, 48, 20);
-			ctx.strokeRect(0, -12, 48, 20);
-			ctx.restore(); 
-			ctx.strokeColor = 'red';
-	 		
-	 	} else if(tankType == 7){
-	 		rad = 26.5;
-	 		
-	 		ctx.restore();
-	 		for(var i = -180; i <= 0; i += 180){
-	 			ctx.save();
-	 			ctx.translate(x,y);
-		 		ctx.rotate((i + angle) * Math.PI / 180);
-			  ctx.strokeStyle = 'black';
-			  ///ctx.lineWidth = 1;
-				ctx.fillStyle = barrelColor;
-				ctx.beginPath();
-				ctx.moveTo(5, -12);
-				ctx.lineTo(35, -20);
-				ctx.lineTo(35, 20);
-				ctx.lineTo(-5, 12);
-				ctx.fill();
-				ctx.stroke();
-				ctx.restore(); 
-				
-			}
-	 	} else if(tankType == 8){
-	 		rad = 30;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
-	 		
-	 		for(var i = 0; i <= 360; i+=180){
-	 			ctx.save();
-	 			ctx.fillStyle = barrelColor;
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			 	ctx.fillRect(0, -27, 55, 26);
-				ctx.fillRect(0, 3, 55, 26);
-				ctx.strokeRect(0, -27, 55, 26);
-				ctx.strokeRect(0, 3, 55, 26);
-				ctx.restore();
-	 		}
-	 		ctx.strokeColor = 'red';
-	 		
-	 	} else if(tankType == 9){
-	 		rad = 30;
-	 		ctx.strokeStyle = 'black';
-	 		ctx.restore();
-	 		for(var i = 0; i <= 360; i += 360 / 10){
-	 			ctx.save();
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = barrelColor;
-				ctx.fillRect(0, -12, 55, 24);
-				ctx.strokeRect(0, -12, 55, 24);
-				ctx.restore();
-	 		}
-	 		
-	 	} else if(tankType == 10){
-	 		rad = 23;
-	 		ctx.strokeStyle = 'black';
-	 		ctx.restore();
-	 		for(var i = 0; i <= 360; i += 360 / 2){
-	 			ctx.save();
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = barrelColor;
-				ctx.fillRect(0, -9, 42, 18);
-				ctx.strokeRect(0, -9, 42, 18);
-				ctx.restore();
-	 		}
-	 		
-	 	} else if(tankType == 11){
-			ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = barrelColor;
-			ctx.beginPath();
-			ctx.moveTo(5, -12);
-			ctx.lineTo(35, -20);
-			ctx.lineTo(35, 20);
-			ctx.lineTo(-5, 12);
-			ctx.fill();
-			ctx.stroke();
-			ctx.restore(); 
-			
-		} else if(tankType == 12){
-			ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -12, 50, 20);
-			ctx.strokeRect(0, -12, 50, 20);
-			ctx.restore(); 
-			
-		}else if(tankType == 13){
-	 		rad = 30;
-	 		ctx.strokeStyle = 'black';
-	 		ctx.restore();
-	 		for(var i = 0; i <= 360; i += 360 / 4){
-	 			ctx.save();
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = barrelColor;
-				ctx.fillRect(0, -12, 55, 24);
-				ctx.strokeRect(0, -12, 55, 24);
-				ctx.restore();
-	 		}
-	 		
-	 	} else if(tankType == 14){
-	 		rad = 30;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
-	 		
-	 		for(var i = -360 / 9; i <= 360 / 9; i += 360 / 9){
-	 			ctx.save();
-	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = barrelColor;
-				ctx.fillRect(0, -12, 55, 24);
-				ctx.strokeRect(0, -12, 55, 24);
-				ctx.restore();
-	 		}
-	 		
-	 	} else if(tankType == 15){
-	 		rad = 26.5;
-	 		
-	 		ctx.restore();
-	 		for(var i = -180; i <= 90; i += 90){
-	 			ctx.save();
-	 			ctx.translate(x,y);
-		 		ctx.rotate((i + angle) * Math.PI / 180);
-			  ctx.strokeStyle = 'black';
-			  ///ctx.lineWidth = 1;
-				ctx.fillStyle = barrelColor;
-				ctx.beginPath();
-				ctx.moveTo(5, -12);
-				ctx.lineTo(35, -20);
-				ctx.lineTo(35, 20);
-				ctx.lineTo(-5, 12);
-				ctx.fill();
-				ctx.stroke();
-				ctx.restore(); 
-				
-			}
-	 	} else if(tankType == 16){
-	 		//ctx.save();
-	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
-	 		rad = 27;
-	 		ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -20, 50, 40);
-			ctx.strokeRect(0, -20, 50, 40);
-			ctx.restore(); 
-			
-		}else if(tankType == 17){
-	 		rad = 30;
-	 		ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -13, 55, 11);
-			ctx.fillRect(0, 0, 55, 11);
-			ctx.strokeRect(0, -13, 55, 11);
-			ctx.strokeRect(0, 0, 55, 11);
-			
-			ctx.fillRect(-12, -26, 55, 11);
-			ctx.fillRect(-12, 13, 55, 11);
-			ctx.strokeRect(-12, 13, 55, 11);
-			ctx.strokeRect(-12, -26, 55, 11);
-			ctx.restore(); 
-			
-	 	} else if(tankType == 18){
-	 		rad = 34;
-	 		ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -10, 60, 8);
-			ctx.fillRect(0, 0, 60, 8);
-			ctx.strokeRect(0, -10, 60, 8);
-			ctx.strokeRect(0, 0, 60, 8);
-			
-			ctx.fillRect(-8, -20, 60, 8);
-			ctx.fillRect(-8, 10, 60, 8);
-			ctx.strokeRect(-8, 10, 60, 8);
-			ctx.strokeRect(-8, -20, 60, 8);
-			
-			ctx.fillRect(-16, -30, 60, 8);
-			ctx.fillRect(-16, 20, 60, 8);
-			ctx.strokeRect(-16, 20, 60, 8);
-			ctx.strokeRect(-16, -30, 60, 8);
-			ctx.restore(); 
-			
-	 	} else if(tankType == 19){
-	 		//ctx.save();
-	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
-	 		rad = 27;
-	 		ctx.restore();
-	 		for(var i = 0; i <= 180; i+= 180){
-	 			ctx.save();
-	 			ctx.translate(x,y);
-		 		ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.strokeStyle = 'black';
-			  ///ctx.lineWidth = 1;
-				ctx.fillStyle = barrelColor;
-				ctx.fillRect(0, -20, 50, 40);
-				ctx.strokeRect(0, -20, 50, 40);
-				ctx.restore(); 
-	 		}
-	 		
-			
-		} else if(tankType == 20){
-	 		//ctx.save();
-	 		////////////ctx.translate(7 * WIDTH / 8 + 70, HEIGHT - 70);
-	 		rad = 27;
-	 		ctx.translate(x,y);
-	 		ctx.rotate((angle) * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -20, 50, 40);
-			ctx.fillRect(20, -20, 12, 40);
-			
-			ctx.strokeRect(0, -20, 50, 40);
-			ctx.strokeRect(20, -20, 12, 40);
-			ctx.restore(); 
-	 		
-			
-		} else if(tankType == 21){
-	 		rad = 30;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
-	 		
-	 		for(var i = -360 / 9; i < 0; i += 360 / 18){
-	 			ctx.save();
-	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = barrelColor;
-				ctx.fillRect(0+i * 9 / 360 * 15, -12, 55, 24);
-				ctx.strokeRect(0+i * 9 / 360 * 15, -12, 55, 24);
-				ctx.restore();
-				ctx.save();
-	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle-i) * Math.PI / 180);
-			  ctx.fillStyle = barrelColor;
-				ctx.fillRect(0+i * 9 / 360 * 15, -12, 55, 24);
-				ctx.strokeRect(0+i * 9 / 360 * 15, -12, 55, 24);
-				ctx.restore();
-	 		}
-	 		ctx.save();
- 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
- 			ctx.translate(x,y);
- 			ctx.rotate((angle) * Math.PI / 180);
-		  ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -12, 55, 24);
-			ctx.strokeRect(0, -12, 55, 24);
-			ctx.restore();
-			
-			ctx.save();
-	 		
-	 	} else if(tankType == 22){
-			ctx.translate(x,y);
-	 		ctx.rotate(angle * Math.PI / 180);
-		  ctx.strokeStyle = 'black';
-		  ///ctx.lineWidth = 1;
-			ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -10, 45, 20);
-			ctx.strokeRect(0, -10, 45, 20);
-			ctx.beginPath();
-			ctx.moveTo(45, -12);
-			ctx.lineTo(75, -20);
-			ctx.lineTo(75, 20);
-			ctx.lineTo(45, 12);
-			ctx.fill();
-			ctx.stroke();
-			ctx.restore(); 
-			
-		} else if(tankType == 23){
-	 		rad = 27;
-	 		
-	 		ctx.restore();
-	 		for(var i = 0; i < 360; i += 60){
-	 			ctx.save();
-	 			ctx.translate(x,y);
-		 		ctx.rotate((i + angle) * Math.PI / 180);
-			  ctx.strokeStyle = 'black';
-			  ///ctx.lineWidth = 1;
-				ctx.fillStyle = barrelColor;
-				ctx.beginPath();
-				ctx.moveTo(5, -12);
-				ctx.lineTo(35, -20);
-				ctx.lineTo(35, 20);
-				ctx.lineTo(-5, 12);
-				ctx.fill();
-				ctx.stroke();
-				ctx.restore(); 
-				
-			}
-	 	} else if(tankType == 24){
-	 		rad = 27;
-	 		
-	 		ctx.restore();
-	 		for(var i = 0; i < 360; i += 120){
-	 			ctx.save();
-	 			ctx.translate(x,y);
-		 		ctx.rotate((i + angle) * Math.PI / 180);
-			  ctx.strokeStyle = 'black';
-			  ///ctx.lineWidth = 1;
-				ctx.fillStyle = barrelColor;
-				ctx.beginPath();
-				ctx.moveTo(5, -12);
-				ctx.lineTo(35, -20);
-				ctx.lineTo(35, 20);
-				ctx.lineTo(-5, 12);
-				ctx.fill();
-				ctx.stroke();
-				ctx.restore(); 
-				
-			}
-	 	} else if(tankType == 25){
-	 		//drawParticles();
-	 		rad = 30;
-	 		ctx.restore();
-	 		ctx.strokeStyle = 'black';
-	 		
-	 		for(var i = -360 / 5; i < 0; i += 360 / 15){
-	 			ctx.save();
-	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle+i) * Math.PI / 180);
-			  ctx.fillStyle = barrelColor;
-				ctx.fillRect(0+i * 11 / 360 * 5, -12, 55, 24);
-				ctx.strokeRect(0+i * 11 / 360 * 5, -12, 55, 24);
-				ctx.restore();
-				ctx.save();
-	 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
-	 			ctx.translate(x,y);
-	 			ctx.rotate((angle-i) * Math.PI / 180);
-			  ctx.fillStyle = barrelColor;
-				ctx.fillRect(0+i * 11 / 360 * 5, -12, 55, 24);
-				ctx.strokeRect(0+i * 11 / 360 * 5, -12, 55, 24);
-				ctx.restore();
-	 		}
-	 		ctx.save();
- 			console.log(i + '; ' + x + ', ' + y + '; ' + angle);
- 			ctx.translate(x,y);
- 			ctx.rotate((angle) * Math.PI / 180);
-		  	ctx.fillStyle = barrelColor;
-			ctx.fillRect(0, -12, 55, 24);
-			ctx.strokeRect(0, -12, 55, 24);
-			ctx.restore();
-			
-			ctx.save();
-	 		
-	 	}
-		
-		var ch = true;
-		if(text){
-			ctx.font = '19px Arial';
-			if(ch)
-				var text = CHINESE[tankType];
-			else
-				var text = ENGLISH[tankType];
-			ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
-		}
-		
-		ctx.save();
-		//ctx.scale(2,2);
-		ctx.lineWidth = 2.5;
-		ctx.strokeStyle = 'black';
-		ctx.beginPath();
-		ctx.arc(x, y, rad, 0, 2 * Math.PI);
-		ctx.fillStyle = '#7DF9FF';
-		ctx.fill();
-		ctx.closePath();
-		ctx.stroke();
-		ctx.restore();
+
+	var drawMinis = function(x, y, angle, text, tankType) {
+	    var width = 66;
+	    var height = 44;
+	    ctx.save();
+	    var rad = 22;
+	    ctx.lineWidth = 2.5;
+
+	    var barrelColor = "#DCDCDC";
+
+	    if (tankType == 0) {
+
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -12, 40, 20);
+	        ctx.strokeRect(0, -12, 40, 20);
+	        ctx.restore();
+
+
+	    } else if (tankType == 1) {
+	        rad = 25;
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -22, 45, 21);
+	        ctx.fillRect(0, 3, 45, 21);
+	        ctx.strokeRect(0, -22, 45, 21);
+	        ctx.strokeRect(0, 3, 45, 21);
+	        ctx.restore();
+
+	    } else if (tankType == 2) {
+	        rad = 31;
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+
+	        ctx.fillStyle = barrelColor;
+
+	        ctx.fillRect(0, -30, 56, 20);
+	        ctx.fillRect(0, 5, 56, 20);
+
+	        ctx.strokeRect(0, -12, 66, 20);
+	        ctx.strokeRect(0, -30, 56, 20);
+	        ctx.strokeRect(0, 5, 56, 20);
+	        ctx.fillRect(0, -12, 66, 20);
+
+	        ctx.restore();
+
+	    } else if (tankType == 3) {
+	        rad = 30;
+	        ctx.restore();
+	        ctx.strokeStyle = 'black';
+
+	        for (var i = 0; i <= 360; i += 360 / 8) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0, -12, 55, 24);
+	            ctx.strokeRect(0, -12, 55, 24);
+	            ctx.restore();
+	        }
+
+	    } else if (tankType == 4) {
+	        rad = 30;
+	        ctx.restore();
+	        ctx.strokeStyle = 'black';
+	        for (var i = 0; i <= 360; i += 120) {
+	            ctx.save();
+	            ctx.fillStyle = barrelColor;
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillRect(0, -27, 55, 26);
+	            ctx.fillRect(0, 3, 55, 26);
+	            ctx.strokeRect(0, -27, 55, 26);
+	            ctx.strokeRect(0, 3, 55, 26);
+	            ctx.restore();
+	        }
+	        ctx.strokeColor = 'red';
+
+	    } else if (tankType == 5) {
+	        rad = 26.5;
+	        ctx.restore();
+	        ctx.strokeStyle = 'black';
+	        for (var i = -150; i <= 150; i += 300) {
+	            ctx.save();
+	            ctx.fillStyle = barrelColor;
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillRect(0, -12, 42, 20);
+	            ctx.strokeRect(0, -12, 42, 20);
+	            ctx.restore();
+	        }
+	        ctx.save();
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -12, 48, 20);
+	        ctx.strokeRect(0, -12, 48, 20);
+	        ctx.restore();
+	        ctx.strokeColor = 'red';
+
+	    } else if (tankType == 6) {
+	        rad = 26.5;
+	        ctx.restore();
+	        ctx.strokeStyle = 'black';
+
+	        for (var i = -150; i <= 150; i += 300) {
+	            ctx.save();
+	            ctx.fillStyle = barrelColor;
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillRect(0, -12, 42, 20);
+	            ctx.strokeRect(0, -12, 42, 20);
+	            ctx.restore();
+	        }
+	        for (var i = -135; i <= 135; i += 270) {
+	            ctx.save();
+	            ctx.fillStyle = barrelColor;
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillRect(0, -12, 42, 20);
+	            ctx.strokeRect(0, -12, 42, 20);
+	            ctx.restore();
+	        }
+	        ctx.save();
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -12, 48, 20);
+	        ctx.strokeRect(0, -12, 48, 20);
+	        ctx.restore();
+	        ctx.strokeColor = 'red';
+
+	    } else if (tankType == 7) {
+	        rad = 26.5;
+
+	        ctx.restore();
+	        for (var i = -180; i <= 0; i += 180) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((i + angle) * Math.PI / 180);
+	            ctx.strokeStyle = 'black';
+	            ctx.fillStyle = barrelColor;
+	            ctx.beginPath();
+	            ctx.moveTo(5, -12);
+	            ctx.lineTo(35, -20);
+	            ctx.lineTo(35, 20);
+	            ctx.lineTo(-5, 12);
+	            ctx.fill();
+	            ctx.stroke();
+	            ctx.restore();
+
+	        }
+	    } else if (tankType == 8) {
+	        rad = 30;
+	        ctx.restore();
+	        ctx.strokeStyle = 'black';
+
+	        for (var i = 0; i <= 360; i += 180) {
+	            ctx.save();
+	            ctx.fillStyle = barrelColor;
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillRect(0, -27, 55, 26);
+	            ctx.fillRect(0, 3, 55, 26);
+	            ctx.strokeRect(0, -27, 55, 26);
+	            ctx.strokeRect(0, 3, 55, 26);
+	            ctx.restore();
+	        }
+	        ctx.strokeColor = 'red';
+
+	    } else if (tankType == 9) {
+	        rad = 30;
+	        ctx.strokeStyle = 'black';
+	        ctx.restore();
+	        for (var i = 0; i <= 360; i += 360 / 10) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0, -12, 55, 24);
+	            ctx.strokeRect(0, -12, 55, 24);
+	            ctx.restore();
+	        }
+
+	    } else if (tankType == 10) {
+	        rad = 23;
+	        ctx.strokeStyle = 'black';
+	        ctx.restore();
+	        for (var i = 0; i <= 360; i += 360 / 2) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0, -9, 42, 18);
+	            ctx.strokeRect(0, -9, 42, 18);
+	            ctx.restore();
+	        }
+
+	    } else if (tankType == 11) {
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+	        ctx.fillStyle = barrelColor;
+	        ctx.beginPath();
+	        ctx.moveTo(5, -12);
+	        ctx.lineTo(35, -20);
+	        ctx.lineTo(35, 20);
+	        ctx.lineTo(-5, 12);
+	        ctx.fill();
+	        ctx.stroke();
+	        ctx.restore();
+
+	    } else if (tankType == 12) {
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -12, 50, 20);
+	        ctx.strokeRect(0, -12, 50, 20);
+	        ctx.restore();
+
+	    } else if (tankType == 13) {
+	        rad = 30;
+	        ctx.strokeStyle = 'black';
+	        ctx.restore();
+	        for (var i = 0; i <= 360; i += 360 / 4) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0, -12, 55, 24);
+	            ctx.strokeRect(0, -12, 55, 24);
+	            ctx.restore();
+	        }
+
+	    } else if (tankType == 14) {
+	        rad = 30;
+	        ctx.restore();
+	        ctx.strokeStyle = 'black';
+
+	        for (var i = -360 / 9; i <= 360 / 9; i += 360 / 9) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0, -12, 55, 24);
+	            ctx.strokeRect(0, -12, 55, 24);
+	            ctx.restore();
+	        }
+
+	    } else if (tankType == 15) {
+	        rad = 26.5;
+
+	        ctx.restore();
+	        for (var i = -180; i <= 90; i += 90) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((i + angle) * Math.PI / 180);
+	            ctx.strokeStyle = 'black';
+	            ctx.fillStyle = barrelColor;
+	            ctx.beginPath();
+	            ctx.moveTo(5, -12);
+	            ctx.lineTo(35, -20);
+	            ctx.lineTo(35, 20);
+	            ctx.lineTo(-5, 12);
+	            ctx.fill();
+	            ctx.stroke();
+	            ctx.restore();
+
+	        }
+	    } else if (tankType == 16) {
+	        rad = 27;
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -20, 50, 40);
+	        ctx.strokeRect(0, -20, 50, 40);
+	        ctx.restore();
+
+	    } else if (tankType == 17) {
+	        rad = 30;
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -13, 55, 11);
+	        ctx.fillRect(0, 0, 55, 11);
+	        ctx.strokeRect(0, -13, 55, 11);
+	        ctx.strokeRect(0, 0, 55, 11);
+
+	        ctx.fillRect(-12, -26, 55, 11);
+	        ctx.fillRect(-12, 13, 55, 11);
+	        ctx.strokeRect(-12, 13, 55, 11);
+	        ctx.strokeRect(-12, -26, 55, 11);
+	        ctx.restore();
+
+	    } else if (tankType == 18) {
+	        rad = 34;
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -10, 60, 8);
+	        ctx.fillRect(0, 0, 60, 8);
+	        ctx.strokeRect(0, -10, 60, 8);
+	        ctx.strokeRect(0, 0, 60, 8);
+
+	        ctx.fillRect(-8, -20, 60, 8);
+	        ctx.fillRect(-8, 10, 60, 8);
+	        ctx.strokeRect(-8, 10, 60, 8);
+	        ctx.strokeRect(-8, -20, 60, 8);
+
+	        ctx.fillRect(-16, -30, 60, 8);
+	        ctx.fillRect(-16, 20, 60, 8);
+	        ctx.strokeRect(-16, 20, 60, 8);
+	        ctx.strokeRect(-16, -30, 60, 8);
+	        ctx.restore();
+
+	    } else if (tankType == 19) {
+	        rad = 27;
+	        ctx.restore();
+	        for (var i = 0; i <= 180; i += 180) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.strokeStyle = 'black';
+
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0, -20, 50, 40);
+	            ctx.strokeRect(0, -20, 50, 40);
+	            ctx.restore();
+	        }
+
+
+	    } else if (tankType == 20) {
+	        rad = 27;
+	        ctx.translate(x, y);
+	        ctx.rotate((angle) * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -20, 50, 40);
+	        ctx.fillRect(20, -20, 12, 40);
+
+	        ctx.strokeRect(0, -20, 50, 40);
+	        ctx.strokeRect(20, -20, 12, 40);
+	        ctx.restore();
+
+
+	    } else if (tankType == 21) {
+	        rad = 30;
+	        ctx.restore();
+	        ctx.strokeStyle = 'black';
+
+	        for (var i = -360 / 9; i < 0; i += 360 / 18) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0 + i * 9 / 360 * 15, -12, 55, 24);
+	            ctx.strokeRect(0 + i * 9 / 360 * 15, -12, 55, 24);
+	            ctx.restore();
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle - i) * Math.PI / 180);
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0 + i * 9 / 360 * 15, -12, 55, 24);
+	            ctx.strokeRect(0 + i * 9 / 360 * 15, -12, 55, 24);
+	            ctx.restore();
+	        }
+	        ctx.save();
+	        ctx.translate(x, y);
+	        ctx.rotate((angle) * Math.PI / 180);
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -12, 55, 24);
+	        ctx.strokeRect(0, -12, 55, 24);
+	        ctx.restore();
+
+	        ctx.save();
+
+	    } else if (tankType == 22) {
+	        ctx.translate(x, y);
+	        ctx.rotate(angle * Math.PI / 180);
+	        ctx.strokeStyle = 'black';
+
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -10, 45, 20);
+	        ctx.strokeRect(0, -10, 45, 20);
+	        ctx.beginPath();
+	        ctx.moveTo(45, -12);
+	        ctx.lineTo(75, -20);
+	        ctx.lineTo(75, 20);
+	        ctx.lineTo(45, 12);
+	        ctx.fill();
+	        ctx.stroke();
+	        ctx.restore();
+
+	    } else if (tankType == 23) {
+	        rad = 27;
+
+	        ctx.restore();
+	        for (var i = 0; i < 360; i += 60) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((i + angle) * Math.PI / 180);
+	            ctx.strokeStyle = 'black';
+	            ctx.fillStyle = barrelColor;
+	            ctx.beginPath();
+	            ctx.moveTo(5, -12);
+	            ctx.lineTo(35, -20);
+	            ctx.lineTo(35, 20);
+	            ctx.lineTo(-5, 12);
+	            ctx.fill();
+	            ctx.stroke();
+	            ctx.restore();
+
+	        }
+	    } else if (tankType == 24) {
+	        rad = 27;
+
+	        ctx.restore();
+	        for (var i = 0; i < 360; i += 120) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((i + angle) * Math.PI / 180);
+	            ctx.strokeStyle = 'black';
+	            ctx.fillStyle = barrelColor;
+	            ctx.beginPath();
+	            ctx.moveTo(5, -12);
+	            ctx.lineTo(35, -20);
+	            ctx.lineTo(35, 20);
+	            ctx.lineTo(-5, 12);
+	            ctx.fill();
+	            ctx.stroke();
+	            ctx.restore();
+
+	        }
+	    } else if (tankType == 25) {
+
+	        rad = 30;
+	        ctx.restore();
+	        ctx.strokeStyle = 'black';
+
+	        for (var i = -360 / 5; i < 0; i += 360 / 15) {
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle + i) * Math.PI / 180);
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0 + i * 11 / 360 * 5, -12, 55, 24);
+	            ctx.strokeRect(0 + i * 11 / 360 * 5, -12, 55, 24);
+	            ctx.restore();
+	            ctx.save();
+	            ctx.translate(x, y);
+	            ctx.rotate((angle - i) * Math.PI / 180);
+	            ctx.fillStyle = barrelColor;
+	            ctx.fillRect(0 + i * 11 / 360 * 5, -12, 55, 24);
+	            ctx.strokeRect(0 + i * 11 / 360 * 5, -12, 55, 24);
+	            ctx.restore();
+	        }
+	        ctx.save();
+	        ctx.translate(x, y);
+	        ctx.rotate((angle) * Math.PI / 180);
+	        ctx.fillStyle = barrelColor;
+	        ctx.fillRect(0, -12, 55, 24);
+	        ctx.strokeRect(0, -12, 55, 24);
+	        ctx.restore();
+
+	        ctx.save();
+
+	    }
+
+	    var ch = true;
+	    if (text) {
+	        ctx.font = '19px Arial';
+	        if (ch)
+	            var text = CHINESE[tankType];
+	        else
+	            var text = ENGLISH[tankType];
+	        ctx.fillText(text, x - ctx.measureText(text).width / 2, y + 50);
+	    }
+
+	    ctx.save();
+
+	    ctx.lineWidth = 2.5;
+	    ctx.strokeStyle = 'black';
+	    ctx.beginPath();
+	    ctx.arc(x, y, rad, 0, 2 * Math.PI);
+	    ctx.fillStyle = '#7DF9FF';
+	    ctx.fill();
+	    ctx.closePath();
+	    ctx.stroke();
+	    ctx.restore();
 	}
-	
+
 	var CHINESE = [
-		'大炮',
-	'连环炮',
-	'阵列炮',
-	'八角炮',
-	'多角连环炮',
-	'三角炮',
-	'推射炮',
-	'监察者',
-	'双向连环炮',
-	'十方霸主',
-	'侧卫炮',
-	'机关炮',
-	'狙击手',
-	'四方炮',
-	'三连环炮',
-	'领主',
-	'毁灭炮',
-	'机关枪',
-	'高速机关枪',
-	'双门毁灭炮',
-	'歼灭大炮',
-	'五连大炮',
-	'高射加农炮',
-	'地雷',
-	'夹兽者',
-	'七连小炮'
+	    '大炮',
+	    '连环炮',
+	    '阵列炮',
+	    '八角炮',
+	    '多角连环炮',
+	    '三角炮',
+	    '推射炮',
+	    '监察者',
+	    '双向连环炮',
+	    '十方霸主',
+	    '侧卫炮',
+	    '机关炮',
+	    '狙击手',
+	    '四方炮',
+	    '三连环炮',
+	    '领主',
+	    '毁灭炮',
+	    '机关枪',
+	    '高速机关枪',
+	    '双门毁灭炮',
+	    '歼灭大炮',
+	    '五连大炮',
+	    '高射加农炮',
+	    '地雷',
+	    '夹兽者',
+	    '七连小炮'
 	];
-	
+
 	var ENGLISH = [
-		'base tank',
-		'twin',
-		'triplet',
-		'octotank',
-		'triple twin',
-		'triangle',
-		'booster',
-		'overseer',
-		'twin flank',
-		'decatank',
-		'flank guard',
-		'machine gun',
-		'sniper',
-		'quad tank',
-		'triple shot',
-		'overlord',
-		'destroyer',
-		'gunner',
-		'hexagunner',
-		'flank destroyer',
-		'twin destroyer',
-		'penta shot',
-		'flak cannon',
-		'landmine',
-		'trapper',
-		'heptashot',
+	    'base tank',
+	    'twin',
+	    'triplet',
+	    'octotank',
+	    'triple twin',
+	    'triangle',
+	    'booster',
+	    'overseer',
+	    'twin flank',
+	    'decatank',
+	    'flank guard',
+	    'machine gun',
+	    'sniper',
+	    'quad tank',
+	    'triple shot',
+	    'overlord',
+	    'destroyer',
+	    'gunner',
+	    'hexagunner',
+	    'flank destroyer',
+	    'twin destroyer',
+	    'penta shot',
+	    'flak cannon',
+	    'landmine',
+	    'trapper',
+	    'heptashot',
 	];
-	
-	
-	
+
+
+
 	/**
 	 * Draws a rounded rectangle using the current state of the canvas.
 	 * If you omit the last three params, it will draw a rectangle
@@ -2278,183 +2233,271 @@ var WavyLine = function(level,bottom,right,height){
 	 * @param {Boolean} [stroke = true] Whether to stroke the rectangle.
 	 */
 	function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
-	  ctx.fillStyle = 'green';
-	  if (typeof stroke == 'undefined') {
-	    stroke = true;
-	  }
-	  if (typeof radius === 'undefined') {
-	    radius = 5;
-	  }
-	  if (typeof radius === 'number') {
-	    radius = {tl: radius, tr: radius, br: radius, bl: radius};
-	  } else {
-	    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-	    for (var side in defaultRadius) {
-	      radius[side] = radius[side] || defaultRadius[side];
+	    ctx.fillStyle = 'green';
+	    if (typeof stroke == 'undefined') {
+	        stroke = true;
 	    }
-	  }
-	  ctx.beginPath();
-	  ctx.moveTo(x + radius.tl, y);
-	  ctx.lineTo(x + width - radius.tr, y);
-	  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-	  ctx.lineTo(x + width, y + height - radius.br);
-	  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
-	  ctx.lineTo(x + radius.bl, y + height);
-	  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-	  ctx.lineTo(x, y + radius.tl);
-	  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
-	  ctx.closePath();
-	  if (fill) {
-	    ctx.fill();
-	  }
-	  if (stroke) {
-	    ctx.stroke();
-	  }
-	
+	    if (typeof radius === 'undefined') {
+	        radius = 5;
+	    }
+	    if (typeof radius === 'number') {
+	        radius = {
+	            tl: radius,
+	            tr: radius,
+	            br: radius,
+	            bl: radius
+	        };
+	    } else {
+	        var defaultRadius = {
+	            tl: 0,
+	            tr: 0,
+	            br: 0,
+	            bl: 0
+	        };
+	        for (var side in defaultRadius) {
+	            radius[side] = radius[side] || defaultRadius[side];
+	        }
+	    }
+	    ctx.beginPath();
+	    ctx.moveTo(x + radius.tl, y);
+	    ctx.lineTo(x + width - radius.tr, y);
+	    ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+	    ctx.lineTo(x + width, y + height - radius.br);
+	    ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+	    ctx.lineTo(x + radius.bl, y + height);
+	    ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+	    ctx.lineTo(x, y + radius.tl);
+	    ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+	    ctx.closePath();
+	    if (fill) {
+	        ctx.fill();
+	    }
+	    if (stroke) {
+	        ctx.stroke();
+	    }
+
 	}
-	
-	document.onkeydown = function(event){
-		
-		if(!focused){
-			if(event.keyCode === 68){	//d
-				if(!(Player.list[selfId].x > GAME_DIMENSION)){
-					
-					socket.emit('keyPress',{inputId:'right',state:true});
-				}else{
-					socket.emit('keyPress',{inputId:'right',state:false});
-				}
-			}
-			if(event.keyCode === 83){	//s
-				if(!(Player.list[selfId].y > GAME_DIMENSION)){
-					socket.emit('keyPress',{inputId:'down',state:true});
-				}else{
-					socket.emit('keyPress',{inputId:'down',state:false});
-				}
-			}
-			if(event.keyCode === 65){ //a
-				//console.log('hi ' + Player.list[my_id].x);
-				if(!(Player.list[selfId].x < 0)){
-					socket.emit('keyPress',{inputId:'left',state:true});
-				}else{
-					socket.emit('keyPress',{inputId:'left',state:false});
-				}
-			}
-			if(event.keyCode === 87){ // w
-				if(!(Player.list[selfId].y < 0)){
-					//console.log('hi ' + Player.list[my_id].x);
-					socket.emit('keyPress',{inputId:'up',state:true});
-				}else{
-					socket.emit('keyPress',{inputId:'up',state:false});
-				}
-			}
-		}
+
+	document.onkeydown = function(event) {
+
+	    if (!focused) {
+	        if (event.keyCode === 68) {
+	            if (!(Player.list[selfId].x > GAME_DIMENSION)) {
+
+	                socket.emit('keyPress', {
+	                    inputId: 'right',
+	                    state: true
+	                });
+	            } else {
+	                socket.emit('keyPress', {
+	                    inputId: 'right',
+	                    state: false
+	                });
+	            }
+	        }
+	        if (event.keyCode === 83) {
+	            if (!(Player.list[selfId].y > GAME_DIMENSION)) {
+	                socket.emit('keyPress', {
+	                    inputId: 'down',
+	                    state: true
+	                });
+	            } else {
+	                socket.emit('keyPress', {
+	                    inputId: 'down',
+	                    state: false
+	                });
+	            }
+	        }
+	        if (event.keyCode === 65) {
+
+	            if (!(Player.list[selfId].x < 0)) {
+	                socket.emit('keyPress', {
+	                    inputId: 'left',
+	                    state: true
+	                });
+	            } else {
+	                socket.emit('keyPress', {
+	                    inputId: 'left',
+	                    state: false
+	                });
+	            }
+	        }
+	        if (event.keyCode === 87) {
+	            if (!(Player.list[selfId].y < 0)) {
+
+	                socket.emit('keyPress', {
+	                    inputId: 'up',
+	                    state: true
+	                });
+	            } else {
+	                socket.emit('keyPress', {
+	                    inputId: 'up',
+	                    state: false
+	                });
+	            }
+	        }
+	    }
 	}
 	var autoFire = false;
 	var wasAutoFire = false;
-	document.onkeyup = function(event){
-		if(!focused){
-			if(event.keyCode === 68)	//d
-				socket.emit('keyPress',{inputId:'right',state:false});
-			if(event.keyCode === 83)	//s
-				socket.emit('keyPress',{inputId:'down',state:false});
-			if(event.keyCode === 65) //a
-				socket.emit('keyPress',{inputId:'left',state:false});
-			if(event.keyCode === 87) // w
-				socket.emit('keyPress',{inputId:'up',state:false});
-			if(event.keyCode > 47 && event.keyCode < 58)
-				socket.emit('changeType',{type:{type:event.keyCode - 48,r:1,g:1,b:1}});
-			if(event.keyCode == 69){
-				autoFire = !autoFire;
-				//wasAutoFire = !wasAutoFire;
-				console.log(autoFire);
-			}
-		}
+	document.onkeyup = function(event) {
+		
+	    if (!focused) {
+	        if (event.keyCode === 68)
+	            socket.emit('keyPress', {
+	                inputId: 'right',
+	                state: false
+	            });
+	        if (event.keyCode === 83)
+	            socket.emit('keyPress', {
+	                inputId: 'down',
+	                state: false
+	            });
+	        if (event.keyCode === 65)
+	            socket.emit('keyPress', {
+	                inputId: 'left',
+	                state: false
+	            });
+	        if (event.keyCode === 87)
+	            socket.emit('keyPress', {
+	                inputId: 'up',
+	                state: false
+	            });
+	        if (event.keyCode > 47 && event.keyCode < 58)
+	            socket.emit('changeType', {
+	                type: {
+	                    type: event.keyCode - 48,
+	                    r: 1,
+	                    g: 1,
+	                    b: 1
+	                }
+	            });
+	        if (event.keyCode == 69) {
+	            autoFire = !autoFire;
+	            if (autoFire) {
+	                socket.emit('keyPress', {
+	                    inputId: 'attack',
+	                    state: true,
+	                    mouseX: lastMouseX,
+	                    mouseY: lastMouseY
+	                });
+	                wasAutoFire = true;
+	            } else if (!autoFire && wasAutoFire) {
+	                socket.emit('keyPress', {
+	                    inputId: 'attack',
+	                    state: false
+	                });
+	                wasAutoFire = false;
+	            } else if (autoFire && !wasAutoFire) {
+	                socket.emit('keyPress', {
+	                    inputId: 'attack',
+	                    state: false
+	                });
+	                wasAutoFire = true;
+	            }
+	        }
+	    }
 	}
-	
-	function isPointInsideRect(pointX,pointY,rectX,rectY,rectWidth,rectHeight){
-    return  (rectX <= pointX) && (rectX + rectWidth >= pointX) &&
-                 (rectY <= pointY) && (rectY + rectHeight >= pointY);
+	var lastMouseX = 0;
+	var lastMouseY = 0;
+	function isPointInsideRect(pointX, pointY, rectX, rectY, rectWidth, rectHeight) {
+	    return (rectX <= pointX) && (rectX + rectWidth >= pointX) &&
+	        (rectY <= pointY) && (rectY + rectHeight >= pointY);
 	}
-	
-	document.onmousedown = function(event){
-		if(signDiv.style.display == 'none'){
-			var x = event.clientX;
-			var y = event.clientY;
-			var spacing = 30;
-			var initial = 10;
-			var w = 15;
-			var length = 154;
-			var leftSpace = 185;
-			if(newTanks.length != 0){
-				var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170;
-				var height = 133;
-				if(isPointInsideRect(x,y,starting - 85,height - 85,(newTanks.length) * 170,170)){
-					var clickIndex = Math.round((x - starting) / 170);
-					console.log(clickIndex);
-					var newTankUpgrade = newTanks[clickIndex];
-					console.log(newTankUpgrade);
-					socket.emit('changeType',{type:newTankUpgrade});
-					newTanks = [];
-				}
-			}
-			if(isPointInsideRect(x,y,0,HEIGHT - 40,210,40)){
-				focused = true;
-			}else focused = false;
-			if(isPointInsideRect(x,y,350,0,50,50)){
-				levelUpVisible = !levelUpVisible;
-			}
-			if(isPointInsideRect(x,y,222,HEIGHT - 39,42,42)){
-				chatVisible = !chatVisible;
-			}
-			if(levelUpVisible && isPointInsideRect(x,y,0,0,400,250)){
-				if(isPointInsideRect(x,y,leftSpace, initial, length, 20)){
-					socket.emit('regen');
-				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing, length, 20)){
-					socket.emit('maxhealth');
-				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*2, length, 20)){
-					socket.emit('bulletspeed');
-				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*3, length, 20)){
-					socket.emit('bulletHp');
-				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*4, length, 20)){
-					socket.emit('reload');
-				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*5, length, 20)){
-					socket.emit('maxSpd');
-				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*6, length, 20)){
-					socket.emit('bodyDamage');
-				}else if(isPointInsideRect(x,y,leftSpace, initial+spacing*7, length, 20)){
-					socket.emit('penetration');
-				}else socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
-			}else socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
-		}
+
+	document.onmousedown = function(event) {
+	    if (signDiv.style.display == 'none') {
+	        var x = event.clientX;
+	        var y = event.clientY;
+	        var spacing = 30;
+	        var initial = 10;
+	        var w = 15;
+	        var length = 154;
+	        var leftSpace = 185;
+	        if (newTanks.length != 0) {
+	            var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170;
+	            var height = 133;
+	            if (isPointInsideRect(x, y, starting - 85, height - 85, (newTanks.length) * 170, 170)) {
+	                var clickIndex = Math.round((x - starting) / 170);
+	                var newTankUpgrade = newTanks[clickIndex];
+	                socket.emit('changeType', {
+	                    type: newTankUpgrade
+	                });
+	                newTanks = [];
+	            }
+	        }
+	        if (isPointInsideRect(x, y, 0, HEIGHT - 40, 210, 40)) {
+	            focused = true;
+	        } else focused = false;
+	        if (isPointInsideRect(x, y, 350, 0, 50, 50)) {
+	            levelUpVisible = !levelUpVisible;
+	        }
+	        if (isPointInsideRect(x, y, 222, HEIGHT - 39, 42, 42)) {
+	            chatVisible = !chatVisible;
+	        }
+	        if (levelUpVisible && isPointInsideRect(x, y, 0, 0, 400, 250)) {
+	            if (isPointInsideRect(x, y, leftSpace, initial, length, 20)) {
+	                socket.emit('regen');
+	            } else if (isPointInsideRect(x, y, leftSpace, initial + spacing, length, 20)) {
+	                socket.emit('maxhealth');
+	            } else if (isPointInsideRect(x, y, leftSpace, initial + spacing * 2, length, 20)) {
+	                socket.emit('bulletspeed');
+	            } else if (isPointInsideRect(x, y, leftSpace, initial + spacing * 3, length, 20)) {
+	                socket.emit('bulletHp');
+	            } else if (isPointInsideRect(x, y, leftSpace, initial + spacing * 4, length, 20)) {
+	                socket.emit('reload');
+	            } else if (isPointInsideRect(x, y, leftSpace, initial + spacing * 5, length, 20)) {
+	                socket.emit('maxSpd');
+	            } else if (isPointInsideRect(x, y, leftSpace, initial + spacing * 6, length, 20)) {
+	                socket.emit('bodyDamage');
+	            } else if (isPointInsideRect(x, y, leftSpace, initial + spacing * 7, length, 20)) {
+	                socket.emit('penetration');
+	            } else socket.emit('keyPress', {
+	                inputId: 'attack',
+	                state: true,
+	                mouseX: x,
+	                mouseY: y
+	            });
+	        } else socket.emit('keyPress', {
+	            inputId: 'attack',
+	            state: true,
+	            mouseX: x,
+	            mouseY: y
+	        });
+	    }
 	}
-	document.onmouseup = function(event){
-		if(signDiv.style.display == 'none')
-			socket.emit('keyPress',{inputId:'attack',state:false});
+	document.onmouseup = function(event) {
+	    if (signDiv.style.display == 'none')
+	        socket.emit('keyPress', {
+	            inputId: 'attack',
+	            state: false
+	        });
 	}
 	var moveTimes = 0;
-	document.onmousemove = function(event){
-		if(moveTimes % 10 == 0){
-			if(signDiv.style.display == 'none'){
-				var x = -(WIDTH / 2) + event.clientX - 8;
-				var y = -(HEIGHT / 2) + event.clientY - 8;
-				//mouseX = x + WIDTH / 2;
-				//mouseY = y + HEIGHT / 2;
-				var angle = Math.atan2(y,x) / Math.PI * 180;
-				Player.list[selfId].angle = angle;
-				socket.emit('keyPress',{inputId:'mouseAngle',state:angle,mouseX:x,mouseY:y});
-				if(autoFire){
-					socket.emit('keyPress',{inputId:'attack',state:true,mouseX:x,mouseY:y});
-					wasAutoFire = true;
-				}else if(!autoFire && wasAutoFire){
-					socket.emit('keyPress',{inputId:'attack',state:false});
-					wasAutoFire = false;
-				}else if(autoFire && !wasAutoFire){
-					socket.emit('keyPress',{inputId:'attack',state:false});
-					wasAutoFire = true;
-				}
-			}
-		}
-		moveTimes++;
+	document.onmousemove = function(event) {
+		
+	    if (signDiv.style.display == 'none') {
+	        var x = -(WIDTH / 2) + event.clientX - 8;
+	        var y = -(HEIGHT / 2) + event.clientY - 8;
+	        lastMouseX = x;
+        	lastMouseY = y;
+        	if((event.clientX < 350 && event.clientY < 350) || Player.list[selfId].upgrades != 0) levelUpVisible = true;
+        	else levelUpVisible = false;
+        	
+	        var angle = Math.atan2(y, x) / Math.PI * 180;
+	        Player.list[selfId].angle = angle;
+	        if (moveTimes % 4 == 0) {
+	            socket.emit('keyPress', {
+	                inputId: 'mouseAngle',
+	                state: angle,
+	                mouseX: x,
+	                mouseY: y
+	            });
+	            
+	        }
+	    }
+
+	    moveTimes++;
 	}
 </script>
 </body>
