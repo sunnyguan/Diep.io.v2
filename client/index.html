@@ -389,8 +389,6 @@ $(document).ready(function(){
 	    var self = {};
 
 	    self.tankType = initPack.tankType;
-
-
 	    self.id = initPack.id;
 
 	    self.name = initPack.name;
@@ -426,8 +424,16 @@ $(document).ready(function(){
 	        else return 0.46 * x * x * x - 12 * x * x + 170 * x - 529;
 	    }
 	    self.draw = function() {
-	        self.x += (self.newX - self.x) / tickRate;
-	        self.y += (self.newY - self.y) / tickRate;
+	    	var distX = self.newX - self.x;
+	    	var distY = self.newY - self.y;
+			var difference = (Math.abs(distX) > Math.abs(distY)) ? Math.abs(distX) : Math.abs(distY);
+	    	if(difference < 1){
+	    		self.x = self.newX;
+	    		self.y = self.newY;
+	    	}else{
+	    		self.x += distX / tickRate * 2;
+		        self.y += distY / tickRate * 2;
+	    	}
 
 	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
@@ -440,9 +446,6 @@ $(document).ready(function(){
 	        roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
 	        ctx.lineWidth = 2;
 	        roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
-
-
-
 
 	        ctx.save();
 	        var name = Player.list[selfId].name;
@@ -477,17 +480,24 @@ $(document).ready(function(){
 	    self.chaser = initPack.chaser;
 	    self.toRemoveTimer = 0;
 	    self.toRemove = false;
-
+		self.parent = initPack.parent;
 	    self.newX = initPack.x;
 	    self.newY = initPack.y;
 	    self.draw = function() {
-	        if (self.x != 0 && self.y != 0) {
-	            self.x += (self.newX - self.x) / tickRate;
-	            self.y += (self.newY - self.y) / tickRate;
-	        } else {
-	            self.x = self.newX;
-	            self.y = self.newY;
-	        }
+	    	var distX = self.newX - self.x;
+	    	var distY = self.newY - self.y;
+			var difference = (Math.abs(distX) > Math.abs(distY)) ? Math.abs(distX) : Math.abs(distY);
+	    	if(difference < 1){
+	    		self.x = self.newX;
+	    		self.y = self.newY;
+	    	}else if (!self.chaser && (self.x == 0 || self.y == 0)){
+	    		self.x = Player.list[self.parent].x;
+	    		self.y = Player.list[self.parent].y;
+	    	}else{
+	    		self.x += distX / tickRate * 2;
+		        self.y += distY / tickRate * 2;
+	    	}
+	    	
 	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
 	        if (self.toRemove) self.toRemoveTimer += 3;
@@ -501,30 +511,17 @@ $(document).ready(function(){
 	                ctx.translate(x, y);
 	                if (self.drone) ctx.rotate(self.angle * Math.PI / 180);
 	                else ctx.rotate(self.angle);
-
-	                var numberOfSides = 3,
-	                    size = 15,
-	                    Xcenter = 0,
-	                    Ycenter = 0;
-
-	                if (self.chaser) ctx.fillStyle = 'pink';
-	                else ctx.fillStyle = 'red';
-
 	                if (self.toRemove) {
-
 	                    ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
 	                    ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
 	                }
 
-
-	                ctx.beginPath();
-	                ctx.moveTo(Xcenter + size * Math.cos(0), Ycenter + size * Math.sin(0));
-
-	                for (var i = 1; i <= numberOfSides; i += 1) {
-	                    ctx.lineTo(Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
-	                }
-	                ctx.fill();
-	                ctx.stroke();
+	                ctx.lineWidth = 5;
+		            ctx.lineJoin = "round";
+		            
+		            polygon(ctx, 0, 0, 15, 3, 0, false);
+		            ctx.stroke();
+		            ctx.fill();
 	                ctx.restore();
 
 
@@ -534,16 +531,16 @@ $(document).ready(function(){
 	                ctx.lineWidth = 3;
 	                ctx.translate(x, y);
 	                ctx.rotate(self.angle * Math.PI / 180);
-	                polygon(ctx, 0, 0, 10, 3, 0, false, "#000000");
+	               
 
 	                if (self.toRemove) {
-
 	                    ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
 	                    ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
 	                }
-
-	                ctx.fill();
+	                polygon(ctx, 0, 0, 10, 3, 0, false, "#000000");
 	                ctx.stroke();
+	                ctx.fill();
+	                
 	                ctx.restore();
 
 
@@ -626,9 +623,7 @@ $(document).ready(function(){
 
 	            if (self.hp / self.maxhp != 1) {
 	                var hpWidth = 60 * self.hp / self.maxhp;
-
 	                ctx.fillStyle = 'green';
-
 	                ctx.lineWidth = 1;
 	                roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
 	                ctx.lineWidth = 2;
@@ -640,7 +635,6 @@ $(document).ready(function(){
 	            ctx.translate(x, y);
 	            if (self.toRemove) {
 	                self.hp = 0;
-
 	                ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
 	                ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
 	            }
@@ -648,12 +642,15 @@ $(document).ready(function(){
 	            self.angle += self.rotDeg;
 	            ctx.beginPath();
 
-
 	            ctx.lineWidth = 5;
 	            ctx.lineJoin = "round";
-	            polygon(ctx, 0, 0, 35, 3, 0, false);
+	            ctx.strokeStyle = "#555555";
+	            polygon(ctx, 0, 0, 24, 3, 0, false);
+	            //ctx.lineWidth = 5;
+	            //ctx.lineJoin = "round";
+	            //polygon(ctx, 0, 0, 35, 3, 0, false);
 
-	            var color = "f0a8ff";
+	            var color = "FC7677";
 	            var red = "ff0000";
 	            var ratio = self.hp / self.maxhp;
 	            ctx.stroke();
@@ -721,18 +718,20 @@ $(document).ready(function(){
 	            }
 	            ctx.rotate(self.angle / 180 * Math.PI);
 	            self.angle += self.rotDeg;
-
+	            
 	            ctx.beginPath();
-	            polygon(ctx, 0, 0, 30, 4, 0, false, "yellow");
-	            polygon(ctx, 0, 0, 10, 4, 0, true, "yellow");
+	            polygon(ctx, 0, 0, 23, 4, 0, false, "yellow");
+	            //polygon(ctx, 0, 0, 10, 4, 0, true, "yellow");
 
-	            var color = "fafaaa";
+	            var color = "ffe869";
 	            var red = "ff0000";
 	            var ratio = self.hp / self.maxhp;
+	            ctx.lineJoin = "round";
 	            ctx.fillStyle = blendColors(color, red, ratio);
 
-	            ctx.shadowColor = 'orange';
-	            ctx.shadowBlur = 15;
+	            //ctx.shadowColor = 'orange';
+	            //ctx.shadowBlur = 15;
+	            ctx.lineWidth = 6;
 	            ctx.stroke();
 	            ctx.fill();
 
@@ -814,28 +813,28 @@ $(document).ready(function(){
 
 	            ctx.beginPath();
 
-	            var color = "00FF00";
+	            var color = "768DFC";
 
-	            if (self.radius != 30) {
+	            /*if (self.radius != 30) {
 	                color = "00FFEC";
 	                polygon(ctx, 0, 0, self.radius + 10, 6, 0, false, color);
 	                polygon(ctx, 0, 0, (self.radius + 10) / 4, 6, 0, true, color);
 	            } else {
 	                polygon(ctx, 0, 0, self.radius + 10, 8, 0, false, color);
 	                polygon(ctx, 0, 0, (self.radius + 10) / 4, 8, 0, true, color);
-	            }
+	            }*/
+	            polygon(ctx, 0, 0, self.radius, 5, 0, false, color);
 
 	            if (self.attacked) {
 	                color = "ff0000";
-	                console.log("red");
 	            }
 
 	            var red = "ff0000";
 	            var ratio = self.hp / self.maxhp;
 	            ctx.fillStyle = blendColors(color, red, ratio);
-
-	            ctx.shadowColor = 'DeepSkyBlue';
-	            ctx.shadowBlur = 20;
+				ctx.lineWidth = 6;
+	            //ctx.shadowColor = 'DeepSkyBlue';
+	            //ctx.shadowBlur = 20;
 	            ctx.stroke();
 	            ctx.fill();
 
@@ -920,109 +919,117 @@ $(document).ready(function(){
 	function update(data) {
 	    tickRate = tick - lastTick;
 	    if (tickRate == 0) tickRate = 1;
-
-	    for (var i = 0; i < data.player.length; i++) {
-	        var pack = data.player[i];
-
-	        var p = Player.list[pack.id];
-	        if (p) {
-	            if (pack.x !== undefined)
-	                p.newX = pack.x;
-	            if (pack.y !== undefined)
-	                p.newY = pack.y;
-	            if (pack.hp !== undefined)
-	                p.hp = pack.hp;
-	            if (pack.score !== undefined)
-	                p.score = pack.score;
-	            if (pack.maxhp !== undefined)
-	                p.hpMax = pack.maxhp;
-	            if (pack.pMaxHp !== undefined)
-	                p.pMaxHp = pack.pMaxHp;
-	            if (pack.regen !== undefined)
-	                p.regen = pack.regen;
-	            if (pack.bulletSpeed !== undefined)
-	                p.bulletSpeed = pack.bulletSpeed;
-	            if (pack.bulletHp !== undefined)
-	                p.bulletHp = pack.bulletHp;
-	            if (pack.bulletReload !== undefined)
-	                p.bulletReload = pack.bulletReload;
-	            if (pack.movementSpeed !== undefined)
-	                p.movementSpeed = pack.movementSpeed;
-	            if (pack.bodyDamage !== undefined)
-	                p.bodyDamage = pack.bodyDamage;
-	            if (pack.penetration !== undefined)
-	                p.penetration = pack.penetration;
-	            if (pack.upgrades !== undefined)
-	                p.upgrades = pack.upgrades;
-	            if (pack.tankType !== undefined)
-	                p.tankType = pack.tankType;
-	            if (pack.level !== undefined)
-	                p.level = pack.level;
-	            if (pack.mouseAngle !== undefined && pack.id != selfId)
-	                p.angle = pack.mouseAngle;
-	        }
+		if(data.player !== undefined){
+			for (var i = 0; i < data.player.length; i++) {
+		        var pack = data.player[i];
+		        var p = Player.list[pack.id];
+		        if (p) {
+		            if (pack.x !== undefined)
+		                p.newX = pack.x;
+		            if (pack.y !== undefined)
+		                p.newY = pack.y;
+		            if (pack.hp !== undefined)
+		                p.hp = pack.hp;
+		            if (pack.score !== undefined)
+		                p.score = pack.score;
+		            if (pack.maxhp !== undefined)
+		                p.hpMax = pack.maxhp;
+		            if (pack.pMaxHp !== undefined)
+		                p.pMaxHp = pack.pMaxHp;
+		            if (pack.regen !== undefined)
+		                p.regen = pack.regen;
+		            if (pack.bulletSpeed !== undefined)
+		                p.bulletSpeed = pack.bulletSpeed;
+		            if (pack.bulletHp !== undefined)
+		                p.bulletHp = pack.bulletHp;
+		            if (pack.bulletReload !== undefined)
+		                p.bulletReload = pack.bulletReload;
+		            if (pack.movementSpeed !== undefined)
+		                p.movementSpeed = pack.movementSpeed;
+		            if (pack.bodyDamage !== undefined)
+		                p.bodyDamage = pack.bodyDamage;
+		            if (pack.penetration !== undefined)
+		                p.penetration = pack.penetration;
+		            if (pack.upgrades !== undefined)
+		                p.upgrades = pack.upgrades;
+		            if (pack.tankType !== undefined)
+		                p.tankType = pack.tankType;
+		            if (pack.level !== undefined)
+		                p.level = pack.level;
+		            if (pack.mouseAngle !== undefined && pack.id != selfId)
+		                p.angle = pack.mouseAngle;
+		        }
+		    }
+		}
+		if(data.bullet !== undefined){
+		    for (var i = 0; i < data.bullet.length; i++) {
+		        var pack = data.bullet[i];
+		        var b = Bullet.list[data.bullet[i].id];
+		        if (b) {
+		            if (pack.x !== undefined)
+		                b.newX = pack.x;
+		            if (pack.y !== undefined)
+		                b.newY = pack.y;
+		            if (pack.angle !== undefined)
+		                b.angle = pack.angle;
+		        }
+		    }
+		}
+	    if(data.square !== undefined){
+		    for (var i = 0; i < data.square.length; i++) {
+		        var pack = data.square[i];
+		        var b = Square.list[data.square[i].id];
+		        if (b) {
+		            if (pack.x !== undefined)
+		                b.newX = pack.x;
+		            if (pack.y !== undefined)
+		                b.newY = pack.y;
+		            if (pack.hp !== undefined)
+		                b.hp = pack.hp;
+		            if (pack.attacked !== undefined)
+		                b.attacked = pack.attacked;
+		            if (pack.angle !== undefined)
+		                b.angle = pack.angle;
+		        }
+		    }
 	    }
-	    for (var i = 0; i < data.bullet.length; i++) {
-	        var pack = data.bullet[i];
-	        var b = Bullet.list[data.bullet[i].id];
-	        if (b) {
-	            if (pack.x !== undefined)
-	                b.newX = pack.x;
-	            if (pack.y !== undefined)
-	                b.newY = pack.y;
-	            if (pack.angle !== undefined)
-	                b.angle = pack.angle;
-	        }
+	    if(data.pentagon !== undefined){
+		    for (var i = 0; i < data.pentagon.length; i++) {
+		        var pack = data.pentagon[i];
+		        var b = Pentagon.list[data.pentagon[i].id];
+		        if (b) {
+		            if (pack.x !== undefined)
+		                b.newX = pack.x;
+		            if (pack.y !== undefined)
+		                b.newY = pack.y;
+		            if (pack.hp !== undefined)
+		                b.hp = pack.hp;
+		            if (pack.attacked !== undefined)
+		                b.attacked = pack.attacked;
+		            if (pack.maxhp !== undefined)
+		                b.maxhp = pack.maxhp;
+		            if (pack.angle !== undefined)
+		                b.angle = pack.angle;
+		        }
+	    	}
 	    }
-	    for (var i = 0; i < data.square.length; i++) {
-	        var pack = data.square[i];
-	        var b = Square.list[data.square[i].id];
-	        if (b) {
-	            if (pack.x !== undefined)
-	                b.newX = pack.x;
-	            if (pack.y !== undefined)
-	                b.newY = pack.y;
-	            if (pack.hp !== undefined)
-	                b.hp = pack.hp;
-	            if (pack.attacked !== undefined)
-	                b.attacked = pack.attacked;
-	            if (pack.angle !== undefined)
-	                b.angle = pack.angle;
-	        }
-	    }
-	    for (var i = 0; i < data.pentagon.length; i++) {
-	        var pack = data.pentagon[i];
-	        var b = Pentagon.list[data.pentagon[i].id];
-	        if (b) {
-	            if (pack.x !== undefined)
-	                b.newX = pack.x;
-	            if (pack.y !== undefined)
-	                b.newY = pack.y;
-	            if (pack.hp !== undefined)
-	                b.hp = pack.hp;
-	            if (pack.attacked !== undefined)
-	                b.attacked = pack.attacked;
-	            if (pack.maxhp !== undefined)
-	                b.maxhp = pack.maxhp;
-	            if (pack.angle !== undefined)
-	                b.angle = pack.angle;
-	        }
-	    }
-	    for (var i = 0; i < data.triangle.length; i++) {
-	        var pack = data.triangle[i];
-	        var b = Triangle.list[data.triangle[i].id];
-	        if (b) {
-	            if (pack.x !== undefined)
-	                b.newX = pack.x;
-	            if (pack.y !== undefined)
-	                b.newY = pack.y;
-	            if (pack.hp !== undefined)
-	                b.hp = pack.hp;
-	            if (pack.attacked !== undefined)
-	                b.attacked = pack.attacked;
-	            if (pack.angle !== undefined)
-	                b.angle = pack.angle;
-	        }
+	    if(data.triangle !== undefined){
+		    for (var i = 0; i < data.triangle.length; i++) {
+		        var pack = data.triangle[i];
+		        var b = Triangle.list[data.triangle[i].id];
+		        if (b) {
+		            if (pack.x !== undefined)
+		                b.newX = pack.x;
+		            if (pack.y !== undefined)
+		                b.newY = pack.y;
+		            if (pack.hp !== undefined)
+		                b.hp = pack.hp;
+		            if (pack.attacked !== undefined)
+		                b.attacked = pack.attacked;
+		            if (pack.angle !== undefined)
+		                b.angle = pack.angle;
+		        }
+		    }
 	    }
 	    lastTick = tick;
 	}
@@ -1104,9 +1111,7 @@ $(document).ready(function(){
 
 	function draw() {
 
-
-
-	    tick++;
+	    tick = new Date().getTime();
 	    requestAnimationFrame(draw);
 	    if (drawDeath) {
 	        ctx.fillStyle = 'red';
@@ -1122,14 +1127,7 @@ $(document).ready(function(){
 	        WIDTH = document.body.clientWidth;
 	        HEIGHT = document.body.clientHeight;
 
-	        if (u % 100 == 0) {
-	            socket.emit('dimension', {
-	                width: WIDTH,
-	                height: HEIGHT
-	            });
-	            u -= 100;
-	        }
-	        u++;
+	        
 	        if (!selfId)
 	            return;
 	        ctx.clearRect(0, 0, WIDTH, HEIGHT);
@@ -1310,11 +1308,13 @@ $(document).ready(function(){
 		if(levelUpVisible){
 			left = easingInOutQuad(leftTick, 0, 350, 50);
 			if(leftTick <= 50) leftTick++;
+			left -= 350;
 		}else if(left > -349){
 			left = easingInOutQuad(leftTick, 0, 350, 50);
 			if(leftTick >= 0) leftTick--;
+			left -= 350;
 		}
-		left -= 350;
+		
 	    var spacing = 30;
 	    var initial = 10;
 	    var leftSpace = 185;
@@ -1348,10 +1348,20 @@ $(document).ready(function(){
 
         for (var i in prop) {
             var pp = prop[i];
-            pp.newX = left;
-            if (wavyLines[i].right != Math.round(pp * (14 / levelUpCount) + 2))
-                wavyLines[i] = new WavyLine(1, ij, Math.round(pp * (14 / levelUpCount)) + 2, 10);
-            ij += 30;
+            /*if(pp == undefined){
+            	for (var ij = 20; ij <= 230; ij += 30) {
+            	    var wl = new WavyLine(1, ij - 350, 16, 10);
+            	    wavyLines.push(wl);
+            	}
+            	break;
+            }*/
+            if(pp !== undefined){
+            	pp.newX = left;
+            
+	            if (wavyLines[i].right != Math.round(pp * (14 / levelUpCount) + 2))
+	                wavyLines[i] = new WavyLine(1, ij, Math.round(pp * (14 / levelUpCount)) + 2, 10);
+	            ij += 30;
+            }
         }
         for (var ind in wavyLines) {
             var wvLn = wavyLines[ind];
@@ -1433,7 +1443,7 @@ $(document).ready(function(){
 	}
 	function drawgrid() {
 	    if (!blackTheme) {
-	        ctx.fillStyle = '#D9D9D9';
+	        ctx.fillStyle = '#CECECE';
 	    } else {
 	        ctx.fillStyle = 'black';
 	    }
@@ -1442,7 +1452,7 @@ $(document).ready(function(){
 
 	    ctx.lineWidth = 0.5;
 	    if (!blackTheme) {
-	        ctx.strokeStyle = '#bfbfbf';
+	        ctx.strokeStyle = '#B2B2B2';
 	    } else {
 	        ctx.strokeStyle = 'black';
 	    }
@@ -1654,15 +1664,15 @@ $(document).ready(function(){
 	    var height = 44;
 	    ctx.save();
 	    var rad = 22;
-	    ctx.lineWidth = 2.5;
+	    ctx.lineWidth = 3.5;
 
-	    var barrelColor = "#DCDCDC";
+	    var barrelColor = "#A1A1A1";
+	    ctx.strokeStyle = '#555555';
 
 	    if (tankType == 0) {
 
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -12, 40, 20);
 	        ctx.strokeRect(0, -12, 40, 20);
@@ -1673,7 +1683,6 @@ $(document).ready(function(){
 	        rad = 25;
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -22, 45, 21);
@@ -1686,7 +1695,6 @@ $(document).ready(function(){
 	        rad = 31;
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 
 	        ctx.fillStyle = barrelColor;
 
@@ -1703,7 +1711,6 @@ $(document).ready(function(){
 	    } else if (tankType == 3) {
 	        rad = 30;
 	        ctx.restore();
-	        ctx.strokeStyle = 'black';
 
 	        for (var i = 0; i <= 360; i += 360 / 8) {
 	            ctx.save();
@@ -1718,7 +1725,6 @@ $(document).ready(function(){
 	    } else if (tankType == 4) {
 	        rad = 30;
 	        ctx.restore();
-	        ctx.strokeStyle = 'black';
 	        for (var i = 0; i <= 360; i += 120) {
 	            ctx.save();
 	            ctx.fillStyle = barrelColor;
@@ -1730,12 +1736,10 @@ $(document).ready(function(){
 	            ctx.strokeRect(0, 3, 55, 26);
 	            ctx.restore();
 	        }
-	        ctx.strokeColor = 'red';
 
 	    } else if (tankType == 5) {
 	        rad = 26.5;
 	        ctx.restore();
-	        ctx.strokeStyle = 'black';
 	        for (var i = -150; i <= 150; i += 300) {
 	            ctx.save();
 	            ctx.fillStyle = barrelColor;
@@ -1748,18 +1752,15 @@ $(document).ready(function(){
 	        ctx.save();
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -12, 48, 20);
 	        ctx.strokeRect(0, -12, 48, 20);
 	        ctx.restore();
-	        ctx.strokeColor = 'red';
 
 	    } else if (tankType == 6) {
 	        rad = 26.5;
 	        ctx.restore();
-	        ctx.strokeStyle = 'black';
 
 	        for (var i = -150; i <= 150; i += 300) {
 	            ctx.save();
@@ -1782,13 +1783,11 @@ $(document).ready(function(){
 	        ctx.save();
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -12, 48, 20);
 	        ctx.strokeRect(0, -12, 48, 20);
 	        ctx.restore();
-	        ctx.strokeColor = 'red';
 
 	    } else if (tankType == 7) {
 	        rad = 26.5;
@@ -1798,7 +1797,6 @@ $(document).ready(function(){
 	            ctx.save();
 	            ctx.translate(x, y);
 	            ctx.rotate((i + angle) * Math.PI / 180);
-	            ctx.strokeStyle = 'black';
 	            ctx.fillStyle = barrelColor;
 	            ctx.beginPath();
 	            ctx.moveTo(5, -12);
@@ -1813,7 +1811,6 @@ $(document).ready(function(){
 	    } else if (tankType == 8) {
 	        rad = 30;
 	        ctx.restore();
-	        ctx.strokeStyle = 'black';
 
 	        for (var i = 0; i <= 360; i += 180) {
 	            ctx.save();
@@ -1830,7 +1827,6 @@ $(document).ready(function(){
 
 	    } else if (tankType == 9) {
 	        rad = 30;
-	        ctx.strokeStyle = 'black';
 	        ctx.restore();
 	        for (var i = 0; i <= 360; i += 360 / 10) {
 	            ctx.save();
@@ -1844,7 +1840,6 @@ $(document).ready(function(){
 
 	    } else if (tankType == 10) {
 	        rad = 23;
-	        ctx.strokeStyle = 'black';
 	        ctx.restore();
 	        for (var i = 0; i <= 360; i += 360 / 2) {
 	            ctx.save();
@@ -1859,7 +1854,6 @@ $(document).ready(function(){
 	    } else if (tankType == 11) {
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 	        ctx.fillStyle = barrelColor;
 	        ctx.beginPath();
 	        ctx.moveTo(5, -12);
@@ -1873,7 +1867,6 @@ $(document).ready(function(){
 	    } else if (tankType == 12) {
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -12, 50, 20);
 	        ctx.strokeRect(0, -12, 50, 20);
@@ -1881,7 +1874,6 @@ $(document).ready(function(){
 
 	    } else if (tankType == 13) {
 	        rad = 30;
-	        ctx.strokeStyle = 'black';
 	        ctx.restore();
 	        for (var i = 0; i <= 360; i += 360 / 4) {
 	            ctx.save();
@@ -1896,7 +1888,6 @@ $(document).ready(function(){
 	    } else if (tankType == 14) {
 	        rad = 30;
 	        ctx.restore();
-	        ctx.strokeStyle = 'black';
 
 	        for (var i = -360 / 9; i <= 360 / 9; i += 360 / 9) {
 	            ctx.save();
@@ -1916,7 +1907,6 @@ $(document).ready(function(){
 	            ctx.save();
 	            ctx.translate(x, y);
 	            ctx.rotate((i + angle) * Math.PI / 180);
-	            ctx.strokeStyle = 'black';
 	            ctx.fillStyle = barrelColor;
 	            ctx.beginPath();
 	            ctx.moveTo(5, -12);
@@ -1932,7 +1922,6 @@ $(document).ready(function(){
 	        rad = 27;
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -20, 50, 40);
 	        ctx.strokeRect(0, -20, 50, 40);
@@ -1942,7 +1931,6 @@ $(document).ready(function(){
 	        rad = 30;
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -13, 55, 11);
 	        ctx.fillRect(0, 0, 55, 11);
@@ -1959,7 +1947,6 @@ $(document).ready(function(){
 	        rad = 34;
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -10, 60, 8);
@@ -1985,7 +1972,6 @@ $(document).ready(function(){
 	            ctx.save();
 	            ctx.translate(x, y);
 	            ctx.rotate((angle + i) * Math.PI / 180);
-	            ctx.strokeStyle = 'black';
 
 	            ctx.fillStyle = barrelColor;
 	            ctx.fillRect(0, -20, 50, 40);
@@ -1998,7 +1984,6 @@ $(document).ready(function(){
 	        rad = 27;
 	        ctx.translate(x, y);
 	        ctx.rotate((angle) * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -20, 50, 40);
@@ -2012,7 +1997,6 @@ $(document).ready(function(){
 	    } else if (tankType == 21) {
 	        rad = 30;
 	        ctx.restore();
-	        ctx.strokeStyle = 'black';
 
 	        for (var i = -360 / 9; i < 0; i += 360 / 18) {
 	            ctx.save();
@@ -2043,7 +2027,6 @@ $(document).ready(function(){
 	    } else if (tankType == 22) {
 	        ctx.translate(x, y);
 	        ctx.rotate(angle * Math.PI / 180);
-	        ctx.strokeStyle = 'black';
 
 	        ctx.fillStyle = barrelColor;
 	        ctx.fillRect(0, -10, 45, 20);
@@ -2065,7 +2048,6 @@ $(document).ready(function(){
 	            ctx.save();
 	            ctx.translate(x, y);
 	            ctx.rotate((i + angle) * Math.PI / 180);
-	            ctx.strokeStyle = 'black';
 	            ctx.fillStyle = barrelColor;
 	            ctx.beginPath();
 	            ctx.moveTo(5, -12);
@@ -2085,7 +2067,6 @@ $(document).ready(function(){
 	            ctx.save();
 	            ctx.translate(x, y);
 	            ctx.rotate((i + angle) * Math.PI / 180);
-	            ctx.strokeStyle = 'black';
 	            ctx.fillStyle = barrelColor;
 	            ctx.beginPath();
 	            ctx.moveTo(5, -12);
@@ -2101,7 +2082,6 @@ $(document).ready(function(){
 
 	        rad = 30;
 	        ctx.restore();
-	        ctx.strokeStyle = 'black';
 
 	        for (var i = -360 / 5; i < 0; i += 360 / 15) {
 	            ctx.save();
@@ -2147,7 +2127,7 @@ $(document).ready(function(){
 	    ctx.strokeStyle = 'black';
 	    ctx.beginPath();
 	    ctx.arc(x, y, rad, 0, 2 * Math.PI);
-	    ctx.fillStyle = '#7DF9FF';
+	    ctx.fillStyle = '#00B2E1';
 	    ctx.fill();
 	    ctx.closePath();
 	    ctx.stroke();
