@@ -43,11 +43,12 @@ var Entity = function() {
 	}
 	return self;
 }
-
+var playerFirst = true;
 var Player = function(id, name) {
 	var self = Entity();
 
 	self.tankType = 0;
+	self.updateTankType = true;
 	self.reloadNum = 0;
 
 	self.id = id;
@@ -61,19 +62,24 @@ var Player = function(id, name) {
 	self.pressingDown = false;
 	self.pressingAttack = false;
 	self.mouseAngle = 0;
+	self.updateMouseAngle = true;
 	self.upgrades = 0;
+	self.updateUpgrades = true;
 
 	self.hp = 100;
+	self.updateHp = true;
 
 	self.score = 0;
+	self.updateScore = true;
 
 	self.timer = 0;
 
 	self.regen = 21;
 	self.hpMax = 100;
+	self.updateHpMax = true;
 	self.bulletHp = 7;
 	self.bulletSpeed = 10;
-	self.reload = 38;
+	self.reload = 25;
 	self.maxSpd = 6;
 	self.bodyDamage = 10;
 	self.penetration = 0;
@@ -84,7 +90,6 @@ var Player = function(id, name) {
 
 	self.minHp = 100;
 	self.maxHp = 200;
-	self.updateHp = true;
 
 	self.minBulletHp = 7;
 	self.maxBulletHp = 30;
@@ -123,12 +128,19 @@ var Player = function(id, name) {
 	self.moveTimer = 0;
 	self.friction = 0.94;
 	self.level = 1;
+	self.updateLevel = true;
 	self.mouseX = 0;
 	self.mouseY = 0;
 
 	self.needToUpdate = true;
 	self.newScore = true;
 
+	var xSector = Math.floor(self.x / GAME_DIMENSION * 10);
+	var ySector = Math.floor(self.y / GAME_DIMENSION * 10);
+	self.xSector = xSector;
+	self.ySector = ySector;
+	Player.matrix[xSector][ySector].push(self);
+	
 	self.availableUpgrades = [ 0, 0, 0 ];
 	self.sent = [ 0, 0, 0 ];
 	var super_update = self.update;
@@ -141,7 +153,7 @@ var Player = function(id, name) {
 		else if (x == 4)
 			return 65;
 		else if (x > 45)
-			return 500000 + (x - 45) * 1000;
+			return 10000000;
 		else
 			return 0.46 * x * x * x - 12 * x * x + 170 * x - 529;
 	}
@@ -149,7 +161,17 @@ var Player = function(id, name) {
 		var ox = self.x;
 		var oy = self.y;
 		self.updateSpd();
-
+		
+		var xSector = Math.floor(self.x / GAME_DIMENSION * 10);
+		var ySector = Math.floor(self.y / GAME_DIMENSION * 10);
+		if(self.xSector != xSector || self.ySector != ySector){
+			var index = Player.matrix[self.xSector][self.ySector].indexOf(self);
+			Player.matrix[self.xSector][self.ySector].splice(index, 1);
+			self.xSector = xSector;
+			self.ySector = ySector;
+			Player.matrix[self.xSector][self.ySector].push(self);
+		}
+		
 		if (self.score >= self.evaluateNextLevelScore(self.level)) {
 			var maxUps = 0;
 			for (var i = 0; i < 45; i++) {
@@ -160,11 +182,18 @@ var Player = function(id, name) {
 			}
 			self.upgrades += maxUps;
 			self.level += maxUps;
+			
+			self.updateUpgrades = true;
+			self.updateLevel = true;
 		}
 		self.checkForUpgrades();
 		if (self.timer % Math.round(self.regen) == 0) {
 			if (self.hp < self.hpMax) {
 				self.hp++;
+				self.updateHp = true;
+			}else if (self.hp > self.hpMax){
+				self.hp = self.hpMax;
+				self.updateHp = true;
 			}
 		}
 
@@ -265,7 +294,6 @@ var Player = function(id, name) {
 		if ((self.pressingAttack || (self.tankType == 7 || self.tankType == 15))
 				&& self.timer % Math.round(self.reload) == 0) {
 			self.shootBullet(self.mouseAngle, self.mouseX, self.mouseY);
-
 		}
 	}
 	self.checkForUpgrades = function() {
@@ -290,7 +318,7 @@ var Player = function(id, name) {
 				} else if (self.tankType == 5) {
 					tanks = [ 6 ];
 				} else if (self.tankType == 7) {
-					tanks = [ 15 ];
+					tanks = [ 3 ];
 				} else if (self.tankType == 16) {
 					tanks = [ 19, 20 ];
 				} else if (self.tankType == 17) {
@@ -308,14 +336,14 @@ var Player = function(id, name) {
 				} else if (self.tankType == 11) {
 					tanks = [ 16, 17 ];
 				} else if (self.tankType == 12) {
-					tanks = [ 7, 22, 24 ];
+					tanks = [ 8, 13, 16, 17 ]; // removed 7, 22, 24
 				}
 				SOCKET_LIST[self.id].emit('newTanks', {
 					tanks : tanks
 				});
 				self.sent[1] = true;
 			} else if (self.level >= 15 && self.availableUpgrades[0]) {
-				tanks = [ 1, 10, 11, 12, 23 ];
+				tanks = [ 1, 10, 11, 12]; // removed 23
 				SOCKET_LIST[self.id].emit('newTanks', {
 					tanks : tanks
 				});
@@ -328,29 +356,33 @@ var Player = function(id, name) {
 
 		var turbAngle = angle + 6 * Math.random() - 6;
 		angle += 6 * Math.random() - 6;
-		var damping = 3;
+		var damping = 0.8;
+		
+		var ax = self.x;
+		var ay = self.y;
+		
 		if (self.tankType === 0) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-			var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b.x = self.x;
-			b.y = self.y;
+			var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 		} else if (self.tankType === 1) {
 
 			turbAngle = -90 + turbAngle;
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
-				b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+				
+				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
+				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b2.x = self.x + Math.cos(turbAngle * Math.PI / 180) * 17;
-				b2.y = self.y + Math.sin(turbAngle * Math.PI / 180) * 17;
+				
+				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 17;
+				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 17;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 2) {
@@ -358,56 +390,43 @@ var Player = function(id, name) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 1 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 1 * damping;
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 15;
-				b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 15;
-				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b2.x = self.x + Math.cos(turbAngle * Math.PI / 180) * 20;
-				b2.y = self.y + Math.sin(turbAngle * Math.PI / 180) * 20;
+				
+				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 15;
+				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 15;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
+				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 20;
+				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 20;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
+				
+				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 3) {
 			if (self.reloadNum == 0) {
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				var b2 = Bullet(self.id, angle - 2 * 360 / 8, self.bulletHp,
-						self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b3 = Bullet(self.id, angle - 4 * 360 / 8, self.bulletHp,
-						self.bulletSpeed);
-				b3.x = self.x;
-				b3.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b4 = Bullet(self.id, angle - 6 * 360 / 8, self.bulletHp,
-						self.bulletSpeed);
-				b4.x = self.x;
-				b4.y = self.y;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				var b1 = Bullet(self.id, angle - 1 * 360 / 8, self.bulletHp,
-						self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b2 = Bullet(self.id, angle - 3 * 360 / 8, self.bulletHp,
-						self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b3 = Bullet(self.id, angle - 5 * 360 / 8, self.bulletHp,
-						self.bulletSpeed);
-				b3.x = self.x;
-				b3.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b4 = Bullet(self.id, angle - 7 * 360 / 8, self.bulletHp,
-						self.bulletSpeed);
-				b4.x = self.x;
-				b4.y = self.y;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 4) {
@@ -418,16 +437,15 @@ var Player = function(id, name) {
 				angle += 120;
 				turbAngle += 120;
 				if (self.reloadNum == 0) {
+					ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
+					ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
 					var b1 = Bullet(self.id, angle, self.bulletHp,
-							self.bulletSpeed);
-					b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
-					b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
-
+							self.bulletSpeed, ax, ay);
 				} else if (self.reloadNum == 1) {
+					ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 17;
+					ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 17;
 					var b2 = Bullet(self.id, angle, self.bulletHp,
-							self.bulletSpeed);
-					b2.x = self.x + Math.cos(turbAngle * Math.PI / 180) * 17;
-					b2.y = self.y + Math.sin(turbAngle * Math.PI / 180) * 17;
+							self.bulletSpeed, ax, ay);
 				}
 			}
 			if (self.reloadNum == 0) {
@@ -438,56 +456,34 @@ var Player = function(id, name) {
 			turbAngle = -90 + turbAngle;
 			self.spdX += Math.cos(angle / 180 * Math.PI) * 1.5 * damping;
 			self.spdY += Math.sin(angle / 180 * Math.PI) * 1.5 * damping;
-			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b1.x = self.x;
-			b1.y = self.y;
-
+			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 			angle += 150;
-			var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b2.x = self.x;
-			b2.y = self.y;
-
+			var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 			angle -= 150 * 2;
-			var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b2.x = self.x;
-			b2.y = self.y;
+			var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 		} else if (self.tankType === 6) {
 			turbAngle = -90 + turbAngle;
 			self.spdX += Math.cos(angle / 180 * Math.PI) * 2.5 * damping;
 			self.spdY += Math.sin(angle / 180 * Math.PI) * 2.5 * damping;
-			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b1.x = self.x;
-			b1.y = self.y;
+			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 
 			if (self.reloadNum == 0) {
 				angle += 150;
-				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
-
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				angle -= 300;
-				var b3 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b3.x = self.x;
-				b3.y = self.y;
+				var b3 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				angle += 135;
-				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
-
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				angle -= 270;
-				var b4 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b4.x = self.x;
-				b4.y = self.y;
+				var b4 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 7) {
 			if (self.bullets.length < 13) {
 				var b = Bullet(self.id, angle, self.bulletHp,
-						self.bulletSpeed / 2, true);
-				b.x = self.x;
-				b.y = self.y;
+						self.bulletSpeed / 2, ax, ay, true);
 				self.bullets.push(b);
 			}
 		} else if (self.tankType === 8) {
@@ -496,16 +492,15 @@ var Player = function(id, name) {
 				angle += 180;
 				turbAngle += 180;
 				if (self.reloadNum == 0) {
+					ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
+					ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
 					var b1 = Bullet(self.id, angle, self.bulletHp,
-							self.bulletSpeed);
-					b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
-					b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
-
+							self.bulletSpeed, ax, ay);
 				} else if (self.reloadNum == 1) {
+					ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 17;
+					ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 17;
 					var b2 = Bullet(self.id, angle, self.bulletHp,
-							self.bulletSpeed);
-					b2.x = self.x + Math.cos(turbAngle * Math.PI / 180) * 17;
-					b2.y = self.y + Math.sin(turbAngle * Math.PI / 180) * 17;
+							self.bulletSpeed, ax, ay);
 				}
 			}
 			if (self.reloadNum == 0) {
@@ -514,151 +509,111 @@ var Player = function(id, name) {
 				self.reloadNum = 0;
 		} else if (self.tankType === 9) {
 			if (self.reloadNum == 0) {
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				var b2 = Bullet(self.id, angle - 2 * 360 / 10, self.bulletHp,
-						self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b3 = Bullet(self.id, angle - 4 * 360 / 10, self.bulletHp,
-						self.bulletSpeed);
-				b3.x = self.x;
-				b3.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b4 = Bullet(self.id, angle - 6 * 360 / 10, self.bulletHp,
-						self.bulletSpeed);
-				b4.x = self.x;
-				b4.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b5 = Bullet(self.id, angle - 8 * 360 / 10, self.bulletHp,
-						self.bulletSpeed);
-				b5.x = self.x;
-				b5.y = self.y;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				var b1 = Bullet(self.id, angle - 1 * 360 / 10, self.bulletHp,
-						self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b2 = Bullet(self.id, angle - 3 * 360 / 10, self.bulletHp,
-						self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b3 = Bullet(self.id, angle - 5 * 360 / 10, self.bulletHp,
-						self.bulletSpeed);
-				b3.x = self.x;
-				b3.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b4 = Bullet(self.id, angle - 7 * 360 / 10, self.bulletHp,
-						self.bulletSpeed);
-				b4.x = self.x;
-				b4.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b5 = Bullet(self.id, angle - 9 * 360 / 10, self.bulletHp,
-						self.bulletSpeed);
-				b5.x = self.x;
-				b5.y = self.y;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 10) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX += Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY += Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
 				var b1 = Bullet(self.id, angle - 180, self.bulletHp,
-						self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 11) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-			var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b.x = self.x;
-			b.y = self.y;
+			var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 		} else if (self.tankType === 12) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-			var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b.x = self.x;
-			b.y = self.y;
+			var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 		} else if (self.tankType === 13) {
 			if (self.reloadNum == 0) {
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				var b2 = Bullet(self.id, angle - 2 * 360 / 4, self.bulletHp,
-						self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				var b1 = Bullet(self.id, angle - 1 * 360 / 4, self.bulletHp,
-						self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b2 = Bullet(self.id, angle - 3 * 360 / 4, self.bulletHp,
-						self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 14) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 2 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 2 * damping;
-			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b1.x = self.x;
-			b1.y = self.y;
+			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 			var b2 = Bullet(self.id, angle - 1 * 360 / 9, self.bulletHp,
-					self.bulletSpeed);
-			b2.x = self.x;
-			b2.y = self.y;
+					self.bulletSpeed, ax, ay);
 			var b3 = Bullet(self.id, angle + 1 * 360 / 9, self.bulletHp,
-					self.bulletSpeed);
-			b3.x = self.x;
-			b3.y = self.y;
-		} else if (self.tankType === 15) {
+					self.bulletSpeed, ax, ay);
+			} else if (self.tankType === 15) {
 			if (self.bullets.length < 20) {
 				var b = Bullet(self.id, angle, self.bulletHp,
-						self.bulletSpeed / 2, true);
-				b.x = self.x;
-				b.y = self.y;
+						self.bulletSpeed / 2, ax, ay, true);
 				self.bullets.push(b);
 			}
 		} else if (self.tankType === 16) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 3 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 3 * damping;
-			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
-			b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+			
+			ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
+			ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 		} else if (self.tankType === 17) {
-
 			turbAngle = -90 + turbAngle;
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 10;
-				b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 10;
-
-				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b2.x = self.x + Math.cos(turbAngle * Math.PI / 180) * 10;
-				b2.y = self.y + Math.sin(turbAngle * Math.PI / 180) * 10;
+				
+				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 10;
+				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 10;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
+				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 10;
+				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 10;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 20;
-				b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 20;
-
-				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b2.x = self.x + Math.cos(turbAngle * Math.PI / 180) * 20;
-				b2.y = self.y + Math.sin(turbAngle * Math.PI / 180) * 20;
+				
+				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 20;
+				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 20;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
+				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 20;
+				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 20;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 18) {
@@ -667,56 +622,64 @@ var Player = function(id, name) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 7;
-				b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 7;
-
-				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b2.x = self.x + Math.cos(turbAngle * Math.PI / 180) * 7;
-				b2.y = self.y + Math.sin(turbAngle * Math.PI / 180) * 7;
+				
+				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 7;
+				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 7;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
+				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 7;
+				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 7;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 14;
-				b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 14;
-
-				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b2.x = self.x + Math.cos(turbAngle * Math.PI / 180) * 14;
-				b2.y = self.y + Math.sin(turbAngle * Math.PI / 180) * 14;
+				
+				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 14;
+				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 14;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
+				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 14;
+				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 14;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
 				self.reloadNum = 2;
 			} else if (self.reloadNum == 2) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 21;
-				b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 21;
-
-				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b2.x = self.x + Math.cos(turbAngle * Math.PI / 180) * 21;
-				b2.y = self.y + Math.sin(turbAngle * Math.PI / 180) * 21;
+				
+				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 21;
+				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 21;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
+				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 21;
+				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 21;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 19) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 3 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 3 * damping;
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
-				b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+				
+				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
+				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos((angle + 180) / 180 * Math.PI) * 3
 						* damping;
 				self.spdY -= Math.sin((angle + 180) / 180 * Math.PI) * 3
 						* damping;
+				ax = self.x - Math.cos((turbAngle + 180) * Math.PI / 180)
+				* 17;
+				ay = self.y - Math.sin((turbAngle + 180) * Math.PI / 180)
+				* 17;
 				var b1 = Bullet(self.id, angle + 180, self.bulletHp,
-						self.bulletSpeed);
-				b1.x = self.x - Math.cos((turbAngle + 180) * Math.PI / 180)
-						* 17;
-				b1.y = self.y - Math.sin((turbAngle + 180) * Math.PI / 180)
-						* 17;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 20) {
@@ -726,73 +689,57 @@ var Player = function(id, name) {
 
 			angle -= 8;
 			turbAngle -= 8;
-			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b1.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
-			b1.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+			
+			ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
+			ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 
 			angle += 8;
 			turbAngle += 8;
-			var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b2.x = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
-			b2.y = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+			ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
+			ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
+			var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+			
 		} else if (self.tankType === 21) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 1.5 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 1.5 * damping;
 			if (self.reloadNum == 0) {
-				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				var b2 = Bullet(self.id, angle - 1 * 360 / 9, self.bulletHp,
-						self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b3 = Bullet(self.id, angle + 1 * 360 / 9, self.bulletHp,
-						self.bulletSpeed);
-				b3.x = self.x;
-				b3.y = self.y;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				var b1 = Bullet(self.id, angle + 1 * 360 / 18, self.bulletHp,
-						self.bulletSpeed);
-				b1.x = self.x;
-				b1.y = self.y;
+						self.bulletSpeed, ax, ay);
 				var b2 = Bullet(self.id, angle - 1 * 360 / 18, self.bulletHp,
-						self.bulletSpeed);
-				b2.x = self.x;
-				b2.y = self.y;
+						self.bulletSpeed, ax, ay);
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 22) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-			var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-			b.x = self.x;
-			b.y = self.y;
+			var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 		} else if (self.tankType === 24) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
+				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				b.stationary = true;
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				angle -= 120;
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
+				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				b.stationary = true;
 				self.reloadNum = 2;
 			} else if (self.reloadNum == 2) {
 				angle -= 240;
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
+				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				b.stationary = true;
 				self.reloadNum = 0;
 			}
@@ -800,64 +747,41 @@ var Player = function(id, name) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
+				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				b.stationary = true;
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				angle -= 20;
-				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
-				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
+				self.spdX -= Math.cos(angle / 180 * Math.PI) * 1 * damping;
+				self.spdY -= Math.sin(angle / 180 * Math.PI) * 1 * damping;
+				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				b.stationary = true;
-				self.reloadNum = 2;
 
 				angle += 40;
-				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
-				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
-				b.stationary = true;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				b2.stationary = true;
 				self.reloadNum = 2;
 			} else if (self.reloadNum == 2) {
 				angle -= 40;
-				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
-				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
+				self.spdX -= Math.cos(angle / 180 * Math.PI) * 1 * damping;
+				self.spdY -= Math.sin(angle / 180 * Math.PI) * 1 * damping;
+				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				b.stationary = true;
-				self.reloadNum = 0;
 
 				angle += 80;
-				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
-				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
-				b.stationary = true;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				b2.stationary = true;
 				self.reloadNum = 3;
 			} else if (self.reloadNum == 3) {
 				angle -= 60;
-				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
-				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
+				self.spdX -= Math.cos(angle / 180 * Math.PI) * 1 * damping;
+				self.spdY -= Math.sin(angle / 180 * Math.PI) * 1 * damping;
+				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
 				b.stationary = true;
-				self.reloadNum = 0;
 
 				angle += 120;
-				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
-				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed);
-				b.x = self.x;
-				b.y = self.y;
-				b.stationary = true;
+				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
+				b2.stationary = true;
 				self.reloadNum = 0;
 			}
 		}
@@ -887,6 +811,31 @@ var Player = function(id, name) {
 		}
 	}
 	self.updateSpd = function() {
+		/*if(self.pressingRight && self.pressingUp && self.x < GAME_DIMENSION && self.y > 0
+			&& self.spdX < self.maxSpd * Math.sqrt(2) / 5
+			&& self.spdY > -self.maxSpd * Math.sqrt(2) / 5){
+				self.spdX++;
+				self.spdY--;
+				console.log('hey');
+		} else if(self.pressingRight && self.pressingDown && self.x < GAME_DIMENSION && self.y < GAME_DIMENSION
+				&& self.spdX < self.maxSpd * Math.sqrt(2) / 5
+				&& self.spdY < self.maxSpd * Math.sqrt(2) / 5){
+					self.spdX++;
+					self.spdY++;
+		} else if(self.pressingLeft && self.pressingUp && self.x > 0 && self.y > 0
+				&& self.spdX > -self.maxSpd * Math.sqrt(2) / 2
+				&& self.spdY > -self.maxSpd * Math.sqrt(2) / 2){
+					self.spdX--;
+					self.spdY--;
+		} else if(self.pressingLeft && self.pressingDown && self.x > 0 && self.y < GAME_DIMENSION
+				&& self.spdX > -self.maxSpd * Math.sqrt(2) / 2
+				&& self.spdY < self.maxSpd * Math.sqrt(2) / 2){
+					self.spdX--;
+					self.spdY++;
+		} else {
+			
+		}*/
+		
 		if (self.pressingRight && self.x < GAME_DIMENSION) {
 			if (self.spdX < self.maxSpd)
 				self.spdX++;
@@ -926,21 +875,15 @@ var Player = function(id, name) {
 			id : self.id,
 			x : self.x,
 			y : self.y,
-			hp : self.hp,
-			pMaxHp : self.hpMax,
-			score : self.score,
-			upgrades : self.upgrades,
-			tankType : self.tankType,
-			level : self.level,
-			mouseAngle : self.mouseAngle,
 		};
 		if (self.updateRegen) {
 			pack.regen = self.regenCount;
 			self.updateRegen = false;
 		}
-		if (self.updateHp) {
+		if (self.updateHpMax) {
 			pack.maxhp = self.hpMaxCount;
-			self.updateHp = false;
+			pack.pMaxHp = self.hpMax;
+			self.updateHpMax = false;
 		}
 		if (self.updateBulletHp) {
 			pack.bulletHp = self.bulletHpCount;
@@ -966,7 +909,32 @@ var Player = function(id, name) {
 			pack.penetration = self.penetrationCount;
 			self.updatePenetration = false;
 		}
-
+		
+		if (self.updateHp) {
+			pack.hp = self.hp;
+			self.updateHp = false;
+		}
+		if (self.updateScore) {
+			pack.score = self.score;
+			self.updateScore = false;
+		}
+		if (self.updateUpgrades) {
+			pack.upgrades = self.upgrades;
+			self.updateUpgrades = false;
+		}
+		if (self.updateTankType) {
+			pack.tankType = self.tankType;
+			self.updateTankType = false;
+		}
+		if (self.updateLevel) {
+			pack.level = self.level;
+			self.updateLevel = false;
+		}
+		if (self.updateMouseAngle) {
+			pack.mouseAngle = self.mouseAngle;
+			self.updateMonseAngle = false;
+		}
+		
 		return pack;
 	}
 
@@ -993,6 +961,7 @@ function rotate_point(cx, cy, angle, p) {
 }
 
 Player.list = {};
+Player.matrix = [];
 Player.tankProps = [ {
 	name : 'base tank',
 	minRegen : 8,
@@ -1463,7 +1432,7 @@ Player.tankProps = [ {
 	maxPenetration : 60
 }, ];
 Player.onConnect = function(socket, username) {
-	var player = Player(socket.id, username);
+	var player = new Player(socket.id, username);
 	socket.on('keyPress', function(data) {
 		if (data.inputId === 'left')
 			player.pressingLeft = data.state;
@@ -1477,6 +1446,7 @@ Player.onConnect = function(socket, username) {
 			player.pressingAttack = data.state;
 		} else if (data.inputId === 'mouseAngle') {
 			player.mouseAngle = data.state;
+			player.updateMouseAngle = true;
 			player.mouseX = data.mouseX;
 			player.mouseY = data.mouseY;
 		}
@@ -1510,28 +1480,54 @@ var collisions = [];
 function include(arr, obj) {
 	return (arr.indexOf(obj) != -1);
 }
-
+Player.initSectors = function() {
+	for(var i = 0; i < 10; i++){
+		Player.matrix[i] = [];
+		for(var j = 0; j < 10; j++){
+			Player.matrix[i][j] = [];
+		}
+	}
+	playerFirst = false;
+}
+function mergeUpdatePacks(past,current){
+	var mergedObj = {};
+	for (var attrname in past) {
+		if(current.hasOwnProperty(attrname)){
+			mergedObj[attrname] = current[attrname];
+		} else {
+			mergedObj[attrname] = past[attrname];
+		}
+	}
+	for (var attrname in current){
+		if(!mergedObj.hasOwnProperty(attrname)){
+			mergedObj[attrname] = current[attrname];
+		}
+	}
+	return mergedObj;
+}
 Player.regUpdate = function() {
+	
 	for ( var i in Player.list) {
 		var player = Player.list[i];
 		if (player.hp <= 0) {
 			player.deathReset();
 		} else {
 			player.update();
+			Player.updatePack[player.id] = mergeUpdatePacks(Player.updatePack[player.id],player.getUpdatePack());
 		}
 
-		for ( var i in Player.list) {
-			var p = Player.list[i];
+		for ( var i in Player.matrix[player.xSector][player.ySector]) {
+			var p = Player.matrix[player.xSector][player.ySector][i];
 			if (p.id != player.id) {
 				if (!include(collisions, p.id + "," + player.id)) {
 					if (player.getDistance(p) < 40) {
 						var angle = Math.atan2(player.y - p.y, player.x - p.x);
-						p.spdX += Math.cos(angle) * 32 / 10;
-						p.spdY -= Math.sin(angle) * 32 / 10;
-						player.spdX += Math.cos(angle) * 32 / 10;
-						player.spdY -= Math.sin(angle) * 32 / 10;
-						p.hp -= Math.round(player.bodyDamage / 10);
-						player.hp -= Math.round(p.bodyDamage / 10);
+						p.spdX += Math.cos(angle) * 32 / 100;
+						p.spdY -= Math.sin(angle) * 32 / 100;
+						player.spdX += Math.cos(angle) * 32 / 100;
+						player.spdY -= Math.sin(angle) * 32 / 100;
+						p.hp -= Math.round(player.bodyDamage / 7);
+						player.hp -= Math.round(p.bodyDamage / 7);
 						if (p.hp <= 0)
 							p.deathReset();
 						else if (player.hp <= 0)
@@ -1547,12 +1543,16 @@ Player.regUpdate = function() {
 
 Player.update = function(p) {
 	var pack = [];
-
+	
 	for ( var i in Player.list) {
 		var player = Player.list[i];
-		if ((player.needToUpdate && objInViewOfPlayer(player, p)) || p.newScore) {
-			Player.updatePack[player.id] = player.getUpdatePack();
+		if (objInViewOfPlayer(player, p)) {
 			pack.push(Player.updatePack[player.id]);
+		}else if(p.newScore){
+			var newObj = {};
+			newObj.id = player.id;
+			newObj.score = player.score;
+			pack.push(newObj);
 		}
 	}
 
@@ -1578,10 +1578,12 @@ var Shape = function() {
 		spdX : 0,
 		spdY : 0,
 		attacked : false,
-		attackedTimer : 0,
+		toRemove : false,
 		dirChange : true,
 		needToUpdate : false,
-
+		xSector : 11,
+		ySector : 11,
+		type : "Shape"
 	}
 
 	self.update = function() {
@@ -1596,9 +1598,9 @@ var Shape = function() {
 		if (self.y + self.spdY < GAME_DIMENSION && self.y + self.spdY > 0) {
 			self.y += self.spdY;
 		}
-
-		for ( var i in Player.list) {
-			var p = Player.list[i];
+		if(Player.matrix[self.xSector] === undefined) Player.initSectors();
+		for ( var i in Player.matrix[self.xSector][self.ySector]) {
+			var p = Player.matrix[self.xSector][self.ySector][i];
 			if (self.getDistance(p) < 50) {
 				self.attacked = true;
 				p.hp -= Math.round((self.maxhp + 10) / 3)
@@ -1608,6 +1610,7 @@ var Shape = function() {
 					p.deathReset();
 				} else if (self.hp <= 0) {
 					p.score += self.score;
+					p.updateScore = true;
 				} else {
 					var angle = Math.atan2(self.y - p.y, self.x - p.x);
 					p.spdX -= Math.cos(angle) * 5;
@@ -1624,14 +1627,8 @@ var Shape = function() {
 		}
 		if (self.hp > self.maxhp)
 			self.hp = self.maxhp;
-		if (self.attacked && self.attackedTimer > 2) {
-			self.attacked = false;
-			self.attackedTimer = 0;
-		} else if (self.attacked) {
-			self.attackedTimer++;
-		}
-
-		if (self.x != oriX || self.y != oriY) {
+		
+		if (self.attacked) {
 			self.needToUpdate = true;
 		} else {
 			self.needToUpdate = false;
@@ -1677,10 +1674,15 @@ var Shape = function() {
 }
 var numOfFarmPentagons = 0;
 var numOfAlphaPentagons = 0;
+var pentagonFirst = true;
 var Pentagon = function(x, y, radius) {
 	var self = Shape();
-	self.x = x;
-	self.y = y;
+	self.type = "Pentagon";
+	if(x !== undefined){
+		self.x = x;
+		self.y = y;
+	}
+	
 	if (typeof radius !== 'undefined') {
 		self.radius = radius;
 		self.score = 3000;
@@ -1692,6 +1694,22 @@ var Pentagon = function(x, y, radius) {
 		self.hp = 130;
 		self.maxhp = 130;
 	}
+	
+	if(pentagonFirst){
+		for(var i = 0; i < 10; i++){
+			Pentagon.matrix[i] = [];
+			for(var j = 0; j < 10; j++){
+				Pentagon.matrix[i][j] = [];
+			}
+		}
+		pentagonFirst = false;
+	}
+	
+	var xSector = Math.floor(self.x / GAME_DIMENSION * 10);
+	var ySector = Math.floor(self.y / GAME_DIMENSION * 10);
+	self.xSector = xSector;
+	self.ySector = ySector;
+	Pentagon.matrix[xSector][ySector].push(self);
 
 	self.getInitPack = function() {
 		return {
@@ -1709,10 +1727,13 @@ var Pentagon = function(x, y, radius) {
 	return self;
 }
 Pentagon.list = {};
+Pentagon.matrix = [];
 
 Pentagon.updatePack = {};
 
+
 Pentagon.regUpdate = function() {
+	
 	if (numOfAlphaPentagons < 4) {
 		var x = Math.floor(Math.random()
 				* (GAME_DIMENSION * 6 / 9 - GAME_DIMENSION * 3 / 9 + 1)
@@ -1720,7 +1741,7 @@ Pentagon.regUpdate = function() {
 		var y = Math.floor(Math.random()
 				* (GAME_DIMENSION * 6 / 9 - GAME_DIMENSION * 3 / 9 + 1)
 				+ GAME_DIMENSION * 1 / 3);
-		var ap = Pentagon(x, y, 120);
+		var ap = Pentagon(x, y, 200);
 		numOfAlphaPentagons++;
 	}
 	if (Object.keys(Pentagon.list).length < 126) {
@@ -1739,14 +1760,23 @@ Pentagon.regUpdate = function() {
 		}
 		x = Math.floor(Math.random() * GAME_DIMENSION);
 		y = Math.floor(Math.random() * GAME_DIMENSION);
-		var t = Pentagon();
-		t.x = x;
-		t.y = y;
+		var t = Pentagon(x, y);
 	}
 	for ( var i in Pentagon.list) {
 		var pentagon = Pentagon.list[i];
+		
+		/*var xSector = Math.floor(pentagon.x / GAME_DIMENSION * 10);
+		var ySector = Math.floor(pentagon.y / GAME_DIMENSION * 10);
+		if(xSector != pentagon.xSector || ySector != pentagon.ySector){
+			var index = Pentagon.matrix[pentagon.xSector][pentagon.ySector].indexOf(pentagon);
+			Pentagon.matrix[pentagon.xSector][pentagon.ySector].splice(index, 1);
+			Pentagon.matrix[xSector][ySector].push(pentagon);
+		}*/
+		
 		if (pentagon.hp <= 0) {
 			delete Pentagon.list[i];
+			var sindex = Pentagon.matrix[pentagon.xSector][pentagon.ySector].indexOf(pentagon);
+			Pentagon.matrix[pentagon.xSector][pentagon.ySector].splice(sindex, 1);
 			removePack.pentagon.push(pentagon.id);
 		} else {
 			Pentagon.updatePack[pentagon.id] = pentagon.update();
@@ -1774,29 +1804,59 @@ Pentagon.getAllInitPack = function() {
 		pentagons.push(Pentagon.list[i].getInitPack());
 	return pentagons;
 }
-
+var squareFirst = true;
 var Square = function() {
 	var self = Shape();
-	self.score = 5000;
+	self.score = 15;
 	self.hp = 10;
 	self.maxhp = 10;
-
+	self.type = "Square";
+	if(squareFirst){
+		for(var i = 0; i < 10; i++){
+			Square.matrix[i] = [];
+			for(var j = 0; j < 10; j++){
+				Square.matrix[i][j] = [];
+			}
+		}
+		squareFirst = false;
+	}
+	
+	var xSector = Math.floor(self.x / GAME_DIMENSION * 10);
+	var ySector = Math.floor(self.y / GAME_DIMENSION * 10);
+	Square.matrix[xSector][ySector].push(self);
+	self.xSector = xSector;
+	self.ySector = ySector;
+	
 	Square.list[self.id] = self;
 	initPack.square.push(self.getInitPack());
 	return self;
 }
 Square.list = {};
+Square.matrix = [];
 
 Square.updatePack = {};
 
 Square.regUpdate = function() {
+	
+	
 	if (Object.keys(Square.list).length < 390) {
 		var t = Square();
 	}
 	for ( var i in Square.list) {
 		var square = Square.list[i];
+		
+		/*var xSector = Math.floor(square.x / GAME_DIMENSION * 10);
+		var ySector = Math.floor(square.y / GAME_DIMENSION * 10);
+		if(xSector != square.xSector || ySector != square.ySector){
+			var index = Square.matrix[square.xSector][square.ySector].indexOf(square);
+			Square.matrix[square.xSector][square.ySector].splice(index, 1);
+			Square.matrix[xSector][ySector].push(square);
+		}*/
+		
 		if (square.hp <= 0) {
 			delete Square.list[i];
+			var sindex = Square.matrix[square.xSector][square.ySector].indexOf(square);
+			Square.matrix[square.xSector][square.ySector].splice(sindex, 1);
 			removePack.square.push(square.id);
 		} else {
 			Square.updatePack[square.id] = square.update();
@@ -1824,29 +1884,59 @@ Square.getAllInitPack = function() {
 		squares.push(Square.list[i].getInitPack());
 	return squares;
 }
-
+var triangleFirst = true;
 var Triangle = function() {
 	var self = Shape();
 	self.score = 25;
 	self.hp = 25;
 	self.maxhp = 25;
-
+	self.type = "Triangle";
+	if(triangleFirst){
+		for(var i = 0; i < 10; i++){
+			Triangle.matrix[i] = [];
+			for(var j = 0; j < 10; j++){
+				Triangle.matrix[i][j] = [];
+			}
+		}
+		triangleFirst = false;
+	}
+	
+	var xSector = Math.floor(self.x / GAME_DIMENSION * 10);
+	var ySector = Math.floor(self.y / GAME_DIMENSION * 10);
+	Triangle.matrix[xSector][ySector].push(self);
+	self.xSector = xSector;
+	self.ySector = ySector;
+	
 	Triangle.list[self.id] = self;
 	initPack.triangle.push(self.getInitPack());
 	return self;
 }
 Triangle.list = {};
+Triangle.matrix = [];
 
 Triangle.updatePack = {};
 
+
 Triangle.regUpdate = function() {
+	
 	if (Object.keys(Triangle.list).length < 150) {
-		var t = Triangle();
+		var t = new Triangle();
 	}
 	for ( var i in Triangle.list) {
 		var triangle = Triangle.list[i];
+		
+		/*var xSector = Math.floor(triangle.x / GAME_DIMENSION * 10);
+		var ySector = Math.floor(triangle.y / GAME_DIMENSION * 10);
+		if(xSector != triangle.xSector || ySector != triangle.ySector){
+			var index = Triangle.matrix[triangle.xSector][triangle.ySector].indexOf(triangle);
+			Triangle.matrix[triangle.xSector][triangle.ySector].splice(index, 1);
+			Triangle.matrix[xSector][ySector].push(triangle);
+		}*/
+		
 		if (triangle.hp <= 0) {
 			delete Triangle.list[i];
+			var sindex = Triangle.matrix[triangle.xSector][triangle.ySector].indexOf(triangle);
+			Triangle.matrix[triangle.xSector][triangle.ySector].splice(sindex, 1);
 			removePack.triangle.push(triangle.id);
 		} else {
 			Triangle.updatePack[triangle.id] = triangle.update();
@@ -1886,9 +1976,11 @@ var objInViewOfPlayer = function(obj, player) {
 
 var pull = 0.7;
 var t = 0;
-var Bullet = function(parent, angle, hp, speed, drone, chaser) {
+var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 	var self = Entity();
 	self.id = Math.random();
+	self.x = x;
+	self.y = y;
 	if (typeof drone == 'undefined') {
 		drone = false;
 	}
@@ -1900,13 +1992,16 @@ var Bullet = function(parent, angle, hp, speed, drone, chaser) {
 	self.drone = drone;
 	self.hp = hp;
 	if (drone) {
-		self.speed = speed + Math.random() * 5 - 5;
+		self.speed = 10;
 	} else {
 		self.speed = speed;
 	}
 	self.angle = angle;
 	self.spdX = Math.cos(self.angle / 180 * Math.PI) * self.speed;
 	self.spdY = Math.sin(self.angle / 180 * Math.PI) * self.speed;
+	
+	
+	
 	self.parent = parent;
 	if (Player.list[self.parent].tankType == 24)
 		self.trap = true;
@@ -1917,11 +2012,18 @@ var Bullet = function(parent, angle, hp, speed, drone, chaser) {
 	self.toRemove = false;
 	self.stationary = false;
 	self.friction = 1;
+	
+	self.xSector = Math.floor(self.x / GAME_DIMENSION * 10);
+	self.ySector = Math.floor(self.y / GAME_DIMENSION * 10);
+	
 	var super_update = self.update;
 	self.update = function() {
+		self.xSector = Math.floor(self.x / GAME_DIMENSION * 10);
+		self.ySector = Math.floor(self.y / GAME_DIMENSION * 10);
+		
 		if (!self.chaser) {
 			if (!self.trap) {
-				if (self.timer++ > 50 && !drone)
+				if (self.timer++ > 70 && !drone)
 					self.toRemove = true;
 			} else {
 				if (self.timer++ > 500)
@@ -1930,8 +2032,6 @@ var Bullet = function(parent, angle, hp, speed, drone, chaser) {
 			self.x += self.spdX;
 			self.y += self.spdY;
 
-			self.spdX *= self.friction;
-			self.spdY *= self.friction;
 			if (!self.stationary) {
 				self.spdX = Math.cos(self.angle / 180 * Math.PI) * self.speed;
 				self.spdY = Math.sin(self.angle / 180 * Math.PI) * self.speed;
@@ -1939,8 +2039,9 @@ var Bullet = function(parent, angle, hp, speed, drone, chaser) {
 		} else {
 
 			var parent = Player.list[self.parent];
-			if (parent == undefined)
+			if (parent == undefined){
 				return;
+			}
 			var parentX = parent.x;
 			var parentY = parent.y;
 
@@ -1950,8 +2051,6 @@ var Bullet = function(parent, angle, hp, speed, drone, chaser) {
 			self.x += self.spdX;
 			self.y += self.spdY;
 
-			self.spdX *= self.friction;
-			self.spdY *= self.friction;
 			if (!self.stationary) {
 				self.spdX = Math.cos(self.angle) * self.speed;
 				self.spdY = Math.sin(self.angle) * self.speed;
@@ -1972,71 +2071,87 @@ var Bullet = function(parent, angle, hp, speed, drone, chaser) {
 							p.hp -= self.hp;
 							self.hp = 0;
 							self.toRemove = true;
-							if (self.chaser)
+							if (self.chaser){
 								Player.list[p.parent].score += 10;
+								Player.list[p.parent].updateScore = true;
+							}
 						} else {
 							p.hp = 0;
 							self.hp = 0;
 							self.toRemove = true;
 							p.toRemove = true;
-							if (self.chaser)
+							if (self.chaser){
 								Player.list[p.parent].score += 10;
+								Player.list[p.parent].updateScore = true;
+							}
 						}
 					}
 				}
 			}
 		}
 
-		if (t % 3 == 0) {
-			for ( var i in Player.list) {
-				var p = Player.list[i];
-				self.dealWithEntities(p);
+		if (t % 1 == 0) {
+			if (Player.matrix[self.xSector] !== undefined) {
+				for ( var i in Player.matrix[self.xSector][self.ySector]) {
+					var p = Player.matrix[self.xSector][self.ySector][i];
+					self.dealWithEntities(p);
+				}
 			}
 			if (!self.chaser) {
-				for ( var i in Square.list) {
-					var s = Square.list[i];
-					self.dealWithEntities(s);
+				if (Square.matrix[self.xSector] !== undefined) {
+					for ( var i in Square.matrix[self.xSector][self.ySector]) {
+						var s = Square.matrix[self.xSector][self.ySector][i];
+						self.dealWithEntities(s);
+					}
 				}
-				for ( var i in Pentagon.list) {
-					var s = Pentagon.list[i];
-					self.dealWithEntities(s);
+				if (Triangle.matrix[self.xSector] !== undefined) {
+					for ( var i in Triangle.matrix[self.xSector][self.ySector]) {
+						var s = Triangle.matrix[self.xSector][self.ySector][i];
+						self.dealWithEntities(s);
+					}
 				}
-				for ( var i in Triangle.list) {
-					var s = Triangle.list[i];
-					self.dealWithEntities(s);
+				if (Pentagon.matrix[self.xSector] !== undefined) {
+					for ( var i in Pentagon.matrix[self.xSector][self.ySector]) {
+						var s = Pentagon.matrix[self.xSector][self.ySector][i];
+						self.dealWithEntities(s);
+					}
 				}
 			}
 			t = 0;
 		}
 		t++;
-		
-		return self.getUpdatePack();
 	}
 	self.dealWithEntities = function(s) {
-		if ((s.id != self.parent || self.chaser) && !isNaN(self.hp)) {
-			var radius = 25;
+		if ((s.id != self.parent || self.chaser) && !isNaN(self.hp) && Player.list[self.parent] !== undefined) {
+			var radius = 55;
 			if (self.getDistance(s) < radius) {
 				var angle = Math.atan2(self.y - s.y, self.x - s.x);
 				if (typeof s === "Player") {
 					s.spdX -= Math.cos(angle) * 32 / (s.bodyDamage / 400 * 130);
 					s.spdY -= Math.sin(angle) * 32 / (s.bodyDamage / 400 * 130);
 				} else {
-					s.spdX -= Math.cos(angle) * 20 / radius;
-					s.spdY -= Math.sin(angle) * 20 / radius;
+					//s.spdX -= Math.cos(angle) * 20 / radius;
+					//s.spdY -= Math.sin(angle) * 20 / radius;
 				}
 				s.needToUpdate = true;
 				if (typeof s !== "Player")
 					s.dirChange = true;
+				
+				if(typeof s === "Player") s.updateHp = true;
 				s.attacked = true;
-				s.hp -= self.hp;
-				self.hp -= s.maxhp * (1 - self.penetration / 100) / 4;
-				if (self.hp <= 0 || isNaN(self.hp))
+				s.hp -= self.hp / 2;
+				var penetration = Player.list[self.parent].penetration;
+				self.hp -= s.maxhp * (1 - penetration / 100) / 4;
+				if (self.hp <= 0 || isNaN(self.hp)){
 					self.toRemove = true;
-				if (s.hp <= 0) {
+				}
+				if (s.hp < 0 && !s.toRemove) { // prevent double points
+					s.toRemove = true;
 					var shooter = Player.list[self.parent];
 					if (shooter) {
 						shooter.score += s.score;
 						shooter.newScore = true;
+						shooter.updateScore = true;
 					}
 					if (typeof s === "Player")
 						s.deathReset();
@@ -2061,12 +2176,16 @@ var Bullet = function(parent, angle, hp, speed, drone, chaser) {
 			id : self.id,
 			x : self.x,
 			y : self.y,
+			spdX : self.spdX,
+			spdY : self.spdY,
 			drone : self.drone,
 			angle : self.angle,
 			trap : self.trap,
+			speed : self.speed,
 			chaser : self.chaser,
 			parent : self.parent,
 		};
+		
 	}
 	self.getUpdatePack = function() {
 		var pack = {
@@ -2094,14 +2213,15 @@ Bullet.regUpdate = function() {
 			delete Bullet.list[i];
 			removePack.bullet.push(bullet.id);
 		} else {
-			Bullet.updatePack[bullet.id] = bullet.update();
+			bullet.update();
+			Bullet.updatePack[bullet.id] = bullet.getUpdatePack();
 		}
 	}
 }
 
 Bullet.update = function(player) {
 	var pack = [];
-	for ( var i in Bullet.updatePack) {
+	for ( var i in Bullet.list) {
 		var bullet = Bullet.list[i];
 		if (bullet !== undefined && objInViewOfPlayer(bullet, player)) {
 			pack.push(Bullet.updatePack[bullet.id]);
@@ -2196,14 +2316,16 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('changeType', function(data) {
 		var p = Player.list[socket.id];
-		if (p.availableUpgrades[0] == 1)
-			p.availableUpgrades[0] = 0;
-		if (p.availableUpgrades[1] == 1)
-			p.availableUpgrades[1] = 0;
-		if (p.availableUpgrades[2] == 1)
-			p.availableUpgrades[2] = 0;
-		var i = Player.tankProps[data.type.type];
-		upgradeNewTank(p, i, data.type.type);
+		if(p !== undefined){
+			if (p.availableUpgrades[0] == 1)
+				p.availableUpgrades[0] = 0;
+			if (p.availableUpgrades[1] == 1)
+				p.availableUpgrades[1] = 0;
+			if (p.availableUpgrades[2] == 1)
+				p.availableUpgrades[2] = 0;
+			var i = Player.tankProps[data.type.type];
+			upgradeNewTank(p, i, data.type.type);
+		}
 	});
 
 	var upgradeNewTank = function(p, i, t) {
@@ -2211,6 +2333,7 @@ io.sockets.on('connection', function(socket) {
 			p.bullets[a].toRemove = true;
 		}
 		p.tankType = t;
+		p.updateTankType = true;
 		p.minRegen = i.minRegen;
 		p.maxRegen = i.maxRegen;
 		p.minSpeed = i.minSpeed;
@@ -2225,10 +2348,17 @@ io.sockets.on('connection', function(socket) {
 		p.maxReload = i.maxReload;
 		p.minBodyDamage = i.minBodyDamage;
 		p.maxBodyDamage = i.maxBodyDamage;
+		p.minPenetration = i.minPenetration;
+		p.maxPenetration = i.maxPenetration;
 
+		var oldHpMax = p.hpMax;
 		p.regen = (p.maxRegen - p.minRegen) / levelUpCount
 				* (levelUpCount - p.regenCount) + p.minRegen;
 		p.hpMax = (p.maxHp - p.minHp) / levelUpCount * p.hpMaxCount + p.minHp;
+		
+		p.hp = p.hpMax * (p.hp / oldHpMax);
+		
+		p.updateHpMax = true;
 		p.bulletHp = (p.maxBulletHp - p.minBulletHp) / levelUpCount
 				* p.bulletHpCount + p.minBulletHp;
 		p.bulletSpeed = (p.maxBulletSpeed - p.minBulletSpeed) / levelUpCount
@@ -2239,6 +2369,8 @@ io.sockets.on('connection', function(socket) {
 				* p.maxSpdCount + p.minBulletSpeed;
 		p.bodyDamage = (p.maxBodyDamage - p.minBodyDamage) / levelUpCount
 				* p.bodyDamageCount + p.minBodyDamage;
+		p.penetration = (p.maxPenetration - p.minPenetration) / levelUpCount
+				* p.penetrationCount + p.minPenetration;
 	}
 	var levelUpCount = 8;
 	socket.on('regen', function() {
@@ -2250,7 +2382,11 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('maxhealth', function() {
 		var p = Player.list[socket.id];
+		var oldHpMax = p.hpMax;
 		updateLevel(p.maxHp, p.minHp, p.hpMaxCount, p.hpMaxCount, 1);
+		// special :)
+		p.hp = p.hpMax * (p.hp / oldHpMax);
+		p.updateHpMax = true;
 		p.updateHp = true;
 	});
 
@@ -2305,6 +2441,7 @@ io.sockets.on('connection', function(socket) {
 		if (count2 < levelUpCount) {
 			if (p.upgrades > 0) {
 				p.upgrades--;
+				p.updateUpgrades = true;
 
 				switch (index) {
 				case 0:
@@ -2362,42 +2499,63 @@ var removePack = {
 };
 var allpack = {};
 var c = 0;
+
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
 setInterval(function() {
 	Triangle.regUpdate();
 	Square.regUpdate();
 	Pentagon.regUpdate();
 	Player.regUpdate();
 	Bullet.regUpdate();
+	if(playerFirst){
+		Player.initSectors();
+	}
+	
 	var pack = {
 		
 	};
+	
+	if (!(initPack.player.length == 0 && initPack.bullet.length == 0
+			&& initPack.square.length == 0
+			&& initPack.pentagon.length == 0
+			&& initPack.triangle.length == 0)) {
+		allpack["init"] = initPack;
+	}	
+	if (!(removePack.player.length == 0 && removePack.bullet.length == 0
+			&& removePack.square.length == 0
+			&& removePack.pentagon.length == 0
+			&& removePack.triangle.length == 0)) {
+		allpack["remove"] = removePack;
+	}
 	for ( var i in SOCKET_LIST) {
 		var socket = SOCKET_LIST[i];
-		if (typeof Player.list[socket.id] !== 'undefined') {
-			if (c % 3 == 0) {
-				pack.square = Square.update(Player.list[socket.id]);
-				pack.triangle = Triangle.update(Player.list[socket.id]);
-				pack.pentagon = Pentagon.update(Player.list[socket.id]);
-				pack.bullet = Bullet.update(Player.list[socket.id]);
-				pack.player = Player.update(Player.list[socket.id]);
-			}
-			allpack["update"] = pack;
-			if (initPack.player.length == 0 && initPack.bullet.length == 0
-					&& initPack.square.length == 0
-					&& initPack.pentagon.length == 0
-					&& initPack.triangle.length == 0) {
+		var player = Player.list[socket.id];
+		
+		if (c % 2 == 0 && player !== undefined) {
+			var packSquare = Square.update(player);
+			var packTriangle = Triangle.update(player);
+			var packPentagon = Pentagon.update(player);
+			var sizeS = Object.size(packSquare);
+			var sizeT = Object.size(packTriangle);
+			var sizeP = Object.size(packPentagon);
+			if(sizeS > 0) pack.square = packSquare;
+			if(sizeT > 0) pack.triangle = packTriangle;
+			if(sizeP > 0) pack.pentagon = packPentagon;
 
-			} else
-				allpack["init"] = initPack;
-			if (removePack.player.length == 0 && removePack.bullet.length == 0
-					&& removePack.square.length == 0 && removePack.pentagon.length == 0
-					&& removePack.triangle.length == 0) {
-			} else{
-				allpack["remove"] = removePack;
-			}
-
-			socket.emit('allUpdate', allpack);
+			pack.player = Player.update(player);
 		}
+		var size = Object.size(pack);
+		if(size != 0) allpack["update"] = pack;
+		
+		if(Object.size(allpack) != 0)
+			socket.emit('allUpdate', allpack);
 	}
 	c++;
 

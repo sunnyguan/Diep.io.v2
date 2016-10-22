@@ -8,7 +8,7 @@
 		<button id="signDiv-signIn">Sign In</button>
 		<!--<button id="signDiv-signUp">Sign Up</button>!-->
 	</div>
-
+	
 	<style type="text/css">
 * {
 	-webkit-touch-callout: none; /* iOS Safari */
@@ -59,7 +59,7 @@ input:focus, input.focus {
 html, body, canvas {
 	margin: 0;
 	padding: 0;
-	background: url('https://files.gitter.im/sunnyguan/YqxF/Picture0002.png') no-repeat center center fixed;
+	background: url('https://files.gitter.im/sunnyguan/yB5G/afawefaewf.png') no-repeat center center fixed;
 	background-size: cover;
 	overflow: hidden;
 }
@@ -152,7 +152,7 @@ $(document).ready(function(){
 
 
 
-	var RADIUS = 180;
+	/*var RADIUS = 180;
 	var mouseX = WIDTH / 2;
 	var mouseY = HEIGHT / 2;
 	var RADIUS_SCALE = 1;
@@ -231,7 +231,7 @@ $(document).ready(function(){
 	        ctx.fill();
 	        ctx.restore();
 	    }
-	}
+	}*/
 
 
 
@@ -376,15 +376,16 @@ $(document).ready(function(){
 	    console.log(data);
 	});
 
-
-
-
 	ctx.font = '30px Arial';
 
 	var my_id = 95555;
 	var lastTick = 0;
 	var tick = 0;
 	var tickRate = 20;
+	
+	var bulletLastTick = 0;
+	var bulletTickRate = 370;
+	
 	var Player = function(initPack) {
 	    var self = {};
 
@@ -407,12 +408,15 @@ $(document).ready(function(){
 	    self.penetration = 0;
 	    self.level = 1;
 	    self.upgrades = 0;
-	    self.pMaxHp = 0;
+	    self.pMaxHp = initPack.hpMax;
 	    self.angle = 0;
 
 	    self.newX = initPack.x;
 	    self.newY = initPack.y;
-
+	    
+	    self.movementX = 0;
+	   	self.movementY = 0;
+	    
 	    my_id = self.id;
 	    self.evaluateNextLevelScore = function(x) {
 	        x++;
@@ -421,23 +425,49 @@ $(document).ready(function(){
 	        else if (x == 2) return 10;
 	        else if (x == 3) return 25;
 	        else if (x == 4) return 65;
+	        else if (x > 45) return 10000000;
 	        else return 0.46 * x * x * x - 12 * x * x + 170 * x - 529;
 	    }
 	    self.draw = function() {
 	    	var distX = self.newX - self.x;
 	    	var distY = self.newY - self.y;
 			var difference = (Math.abs(distX) > Math.abs(distY)) ? Math.abs(distX) : Math.abs(distY);
-	    	if(difference < 1){
+	    	if(difference < 2){
 	    		self.x = self.newX;
 	    		self.y = self.newY;
 	    	}else{
-	    		self.x += distX / tickRate * 2;
-		        self.y += distY / tickRate * 2;
+	    		self.x += distX / tickRate * 14;
+		        self.y += distY / tickRate * 14;
 	    	}
 
-	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
+	    	var x = self.x - Player.list[selfId].x + WIDTH / 2;
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
+	    	if(self.id == selfId){
+				var speed = 50;
+				var variation = 40;
+	    		if(pressingLeft) self.movementX -= (variation + self.movementX) / speed;
+	    		else if(pressingRight) self.movementX += (variation - self.movementX) / speed;
+	    		else if(Math.abs(self.movementX) > 1) self.movementX += -self.movementX / speed;
+	    		if(pressingUp) self.movementY -= (variation + self.movementY) / speed;
+	    		else if(pressingDown) self.movementY += (variation - self.movementY) / speed;
+	    		else if(Math.abs(self.movementY) > 1) self.movementY += -self.movementY / speed;
+	    		x += self.movementX;
+	    		y += self.movementY;
+	    	}
 
+	        ctx.save();
+	        var name = self.name;
+	        var blur = 1;
+	        var width = ctx.measureText(name).width + blur * 2;
+	        ctx.textBaseline = "top";
+	        ctx.shadowColor = "#000";
+	        ctx.shadowOffsetX = 5;
+	        ctx.shadowOffsetY = 5;
+	        ctx.shadowBlur = 7;
+	        ctx.fillText(name, x - ctx.measureText(name).width / 2, y - 60);
+	        ctx.restore();
+			//console.log(self.angle);
+	        drawMinis(x, y, self.angle, false, self.tankType, self.level);
 	        var hpWidth = 60 * self.hp / self.pMaxHp;
 
 	        ctx.fillStyle = 'green';
@@ -446,24 +476,9 @@ $(document).ready(function(){
 	        roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
 	        ctx.lineWidth = 2;
 	        roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
-
-	        ctx.save();
-	        var name = Player.list[selfId].name;
-	        var blur = 1;
-	        var width = ctx.measureText(name).width + blur * 2;
-	        ctx.textBaseline = "top";
-	        ctx.shadowColor = "#000";
-	        ctx.shadowOffsetX = 5;
-	        ctx.shadowOffsetY = 5;
-	        ctx.shadowBlur = 7;
-	        ctx.fillText(name, WIDTH / 2 - ctx.measureText(name).width / 2, HEIGHT / 2 - 60);
-	        ctx.restore();
-
-	        drawMinis(x, y, self.angle, false, self.tankType);
 	    }
 
 	    Player.list[self.id] = self;
-
 
 	    return self;
 	}
@@ -481,28 +496,29 @@ $(document).ready(function(){
 	    self.toRemoveTimer = 0;
 	    self.toRemove = false;
 		self.parent = initPack.parent;
+	    self.speed = initPack.speed;
+	    self.spdX = initPack.spdX;
+	    self.spdY = initPack.spdY;
+	    self.speedo = Math.sqrt(self.spdX * self.spdX + self.spdY * self.spdY);
 	    self.newX = initPack.x;
 	    self.newY = initPack.y;
+	    self.toDisplay = true;
+	    self.updated = true;
+	    self.lastDistX = initPack.spdX * 10;
+	    self.lastDistY = initPack.spdY * 10;
 	    self.draw = function() {
-	    	var distX = self.newX - self.x;
-	    	var distY = self.newY - self.y;
-			var difference = (Math.abs(distX) > Math.abs(distY)) ? Math.abs(distX) : Math.abs(distY);
-	    	if(difference < 1){
-	    		self.x = self.newX;
-	    		self.y = self.newY;
-	    	}else if (!self.chaser && (self.x == 0 || self.y == 0)){
-	    		self.x = Player.list[self.parent].x;
-	    		self.y = Player.list[self.parent].y;
-	    	}else{
-	    		self.x += distX / tickRate * 2;
-		        self.y += distY / tickRate * 2;
+	    	if(bulletTickRate != 0){
+	    		self.x += Math.cos(self.angle * Math.PI / 180) * self.speedo / bulletTickRate * 180;
+		    	self.y += Math.sin(self.angle * Math.PI / 180) * self.speedo / bulletTickRate * 180;
 	    	}
 	    	
-	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
+	    	var x = self.x - Player.list[selfId].x + WIDTH / 2;
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
+	    	
 	        if (self.toRemove) self.toRemoveTimer += 3;
 	        if (self.toRemoveTimer >= 45)
 	            delete Bullet.list[self.id];
+	        
 	        if (x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40) {
 	            if (self.drone || self.chaser) {
 	                ctx.save();
@@ -545,46 +561,51 @@ $(document).ready(function(){
 
 
 	            } else {
+	            	if(self.toDisplay){
+	            		ctx.save();
+		                var tt = Player.list[selfId].tankType;
+		                if (tt == 22)
+		                    ctx.fillStyle = 'gray';
+		                else
+		                    ctx.fillStyle = 'DeepSkyBlue';
+		                ctx.lineWidth = 3;
+
+		                var rad = 0;
+
+		                if (tt == 16) {
+		                    rad = 22;
+		                } else if (tt == 19 || tt == 20) {
+		                    rad = 24;
+		                } else if (tt == 17) {
+		                    rad = 6;
+		                } else if (tt == 18) {
+		                    rad = 4;
+		                } else {
+		                    rad = 10;
+		                }
+		                ctx.translate(x - 10 / 2, y - 10 / 2);
+		                if (self.toRemove) {
+							ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
+		                    ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+		                }
+		                ctx.beginPath();
+		                ctx.arc(0, 0, rad, 0, 2 * Math.PI);
+		                ctx.fill();
+		                ctx.stroke();
+		                ctx.restore();
+	            	}
+	                
+	            	/*var tx = self.newX - Player.list[selfId].x + WIDTH / 2;
+	    	        var ty = self.newY - Player.list[selfId].y + HEIGHT / 2;
 	                ctx.save();
-	                var tt = Player.list[selfId].tankType;
-	                if (tt == 22)
-	                    ctx.fillStyle = 'gray';
-	                else
-	                    ctx.fillStyle = 'DeepSkyBlue';
-	                ctx.lineWidth = 3;
-
-	                var rad = 0;
-
-	                if (tt == 16) {
-	                    rad = 22;
-	                } else if (tt == 19 || tt == 20) {
-	                    rad = 24;
-	                } else if (tt == 17) {
-	                    rad = 6;
-	                } else if (tt == 18) {
-	                    rad = 4;
-	                } else {
-	                    rad = 10;
-	                }
-	                ctx.translate(x - 10 / 2, y - 10 / 2);
-	                if (self.toRemove) {
-
-	                    ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-	                    ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
-	                }
-	                ctx.beginPath();
+	                ctx.fillStyle = 'green';
+	                ctx.translate(tx - 10 / 2, ty - 10 / 2);
 	                ctx.arc(0, 0, rad, 0, 2 * Math.PI);
 	                ctx.fill();
 	                ctx.stroke();
-	                ctx.restore();
-
+	                ctx.restore();*/
 	            }
-
-
 	        }
-
-
-
 	    }
 
 	    Bullet.list[self.id] = self;
@@ -621,14 +642,7 @@ $(document).ready(function(){
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
 	        if (x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40) {
 
-	            if (self.hp / self.maxhp != 1) {
-	                var hpWidth = 60 * self.hp / self.maxhp;
-	                ctx.fillStyle = 'green';
-	                ctx.lineWidth = 1;
-	                roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
-	                ctx.lineWidth = 2;
-	                roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
-	            }
+	            
 
 	            ctx.save();
 
@@ -636,7 +650,7 @@ $(document).ready(function(){
 	            if (self.toRemove) {
 	                self.hp = 0;
 	                ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-	                ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+	                ctx.scale(self.toRemoveTimer / 15 + 1, self.toRemoveTimer / 15 + 1);
 	            }
 	            ctx.rotate(self.angle / 180 * Math.PI);
 	            self.angle += self.rotDeg;
@@ -657,8 +671,16 @@ $(document).ready(function(){
 	            ctx.fillStyle = blendColors(color, red, ratio);
 	            ctx.fill();
 
-
 	            ctx.restore();
+	            if (self.hp / self.maxhp != 1) {
+	                var hpWidth = 60 * self.hp / self.maxhp;
+	                if(hpWidth < 0) hpWidth = 0;
+	                ctx.fillStyle = 'green';
+	                ctx.lineWidth = 1;
+	                roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
+	                ctx.lineWidth = 2;
+	                roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
+	            }
 	        }
 	        if (self.toRemove) self.toRemoveTimer += 2;
 	        if (self.toRemoveTimer >= 45)
@@ -677,6 +699,7 @@ $(document).ready(function(){
 	    self.x = initPack.x;
 	    self.y = initPack.y;
 	    self.hp = initPack.hp;
+	    self.lastHp = initPack.hp;
 	    self.maxhp = initPack.maxhp;
 	    self.angle = 0;
 	    self.rotDeg = Math.random(0.2);
@@ -697,16 +720,7 @@ $(document).ready(function(){
 	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
 	        if (x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40) {
-	            if (self.hp / self.maxhp != 1) {
-	                var hpWidth = 60 * self.hp / self.maxhp;
-
-	                ctx.fillStyle = 'green';
-
-	                ctx.lineWidth = 1;
-	                roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
-	                ctx.lineWidth = 2;
-	                roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
-	            }
+	            
 
 	            ctx.save();
 	            ctx.lineWidth = 3;
@@ -714,7 +728,7 @@ $(document).ready(function(){
 	            if (self.toRemove) {
 
 	                ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-	                ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+	                ctx.scale(self.toRemoveTimer / 15 + 1, self.toRemoveTimer / 15 + 1);
 	            }
 	            ctx.rotate(self.angle / 180 * Math.PI);
 	            self.angle += self.rotDeg;
@@ -737,7 +751,16 @@ $(document).ready(function(){
 
 	            ctx.restore();
 
+	            if (self.hp / self.maxhp != 1) {
+	                var hpWidth = 60 * self.hp / self.maxhp;
+	                if(hpWidth < 0) hpWidth = 0;
+	                ctx.fillStyle = 'green';
 
+	                ctx.lineWidth = 1;
+	                roundRect(ctx, x - 30, y + 30, hpWidth, 6, 3, true, true);
+	                ctx.lineWidth = 2;
+	                roundRect(ctx, x - 30, y + 30, 60, 6, 4, false, true);
+	            }
 	        }
 	        if (self.toRemove) self.toRemoveTimer += 2;
 	        if (self.toRemoveTimer >= 45)
@@ -756,6 +779,7 @@ $(document).ready(function(){
 	    self.x = initPack.x;
 	    self.y = initPack.y;
 	    self.hp = initPack.hp;
+	    self.lastHp = initPack.hp;
 	    self.radius = initPack.radius;
 
 	    self.maxhp = initPack.maxhp;
@@ -776,29 +800,9 @@ $(document).ready(function(){
 	        }
 	        ctx.globalAlpha = 1;
 
-
-
 	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
 	        if (x < WIDTH + 120 && x > -120 && y < HEIGHT + 120 && y > -120) {
-	            if (self.hp / self.maxhp != 1) {
-	                var width = 50;
-	                var offset = 50;
-	                if (self.radius != 30) {
-
-	                    var width = 200;
-	                    var offset = 140;
-	                }
-
-	                var hpWidth = width * self.hp / self.maxhp;
-
-	                ctx.fillStyle = 'green';
-
-	                ctx.lineWidth = 1;
-	                roundRect(ctx, x - width / 2, y + offset, hpWidth, 6, 3, true, true);
-	                ctx.lineWidth = 2;
-	                roundRect(ctx, x - width / 2, y + offset, width, 6, 4, false, true);
-	            }
 
 	            ctx.save();
 	            ctx.lineWidth = 2;
@@ -806,7 +810,7 @@ $(document).ready(function(){
 	            if (self.toRemove) {
 
 	                ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
-	                ctx.scale(self.toRemoveTimer / 30 + 1, self.toRemoveTimer / 30 + 1);
+	                ctx.scale(self.toRemoveTimer / 15 + 1, self.toRemoveTimer / 15 + 1);
 	            }
 	            ctx.rotate(self.angle / 180 * Math.PI);
 	            self.angle += self.rotDeg;
@@ -825,8 +829,9 @@ $(document).ready(function(){
 	            }*/
 	            polygon(ctx, 0, 0, self.radius, 5, 0, false, color);
 
-	            if (self.attacked) {
+	            if (self.lastHp != self.hp) {
 	                color = "ff0000";
+	                self.lastHp = self.hp;
 	            }
 
 	            var red = "ff0000";
@@ -838,8 +843,25 @@ $(document).ready(function(){
 	            ctx.stroke();
 	            ctx.fill();
 
-
 	            ctx.restore();
+	            if (self.hp / self.maxhp != 1) {
+	                var width = 50;
+	                var offset = 50;
+	                if (self.radius != 30) {
+
+	                    var width = 200;
+	                    var offset = 140;
+	                }
+
+	                var hpWidth = width * self.hp / self.maxhp;
+	                if(hpWidth < 0) hpWidth = 0;
+	                ctx.fillStyle = 'green';
+
+	                ctx.lineWidth = 1;
+	                roundRect(ctx, x - width / 2, y + offset, hpWidth, 6, 3, true, true);
+	                ctx.lineWidth = 2;
+	                roundRect(ctx, x - width / 2, y + offset, width, 6, 4, false, true);
+	            }
 	        }
 	        if (self.toRemove) self.toRemoveTimer += 2;
 	        if (self.toRemoveTimer >= 45)
@@ -915,7 +937,6 @@ $(document).ready(function(){
 	    }
 
 	}
-
 	function update(data) {
 	    tickRate = tick - lastTick;
 	    if (tickRate == 0) tickRate = 1;
@@ -962,10 +983,10 @@ $(document).ready(function(){
 		    }
 		}
 		if(data.bullet !== undefined){
-		    for (var i = 0; i < data.bullet.length; i++) {
+			for (var i = 0; i < data.bullet.length; i++) {
 		        var pack = data.bullet[i];
-		        var b = Bullet.list[data.bullet[i].id];
-		        if (b) {
+		        if (pack) {
+		        	var b = Bullet.list[pack.id];
 		            if (pack.x !== undefined)
 		                b.newX = pack.x;
 		            if (pack.y !== undefined)
@@ -1014,6 +1035,7 @@ $(document).ready(function(){
 	    	}
 	    }
 	    if(data.triangle !== undefined){
+	    	
 		    for (var i = 0; i < data.triangle.length; i++) {
 		        var pack = data.triangle[i];
 		        var b = Triangle.list[data.triangle[i].id];
@@ -1032,6 +1054,7 @@ $(document).ready(function(){
 		    }
 	    }
 	    lastTick = tick;
+	    
 	}
 
 	function remove(data) {
@@ -1042,7 +1065,6 @@ $(document).ready(function(){
 	    }
 	    for (var i = 0; i < data.bullet.length; i++) {
 	        Bullet.list[data.bullet[i]].toRemove = true;
-
 	    }
 	    for (var i = 0; i < data.square.length; i++) {
 	        Square.list[data.square[i]].toRemove = true;
@@ -1054,7 +1076,6 @@ $(document).ready(function(){
 	    }
 	    for (var i = 0; i < data.triangle.length; i++) {
 	        Triangle.list[data.triangle[i]].toRemove = true;
-
 	    }
 	}
 
@@ -1099,7 +1120,7 @@ $(document).ready(function(){
 	        ctx.fillRect(starting + i * size - size / 2, height, size, size / 2);
 	        ctx.restore();
 	        ctx.stroke();
-	        drawMinis(starting + i * size, height, demoAngle, true, index);
+	        drawMinis(starting + i * size, height, demoAngle, true, index, Player.list[selfId].level);
 	    }
 	}
 	var u = 0;
@@ -1108,10 +1129,17 @@ $(document).ready(function(){
 	var drawDeath = false;
 	var lastCalledTime = 0;
 	var fps = 0;
-
+	var lastFpsTick = 0;
+	
 	function draw() {
-
-	    tick = new Date().getTime();
+		tick = new Date().getTime();
+	    fps = tick - lastFpsTick;
+	    lastFpsTick = tick;
+		if(u % 30 == 0){
+			//console.log(fps);
+		}
+		
+	    
 	    requestAnimationFrame(draw);
 	    if (drawDeath) {
 	        ctx.fillStyle = 'red';
@@ -1128,10 +1156,19 @@ $(document).ready(function(){
 	        HEIGHT = document.body.clientHeight;
 
 	        
+	        if (u % 100 == 0) {
+	            socket.emit('dimension', {
+	                width: WIDTH,
+	                height: HEIGHT
+	            });
+	            u -= 100;
+	        }
+	        u++;
+	        
 	        if (!selfId)
 	            return;
 	        ctx.clearRect(0, 0, WIDTH, HEIGHT);
-
+	        //ctx.drawImage(img, 10, 10);
 	        drawMap();
 	        drawScore();
 	        drawBars();
@@ -1441,6 +1478,7 @@ $(document).ready(function(){
 		if ((t/=d/2) < 1) return c/2*t*t + b;
 		return -c/2 * ((--t)*(t-2) - 1) + b;
 	}
+	var img = document.getElementById("image");
 	function drawgrid() {
 	    if (!blackTheme) {
 	        ctx.fillStyle = '#CECECE';
@@ -1656,10 +1694,10 @@ $(document).ready(function(){
 
 
 
-	    drawMinis(7 * WIDTH / 8 + 70, HEIGHT - 70, demoAngle, true, Player.list[selfId].tankType);
+	    drawMinis(7 * WIDTH / 8 + 70, HEIGHT - 70, demoAngle, true, Player.list[selfId].tankType, Player.list[selfId].level);
 	}
 
-	var drawMinis = function(x, y, angle, text, tankType) {
+	var drawMinis = function(x, y, angle, text, tankType, level) {
 	    var width = 66;
 	    var height = 44;
 	    ctx.save();
@@ -2260,15 +2298,16 @@ $(document).ready(function(){
 
 	document.onkeydown = function(event) {
 
-	    if (!focused) {
+	    if (!focused && Player.list[selfId] !== undefined) {
 	        if (event.keyCode === 68) {
 	            if (!(Player.list[selfId].x > GAME_DIMENSION)) {
-
+					pressingRight = true;
 	                socket.emit('keyPress', {
 	                    inputId: 'right',
 	                    state: true
 	                });
 	            } else {
+	            	pressingRight = false;
 	                socket.emit('keyPress', {
 	                    inputId: 'right',
 	                    state: false
@@ -2277,11 +2316,13 @@ $(document).ready(function(){
 	        }
 	        if (event.keyCode === 83) {
 	            if (!(Player.list[selfId].y > GAME_DIMENSION)) {
+	            	pressingDown = true;
 	                socket.emit('keyPress', {
 	                    inputId: 'down',
 	                    state: true
 	                });
 	            } else {
+	            	pressingDown = false;
 	                socket.emit('keyPress', {
 	                    inputId: 'down',
 	                    state: false
@@ -2291,11 +2332,13 @@ $(document).ready(function(){
 	        if (event.keyCode === 65) {
 
 	            if (!(Player.list[selfId].x < 0)) {
+	            	pressingLeft = true;
 	                socket.emit('keyPress', {
 	                    inputId: 'left',
 	                    state: true
 	                });
 	            } else {
+	            	pressingLeft = false;
 	                socket.emit('keyPress', {
 	                    inputId: 'left',
 	                    state: false
@@ -2304,12 +2347,13 @@ $(document).ready(function(){
 	        }
 	        if (event.keyCode === 87) {
 	            if (!(Player.list[selfId].y < 0)) {
-
+					pressingUp = true;
 	                socket.emit('keyPress', {
 	                    inputId: 'up',
 	                    state: true
 	                });
 	            } else {
+	            	pressingUp = false;
 	                socket.emit('keyPress', {
 	                    inputId: 'up',
 	                    state: false
@@ -2320,30 +2364,43 @@ $(document).ready(function(){
 	}
 	var autoFire = false;
 	var wasAutoFire = false;
+	
+	var pressingLeft = false;
+	var pressingRight = false;
+	var pressingUp = false;
+	var pressingDown = false;
 	document.onkeyup = function(event) {
 		
 	    if (!focused) {
-	        if (event.keyCode === 68)
+	        if (event.keyCode === 68){
 	            socket.emit('keyPress', {
 	                inputId: 'right',
 	                state: false
 	            });
-	        if (event.keyCode === 83)
+	            pressingRight = false;
+	        }
+	        if (event.keyCode === 83){
 	            socket.emit('keyPress', {
 	                inputId: 'down',
 	                state: false
 	            });
-	        if (event.keyCode === 65)
+	            pressingDown = false;
+	        }
+	        if (event.keyCode === 65){
 	            socket.emit('keyPress', {
 	                inputId: 'left',
 	                state: false
 	            });
-	        if (event.keyCode === 87)
+	            pressingLeft = false;
+	        }
+	        if (event.keyCode === 87){
 	            socket.emit('keyPress', {
 	                inputId: 'up',
 	                state: false
 	            });
-	        if (event.keyCode > 47 && event.keyCode < 58)
+	            pressingUp = false;
+	        }
+	        /*if (event.keyCode > 47 && event.keyCode < 58)
 	            socket.emit('changeType', {
 	                type: {
 	                    type: event.keyCode - 48,
@@ -2351,7 +2408,7 @@ $(document).ready(function(){
 	                    g: 1,
 	                    b: 1
 	                }
-	            });
+	            });*/
 	        if (event.keyCode == 69) {
 	            autoFire = !autoFire;
 	            if (autoFire) {
@@ -2392,13 +2449,15 @@ $(document).ready(function(){
 	        var spacing = 30;
 	        var initial = 10;
 	        var w = 15;
-	        var length = 154;
+	        var length = 200;
 	        var leftSpace = 185;
+	        
+	        var length = 130;
 	        if (newTanks.length != 0) {
-	            var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170;
+	            var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * length;
 	            var height = 133;
-	            if (isPointInsideRect(x, y, starting - 85, height - 85, (newTanks.length) * 170, 170)) {
-	                var clickIndex = Math.round((x - starting) / 170);
+	            if (isPointInsideRect(x, y, starting - length / 2, height - length / 2, (newTanks.length) * length, length)) {
+	                var clickIndex = Math.round((x - starting) / length);
 	                var newTankUpgrade = newTanks[clickIndex];
 	                socket.emit('changeType', {
 	                    type: newTankUpgrade
@@ -2466,7 +2525,7 @@ $(document).ready(function(){
         	
 	        var angle = Math.atan2(y, x) / Math.PI * 180;
 	        Player.list[selfId].angle = angle;
-	        if (moveTimes % 4 == 0) {
+	        if (moveTimes % 2 == 0) {
 	            socket.emit('keyPress', {
 	                inputId: 'mouseAngle',
 	                state: angle,
