@@ -436,8 +436,12 @@ $(document).ready(function(){
 	    		self.x = self.newX;
 	    		self.y = self.newY;
 	    	}else{
-	    		self.x += distX / tickRate * 14;
-		        self.y += distY / tickRate * 14;
+	    		var moveXDist = distX / tickRate * 14;
+	    		var moveYDist = distY / tickRate * 14;
+	    		if(Math.abs(moveXDist) < 30 && Math.abs(moveYDist) < 30){
+	    			self.x += moveXDist;
+			        self.y += moveYDist;
+	    		}
 	    	}
 
 	    	var x = self.x - Player.list[selfId].x + WIDTH / 2;
