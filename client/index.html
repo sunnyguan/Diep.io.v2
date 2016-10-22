@@ -443,6 +443,9 @@ $(document).ready(function(){
 	    				&& tickRate >= 20){
 	    			self.x += moveXDist;
 			        self.y += moveYDist;
+	    		} else {
+	    			self.x = self.x + distX;
+	    			self.y = self.y + distY;
 	    		}
 	    	}
 
