@@ -439,7 +439,8 @@ $(document).ready(function(){
 	    	}else{
 	    		var moveXDist = distX / tickRate * 14;
 	    		var moveYDist = distY / tickRate * 14;
-	    		if(Math.abs(moveXDist) < 30 && Math.abs(moveYDist) < 30){
+	    		if(Math.abs(moveXDist) < 30 && Math.abs(moveYDist) < 30
+	    				&& tickRate >= 20){
 	    			self.x += moveXDist;
 			        self.y += moveYDist;
 	    		}
