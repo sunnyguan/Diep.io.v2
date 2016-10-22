@@ -429,6 +429,7 @@ $(document).ready(function(){
 	        else return 0.46 * x * x * x - 12 * x * x + 170 * x - 529;
 	    }
 	    self.draw = function() {
+	    	if(Math.random() > 0.9) console.log(tickRate);
 	    	var distX = self.newX - self.x;
 	    	var distY = self.newY - self.y;
 			var difference = (Math.abs(distX) > Math.abs(distY)) ? Math.abs(distX) : Math.abs(distY);
