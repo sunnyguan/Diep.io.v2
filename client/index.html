@@ -1342,7 +1342,7 @@ $(document).ready(function(){
 	}
 	var wavyLines = [];
 	for (var ij = 20; ij <= 230; ij += 30) {
-	    var wl = new WavyLine(1, ij - 350, 16, 10);
+	    var wl = new WavyLine(1, ij - 100, 16, 10);
 	    wavyLines.push(wl);
 	}
 
@@ -1352,18 +1352,18 @@ $(document).ready(function(){
 	var left = 0;
 	function drawLevelUp() {
 		if(levelUpVisible){
-			left = easingInOutQuad(leftTick, 0, 350, 50);
+			left = easingInOutQuad(leftTick, -35, 350, 50);
 			if(leftTick <= 50) leftTick++;
 			left -= 350;
 		}else if(left > -349){
-			left = easingInOutQuad(leftTick, 0, 350, 50);
+			left = easingInOutQuad(leftTick, -35, 350, 50);
 			if(leftTick >= 0) leftTick--;
 			left -= 350;
 		}
 
 	    var spacing = 30;
 	    var initial = 10;
-	    var leftSpace = 185;
+	    var leftSpace = 230;
 	    var leftWordSpace = 45;
 	    var w = 15;
 	    var length = 145;
@@ -1438,16 +1438,16 @@ $(document).ready(function(){
         ctx.fillText('Movement Speed', leftWordSpace + left, initial + spacing * 6 - w);
         ctx.rect(leftSpace + left, initial + spacing * 5, length, waveLength);
 
-        ctx.fillText('冲撞伤害', leftWordSpace + left, initial + spacing * 7 - w);
+        ctx.fillText('Ram Damage', leftWordSpace + left, initial + spacing * 7 - w);
         ctx.rect(leftSpace + left, initial + spacing * 6, length, waveLength);
 
-        ctx.fillText('炮弹渗透', leftWordSpace + left, initial + spacing * 8 - w);
+        ctx.fillText('Penetration', leftWordSpace + left, initial + spacing * 8 - w);
         ctx.rect(leftSpace + left, initial + spacing * 7, length, waveLength);
 
-        ctx.fillText('大炮加强: ' + Player.list[selfId].upgrades, 60 + left, initial + spacing * 9);
+        ctx.fillText('# of Upgrades: ' + Player.list[selfId].upgrades, 60 + left, initial + spacing * 9);
 
-        ctx.moveTo(350 + left, 0);
-        ctx.lineTo(350 + left, 290);
+        ctx.moveTo(leftSpace+155 + left, 0);
+        ctx.lineTo(leftSpace+155 + left, 290);
         ctx.lineTo(0 + left, 290);
 
 	    //} else {
@@ -1687,7 +1687,7 @@ $(document).ready(function(){
 	    if (txt >= 1000) txt = (Math.round(txt / 1000 * 10) / 10).toFixed(2) + 'k';
 	    ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 + 120, HEIGHT - 120);
 
-	    txt = '级别';
+	    txt = 'Level';
 	    ctx.font = '20px Arial';
 	    ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 - 120, HEIGHT - 150);
 
@@ -1695,7 +1695,7 @@ $(document).ready(function(){
 	    ctx.font = '20px Arial';
 	    ctx.fillText(lvl, WIDTH / 2 - ctx.measureText(lvl).width / 2 - 120, HEIGHT - 120);
 
-	    txt = '得分';
+	    txt = 'Score';
 	    ctx.font = '20px Arial';
 	    ctx.fillText(txt, WIDTH / 2 - ctx.measureText(txt).width / 2 + 120, HEIGHT - 150);
 

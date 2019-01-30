@@ -310,13 +310,13 @@ var Player = function(id, name) {
 
 			if (self.level >= 45 && self.availableUpgrades[2]) {
 				if (self.tankType == 8) {
-					tanks = [ 3, 4, 9, 25 ];
+					tanks = [ 3, 4, 7, 9, 25 ];
 				} else if (self.tankType == 13) {
-					tanks = [ 3, 4, 9, 25 ];
+					tanks = [ 3, 4, 7, 9, 25 ];
 				} else if (self.tankType == 14) {
-					tanks = [ 2, 21 ];
+					tanks = [ 2, 7, 3, 21 ];
 				} else if (self.tankType == 5) {
-					tanks = [ 6 ];
+					tanks = [ 6, 7, 3 ];
 				} else if (self.tankType == 7) {
 					tanks = [ 3 ];
 				} else if (self.tankType == 16) {
@@ -1807,7 +1807,7 @@ Pentagon.getAllInitPack = function() {
 var squareFirst = true;
 var Square = function() {
 	var self = Shape();
-	self.score = 15;
+	self.score = 1500;
 	self.hp = 10;
 	self.maxhp = 10;
 	self.type = "Square";
@@ -2123,7 +2123,7 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 	}
 	self.dealWithEntities = function(s) {
 		if ((s.id != self.parent || self.chaser) && !isNaN(self.hp) && Player.list[self.parent] !== undefined) {
-			var radius = 55;
+			var radius = 10;
 			if (self.getDistance(s) < radius) {
 				var angle = Math.atan2(self.y - s.y, self.x - s.x);
 				if (typeof s === "Player") {
@@ -2251,7 +2251,7 @@ var addUser = function(data, cb) {
 	cb();
 }
 
-var unnamed_usernames = [ '张三', '李四', '王五', '陆二', '赵六', '孙七', '小明', '小王', ];
+var unnamed_usernames = [ 'Bob', 'John', 'Joe', 'Anonymous Player 3', 'Anonymous Player 2', 'I forgot to pick a name'];
 
 var io = require('socket.io')(serv, {});
 io.sockets.on('connection', function(socket) {
