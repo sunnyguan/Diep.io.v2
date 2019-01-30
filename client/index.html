@@ -8,7 +8,7 @@
 		<button id="signDiv-signIn">Sign In</button>
 		<!--<button id="signDiv-signUp">Sign Up</button>!-->
 	</div>
-	
+
 	<style type="text/css">
 * {
 	-webkit-touch-callout: none; /* iOS Safari */
@@ -369,7 +369,7 @@ $(document).ready(function(){
 	    ctx.stroke();
 	}
 	socket.on('addToChat', function(data) {
-		
+
 	    chatMsgs.push(data);
 	});
 	socket.on('evalAnswer', function(data) {
@@ -382,10 +382,10 @@ $(document).ready(function(){
 	var lastTick = 0;
 	var tick = 0;
 	var tickRate = 20;
-	
+
 	var bulletLastTick = 0;
 	var bulletTickRate = 370;
-	
+
 	var Player = function(initPack) {
 	    var self = {};
 
@@ -413,10 +413,10 @@ $(document).ready(function(){
 
 	    self.newX = initPack.x;
 	    self.newY = initPack.y;
-	    
+
 	    self.movementX = 0;
 	   	self.movementY = 0;
-	    
+
 	    my_id = self.id;
 	    self.evaluateNextLevelScore = function(x) {
 	        x++;
@@ -520,14 +520,14 @@ $(document).ready(function(){
 	    		self.x += Math.cos(self.angle * Math.PI / 180) * self.speedo / bulletTickRate * 180;
 		    	self.y += Math.sin(self.angle * Math.PI / 180) * self.speedo / bulletTickRate * 180;
 	    	}
-	    	
+
 	    	var x = self.x - Player.list[selfId].x + WIDTH / 2;
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
-	    	
+
 	        if (self.toRemove) self.toRemoveTimer += 3;
 	        if (self.toRemoveTimer >= 45)
 	            delete Bullet.list[self.id];
-	        
+
 	        if (x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40) {
 	            if (self.drone || self.chaser) {
 	                ctx.save();
@@ -543,7 +543,7 @@ $(document).ready(function(){
 
 	                ctx.lineWidth = 5;
 		            ctx.lineJoin = "round";
-		            
+
 		            polygon(ctx, 0, 0, 15, 3, 0, false);
 		            ctx.stroke();
 		            ctx.fill();
@@ -556,7 +556,7 @@ $(document).ready(function(){
 	                ctx.lineWidth = 3;
 	                ctx.translate(x, y);
 	                ctx.rotate(self.angle * Math.PI / 180);
-	               
+
 
 	                if (self.toRemove) {
 	                    ctx.globalAlpha = 1 - self.toRemoveTimer / 45;
@@ -565,7 +565,7 @@ $(document).ready(function(){
 	                polygon(ctx, 0, 0, 10, 3, 0, false, "#000000");
 	                ctx.stroke();
 	                ctx.fill();
-	                
+
 	                ctx.restore();
 
 
@@ -603,7 +603,7 @@ $(document).ready(function(){
 		                ctx.stroke();
 		                ctx.restore();
 	            	}
-	                
+
 	            	/*var tx = self.newX - Player.list[selfId].x + WIDTH / 2;
 	    	        var ty = self.newY - Player.list[selfId].y + HEIGHT / 2;
 	                ctx.save();
@@ -651,7 +651,7 @@ $(document).ready(function(){
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
 	        if (x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40) {
 
-	            
+
 
 	            ctx.save();
 
@@ -729,7 +729,7 @@ $(document).ready(function(){
 	        var x = self.x - Player.list[selfId].x + WIDTH / 2;
 	        var y = self.y - Player.list[selfId].y + HEIGHT / 2;
 	        if (x < WIDTH + 40 && x > -40 && y < HEIGHT + 40 && y > -40) {
-	            
+
 
 	            ctx.save();
 	            ctx.lineWidth = 3;
@@ -741,7 +741,7 @@ $(document).ready(function(){
 	            }
 	            ctx.rotate(self.angle / 180 * Math.PI);
 	            self.angle += self.rotDeg;
-	            
+
 	            ctx.beginPath();
 	            polygon(ctx, 0, 0, 23, 4, 0, false, "yellow");
 	            //polygon(ctx, 0, 0, 10, 4, 0, true, "yellow");
@@ -1044,7 +1044,7 @@ $(document).ready(function(){
 	    	}
 	    }
 	    if(data.triangle !== undefined){
-	    	
+
 		    for (var i = 0; i < data.triangle.length; i++) {
 		        var pack = data.triangle[i];
 		        var b = Triangle.list[data.triangle[i].id];
@@ -1063,7 +1063,7 @@ $(document).ready(function(){
 		    }
 	    }
 	    lastTick = tick;
-	    
+
 	}
 
 	function remove(data) {
@@ -1109,14 +1109,14 @@ $(document).ready(function(){
 	var drawTankUpgrades = function() {
 	    var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * 170 + 50;
 	    var height = 133;
-	    
+
 	    for (var i in newTanks) {
 	        var index = newTanks[i].type;
 	        ctx.save();
 	        ctx.globalAlpha = 0.3;
 	        ctx.lineWidth = 13;
 	        var size = 130;
-	        
+
 	        ctx.rect(starting + i * size - size / 2, height - size / 2, size, size);
 
 	        ctx.globalAlpha = 0.6;
@@ -1139,7 +1139,7 @@ $(document).ready(function(){
 	var lastCalledTime = 0;
 	var fps = 0;
 	var lastFpsTick = 0;
-	
+
 	function draw() {
 		tick = new Date().getTime();
 	    fps = tick - lastFpsTick;
@@ -1147,8 +1147,8 @@ $(document).ready(function(){
 		if(u % 30 == 0){
 			//console.log(fps);
 		}
-		
-	    
+
+
 	    requestAnimationFrame(draw);
 	    if (drawDeath) {
 	        ctx.fillStyle = 'red';
@@ -1164,7 +1164,7 @@ $(document).ready(function(){
 	        WIDTH = document.body.clientWidth;
 	        HEIGHT = document.body.clientHeight;
 
-	        
+
 	        if (u % 100 == 0) {
 	            socket.emit('dimension', {
 	                width: WIDTH,
@@ -1173,7 +1173,7 @@ $(document).ready(function(){
 	            u -= 100;
 	        }
 	        u++;
-	        
+
 	        if (!selfId)
 	            return;
 	        ctx.clearRect(0, 0, WIDTH, HEIGHT);
@@ -1360,7 +1360,7 @@ $(document).ready(function(){
 			if(leftTick >= 0) leftTick--;
 			left -= 350;
 		}
-		
+
 	    var spacing = 30;
 	    var initial = 10;
 	    var leftSpace = 185;
@@ -1403,7 +1403,7 @@ $(document).ready(function(){
             }*/
             if(pp !== undefined){
             	pp.newX = left;
-            
+
 	            if (wavyLines[i].right != Math.round(pp * (14 / levelUpCount) + 2))
 	                wavyLines[i] = new WavyLine(1, ij, Math.round(pp * (14 / levelUpCount)) + 2, 10);
 	            ij += 30;
@@ -2158,7 +2158,7 @@ $(document).ready(function(){
 
 	    }
 
-	    var ch = true;
+	    var ch = false;
 	    if (text) {
 	        ctx.font = '19px Arial';
 	        if (ch)
@@ -2250,7 +2250,7 @@ $(document).ready(function(){
 	 * @param {Number} y The top left y coordinate
 	 * @param {Number} width The width of the rectangle
 	 * @param {Number} height The height of the rectangle
-	 * @param {Number} [radius = 5] The corner radius; It can also be an object 
+	 * @param {Number} [radius = 5] The corner radius; It can also be an object
 	 *                 to specify different radii for corners
 	 * @param {Number} [radius.tl = 0] Top left
 	 * @param {Number} [radius.tr = 0] Top right
@@ -2373,13 +2373,13 @@ $(document).ready(function(){
 	}
 	var autoFire = false;
 	var wasAutoFire = false;
-	
+
 	var pressingLeft = false;
 	var pressingRight = false;
 	var pressingUp = false;
 	var pressingDown = false;
 	document.onkeyup = function(event) {
-		
+
 	    if (!focused) {
 	        if (event.keyCode === 68){
 	            socket.emit('keyPress', {
@@ -2460,7 +2460,7 @@ $(document).ready(function(){
 	        var w = 15;
 	        var length = 200;
 	        var leftSpace = 185;
-	        
+
 	        var length = 130;
 	        if (newTanks.length != 0) {
 	            var starting = WIDTH / 2 - ((newTanks.length - 1) / 2) * length;
@@ -2523,7 +2523,7 @@ $(document).ready(function(){
 	}
 	var moveTimes = 0;
 	document.onmousemove = function(event) {
-		
+
 	    if (signDiv.style.display == 'none') {
 	        var x = -(WIDTH / 2) + event.clientX - 8;
 	        var y = -(HEIGHT / 2) + event.clientY - 8;
@@ -2531,7 +2531,7 @@ $(document).ready(function(){
         	lastMouseY = y;
         	if((event.clientX < 350 && event.clientY < 350) || Player.list[selfId].upgrades != 0) levelUpVisible = true;
         	else levelUpVisible = false;
-        	
+
 	        var angle = Math.atan2(y, x) / Math.PI * 180;
 	        Player.list[selfId].angle = angle;
 	        if (moveTimes % 2 == 0) {
@@ -2541,7 +2541,7 @@ $(document).ready(function(){
 	                mouseX: x,
 	                mouseY: y
 	            });
-	            
+
 	        }
 	    }
 

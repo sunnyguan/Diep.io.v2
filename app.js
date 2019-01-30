@@ -8,7 +8,7 @@ app.get('/', function(req, res) {
 app.use('/client', express.static(__dirname + '/client'));
 
 serv.listen(process.env.PORT || 2000, '0.0.0.0');
-console.log("Server started.");
+console.log("Server started!");
 
 var SOCKET_LIST = {};
 
@@ -140,7 +140,7 @@ var Player = function(id, name) {
 	self.xSector = xSector;
 	self.ySector = ySector;
 	Player.matrix[xSector][ySector].push(self);
-	
+
 	self.availableUpgrades = [ 0, 0, 0 ];
 	self.sent = [ 0, 0, 0 ];
 	var super_update = self.update;
@@ -161,7 +161,7 @@ var Player = function(id, name) {
 		var ox = self.x;
 		var oy = self.y;
 		self.updateSpd();
-		
+
 		var xSector = Math.floor(self.x / GAME_DIMENSION * 10);
 		var ySector = Math.floor(self.y / GAME_DIMENSION * 10);
 		if(self.xSector != xSector || self.ySector != ySector){
@@ -171,7 +171,7 @@ var Player = function(id, name) {
 			self.ySector = ySector;
 			Player.matrix[self.xSector][self.ySector].push(self);
 		}
-		
+
 		if (self.score >= self.evaluateNextLevelScore(self.level)) {
 			var maxUps = 0;
 			for (var i = 0; i < 45; i++) {
@@ -182,7 +182,7 @@ var Player = function(id, name) {
 			}
 			self.upgrades += maxUps;
 			self.level += maxUps;
-			
+
 			self.updateUpgrades = true;
 			self.updateLevel = true;
 		}
@@ -357,10 +357,10 @@ var Player = function(id, name) {
 		var turbAngle = angle + 6 * Math.random() - 6;
 		angle += 6 * Math.random() - 6;
 		var damping = 0.8;
-		
+
 		var ax = self.x;
 		var ay = self.y;
-		
+
 		if (self.tankType === 0) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
@@ -371,7 +371,7 @@ var Player = function(id, name) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				
+
 				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
 				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
 				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
@@ -379,7 +379,7 @@ var Player = function(id, name) {
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				
+
 				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 17;
 				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 17;
 				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
@@ -390,22 +390,22 @@ var Player = function(id, name) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 1 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 1 * damping;
-				
+
 				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 15;
 				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 15;
 				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 20;
 				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 20;
 				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				
+
 				var b = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 3) {
@@ -583,7 +583,7 @@ var Player = function(id, name) {
 		} else if (self.tankType === 16) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 3 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 3 * damping;
-			
+
 			ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
 			ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
 			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
@@ -592,28 +592,28 @@ var Player = function(id, name) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				
+
 				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 10;
 				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 10;
 				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 10;
 				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 10;
 				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				
+
 				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 20;
 				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 20;
 				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 20;
 				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 20;
 				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 18) {
@@ -622,52 +622,52 @@ var Player = function(id, name) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				
+
 				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 7;
 				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 7;
 				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 7;
 				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 7;
 				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				
+
 				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 14;
 				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 14;
 				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 14;
 				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 14;
 				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				self.reloadNum = 2;
 			} else if (self.reloadNum == 2) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 0.5 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 0.5 * damping;
-				
+
 				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 21;
 				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 21;
 				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				ax = self.x + Math.cos(turbAngle * Math.PI / 180) * 21;
 				ay = self.y + Math.sin(turbAngle * Math.PI / 180) * 21;
 				var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				self.reloadNum = 0;
 			}
 		} else if (self.tankType === 19) {
 			if (self.reloadNum == 0) {
 				self.spdX -= Math.cos(angle / 180 * Math.PI) * 3 * damping;
 				self.spdY -= Math.sin(angle / 180 * Math.PI) * 3 * damping;
-				
+
 				ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
 				ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
 				var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-				
+
 				self.reloadNum = 1;
 			} else if (self.reloadNum == 1) {
 				self.spdX -= Math.cos((angle + 180) / 180 * Math.PI) * 3
@@ -689,7 +689,7 @@ var Player = function(id, name) {
 
 			angle -= 8;
 			turbAngle -= 8;
-			
+
 			ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
 			ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
 			var b1 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
@@ -699,7 +699,7 @@ var Player = function(id, name) {
 			ax = self.x - Math.cos(turbAngle * Math.PI / 180) * 17;
 			ay = self.y - Math.sin(turbAngle * Math.PI / 180) * 17;
 			var b2 = Bullet(self.id, angle, self.bulletHp, self.bulletSpeed, ax, ay);
-			
+
 		} else if (self.tankType === 21) {
 			self.spdX -= Math.cos(angle / 180 * Math.PI) * 1.5 * damping;
 			self.spdY -= Math.sin(angle / 180 * Math.PI) * 1.5 * damping;
@@ -833,9 +833,9 @@ var Player = function(id, name) {
 					self.spdX--;
 					self.spdY++;
 		} else {
-			
+
 		}*/
-		
+
 		if (self.pressingRight && self.x < GAME_DIMENSION) {
 			if (self.spdX < self.maxSpd)
 				self.spdX++;
@@ -909,7 +909,7 @@ var Player = function(id, name) {
 			pack.penetration = self.penetrationCount;
 			self.updatePenetration = false;
 		}
-		
+
 		if (self.updateHp) {
 			pack.hp = self.hp;
 			self.updateHp = false;
@@ -934,7 +934,7 @@ var Player = function(id, name) {
 			pack.mouseAngle = self.mouseAngle;
 			self.updateMonseAngle = false;
 		}
-		
+
 		return pack;
 	}
 
@@ -1506,7 +1506,7 @@ function mergeUpdatePacks(past,current){
 	return mergedObj;
 }
 Player.regUpdate = function() {
-	
+
 	for ( var i in Player.list) {
 		var player = Player.list[i];
 		if (player.hp <= 0) {
@@ -1543,7 +1543,7 @@ Player.regUpdate = function() {
 
 Player.update = function(p) {
 	var pack = [];
-	
+
 	for ( var i in Player.list) {
 		var player = Player.list[i];
 		if (objInViewOfPlayer(player, p)) {
@@ -1627,7 +1627,7 @@ var Shape = function() {
 		}
 		if (self.hp > self.maxhp)
 			self.hp = self.maxhp;
-		
+
 		if (self.attacked) {
 			self.needToUpdate = true;
 		} else {
@@ -1682,7 +1682,7 @@ var Pentagon = function(x, y, radius) {
 		self.x = x;
 		self.y = y;
 	}
-	
+
 	if (typeof radius !== 'undefined') {
 		self.radius = radius;
 		self.score = 3000;
@@ -1694,7 +1694,7 @@ var Pentagon = function(x, y, radius) {
 		self.hp = 130;
 		self.maxhp = 130;
 	}
-	
+
 	if(pentagonFirst){
 		for(var i = 0; i < 10; i++){
 			Pentagon.matrix[i] = [];
@@ -1704,7 +1704,7 @@ var Pentagon = function(x, y, radius) {
 		}
 		pentagonFirst = false;
 	}
-	
+
 	var xSector = Math.floor(self.x / GAME_DIMENSION * 10);
 	var ySector = Math.floor(self.y / GAME_DIMENSION * 10);
 	self.xSector = xSector;
@@ -1733,7 +1733,7 @@ Pentagon.updatePack = {};
 
 
 Pentagon.regUpdate = function() {
-	
+
 	if (numOfAlphaPentagons < 4) {
 		var x = Math.floor(Math.random()
 				* (GAME_DIMENSION * 6 / 9 - GAME_DIMENSION * 3 / 9 + 1)
@@ -1764,7 +1764,7 @@ Pentagon.regUpdate = function() {
 	}
 	for ( var i in Pentagon.list) {
 		var pentagon = Pentagon.list[i];
-		
+
 		/*var xSector = Math.floor(pentagon.x / GAME_DIMENSION * 10);
 		var ySector = Math.floor(pentagon.y / GAME_DIMENSION * 10);
 		if(xSector != pentagon.xSector || ySector != pentagon.ySector){
@@ -1772,7 +1772,7 @@ Pentagon.regUpdate = function() {
 			Pentagon.matrix[pentagon.xSector][pentagon.ySector].splice(index, 1);
 			Pentagon.matrix[xSector][ySector].push(pentagon);
 		}*/
-		
+
 		if (pentagon.hp <= 0) {
 			delete Pentagon.list[i];
 			var sindex = Pentagon.matrix[pentagon.xSector][pentagon.ySector].indexOf(pentagon);
@@ -1820,13 +1820,13 @@ var Square = function() {
 		}
 		squareFirst = false;
 	}
-	
+
 	var xSector = Math.floor(self.x / GAME_DIMENSION * 10);
 	var ySector = Math.floor(self.y / GAME_DIMENSION * 10);
 	Square.matrix[xSector][ySector].push(self);
 	self.xSector = xSector;
 	self.ySector = ySector;
-	
+
 	Square.list[self.id] = self;
 	initPack.square.push(self.getInitPack());
 	return self;
@@ -1837,14 +1837,14 @@ Square.matrix = [];
 Square.updatePack = {};
 
 Square.regUpdate = function() {
-	
-	
+
+
 	if (Object.keys(Square.list).length < 390) {
 		var t = Square();
 	}
 	for ( var i in Square.list) {
 		var square = Square.list[i];
-		
+
 		/*var xSector = Math.floor(square.x / GAME_DIMENSION * 10);
 		var ySector = Math.floor(square.y / GAME_DIMENSION * 10);
 		if(xSector != square.xSector || ySector != square.ySector){
@@ -1852,7 +1852,7 @@ Square.regUpdate = function() {
 			Square.matrix[square.xSector][square.ySector].splice(index, 1);
 			Square.matrix[xSector][ySector].push(square);
 		}*/
-		
+
 		if (square.hp <= 0) {
 			delete Square.list[i];
 			var sindex = Square.matrix[square.xSector][square.ySector].indexOf(square);
@@ -1900,13 +1900,13 @@ var Triangle = function() {
 		}
 		triangleFirst = false;
 	}
-	
+
 	var xSector = Math.floor(self.x / GAME_DIMENSION * 10);
 	var ySector = Math.floor(self.y / GAME_DIMENSION * 10);
 	Triangle.matrix[xSector][ySector].push(self);
 	self.xSector = xSector;
 	self.ySector = ySector;
-	
+
 	Triangle.list[self.id] = self;
 	initPack.triangle.push(self.getInitPack());
 	return self;
@@ -1918,13 +1918,13 @@ Triangle.updatePack = {};
 
 
 Triangle.regUpdate = function() {
-	
+
 	if (Object.keys(Triangle.list).length < 150) {
 		var t = new Triangle();
 	}
 	for ( var i in Triangle.list) {
 		var triangle = Triangle.list[i];
-		
+
 		/*var xSector = Math.floor(triangle.x / GAME_DIMENSION * 10);
 		var ySector = Math.floor(triangle.y / GAME_DIMENSION * 10);
 		if(xSector != triangle.xSector || ySector != triangle.ySector){
@@ -1932,7 +1932,7 @@ Triangle.regUpdate = function() {
 			Triangle.matrix[triangle.xSector][triangle.ySector].splice(index, 1);
 			Triangle.matrix[xSector][ySector].push(triangle);
 		}*/
-		
+
 		if (triangle.hp <= 0) {
 			delete Triangle.list[i];
 			var sindex = Triangle.matrix[triangle.xSector][triangle.ySector].indexOf(triangle);
@@ -1999,9 +1999,9 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 	self.angle = angle;
 	self.spdX = Math.cos(self.angle / 180 * Math.PI) * self.speed;
 	self.spdY = Math.sin(self.angle / 180 * Math.PI) * self.speed;
-	
-	
-	
+
+
+
 	self.parent = parent;
 	if (Player.list[self.parent].tankType == 24)
 		self.trap = true;
@@ -2012,15 +2012,15 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 	self.toRemove = false;
 	self.stationary = false;
 	self.friction = 1;
-	
+
 	self.xSector = Math.floor(self.x / GAME_DIMENSION * 10);
 	self.ySector = Math.floor(self.y / GAME_DIMENSION * 10);
-	
+
 	var super_update = self.update;
 	self.update = function() {
 		self.xSector = Math.floor(self.x / GAME_DIMENSION * 10);
 		self.ySector = Math.floor(self.y / GAME_DIMENSION * 10);
-		
+
 		if (!self.chaser) {
 			if (!self.trap) {
 				if (self.timer++ > 70 && !drone)
@@ -2136,7 +2136,7 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 				s.needToUpdate = true;
 				if (typeof s !== "Player")
 					s.dirChange = true;
-				
+
 				if(typeof s === "Player") s.updateHp = true;
 				s.attacked = true;
 				s.hp -= self.hp / 2;
@@ -2185,7 +2185,7 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 			chaser : self.chaser,
 			parent : self.parent,
 		};
-		
+
 	}
 	self.getUpdatePack = function() {
 		var pack = {
@@ -2355,9 +2355,9 @@ io.sockets.on('connection', function(socket) {
 		p.regen = (p.maxRegen - p.minRegen) / levelUpCount
 				* (levelUpCount - p.regenCount) + p.minRegen;
 		p.hpMax = (p.maxHp - p.minHp) / levelUpCount * p.hpMaxCount + p.minHp;
-		
+
 		p.hp = p.hpMax * (p.hp / oldHpMax);
-		
+
 		p.updateHpMax = true;
 		p.bulletHp = (p.maxBulletHp - p.minBulletHp) / levelUpCount
 				* p.bulletHpCount + p.minBulletHp;
@@ -2517,17 +2517,17 @@ setInterval(function() {
 	if(playerFirst){
 		Player.initSectors();
 	}
-	
+
 	var pack = {
-		
+
 	};
-	
+
 	if (!(initPack.player.length == 0 && initPack.bullet.length == 0
 			&& initPack.square.length == 0
 			&& initPack.pentagon.length == 0
 			&& initPack.triangle.length == 0)) {
 		allpack["init"] = initPack;
-	}	
+	}
 	if (!(removePack.player.length == 0 && removePack.bullet.length == 0
 			&& removePack.square.length == 0
 			&& removePack.pentagon.length == 0
@@ -2537,7 +2537,7 @@ setInterval(function() {
 	for ( var i in SOCKET_LIST) {
 		var socket = SOCKET_LIST[i];
 		var player = Player.list[socket.id];
-		
+
 		if (c % 2 == 0 && player !== undefined) {
 			var packSquare = Square.update(player);
 			var packTriangle = Triangle.update(player);
@@ -2553,7 +2553,7 @@ setInterval(function() {
 		}
 		var size = Object.size(pack);
 		if(size != 0) allpack["update"] = pack;
-		
+
 		if(Object.size(allpack) != 0)
 			socket.emit('allUpdate', allpack);
 	}
