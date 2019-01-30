@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
+//var lzwCompress = require('lzwcompress');
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/client/index.html');
@@ -30,21 +31,32 @@ var Entity = function() {
 	}
 	self.updatePosition = function() {
 
-		if (self.x + self.spdX < GAME_DIMENSION && self.x + self.spdX > 0) {
+		if (self.x + self.spdX < GAME_DIMENSION && self.x + self.spdX > 0 && self.spdX != 0) {
 			self.x += self.spdX;
+			if(!self.updateX) self.updateX = true;
 		}
-		if (self.y + self.spdY < GAME_DIMENSION && self.y + self.spdY > 0) {
+		if (self.y + self.spdY < GAME_DIMENSION && self.y + self.spdY > 0 && self.spdY != 0) {
 			self.y += self.spdY;
+			if(!self.updateY) self.updateY = true;
 		}
+
+		self.x = Math.floor(self.x * 100000) / 100000;
+		self.y = Math.floor(self.y * 100000) / 100000;
 	}
 	self.getDistance = function(pt) {
 		return Math.sqrt(Math.pow(self.x - pt.x, 2)
 				+ Math.pow(self.y - pt.y, 2));
-	}
+	};
 	return self;
 }
+function getDistance (pt1, pt2) {
+	return Math.sqrt(Math.pow(pt1.x - pt2.x, 2)
+			+ Math.pow(pt1.y - pt2.y, 2));
+};
+var messages = "";
+
 var playerFirst = true;
-var Player = function(id, name) {
+var Player = function(id, name, isAI) {
 	var self = Entity();
 
 	self.tankType = 0;
@@ -55,6 +67,8 @@ var Player = function(id, name) {
 	self.name = name;
 	self.x = Math.random() * GAME_DIMENSION;
 	self.y = Math.random() * GAME_DIMENSION;
+	self.updateX = true;
+	self.updateY = true;
 	self.number = "" + Math.floor(10 * Math.random());
 	self.pressingRight = false;
 	self.pressingLeft = false;
@@ -73,6 +87,7 @@ var Player = function(id, name) {
 	self.updateScore = true;
 
 	self.timer = 0;
+	self.type = "Player";
 
 	self.regen = 21;
 	self.hpMax = 100;
@@ -131,6 +146,9 @@ var Player = function(id, name) {
 	self.updateLevel = true;
 	self.mouseX = 0;
 	self.mouseY = 0;
+
+	if(isAI !== undefined) self.isAI = true;
+	else self.isAI = false;
 
 	self.needToUpdate = true;
 	self.newScore = true;
@@ -324,9 +342,11 @@ var Player = function(id, name) {
 				} else if (self.tankType == 17) {
 					tanks = [ 18 ];
 				}
-				SOCKET_LIST[self.id].emit('newTanks', {
-					tanks : tanks
-				});
+				if(SOCKET_LIST[self.id] !== undefined){
+					SOCKET_LIST[self.id].emit('newTanks', {
+						tanks : tanks
+					});
+				}
 				self.sent[2] = true;
 			} else if (self.level >= 30 && self.availableUpgrades[1]) {
 				if (self.tankType == 1) {
@@ -338,15 +358,20 @@ var Player = function(id, name) {
 				} else if (self.tankType == 12) {
 					tanks = [ 8, 13, 16, 17 ]; // removed 7, 22, 24
 				}
-				SOCKET_LIST[self.id].emit('newTanks', {
-					tanks : tanks
-				});
+				if(SOCKET_LIST[self.id] !== undefined){
+					SOCKET_LIST[self.id].emit('newTanks', {
+						tanks : tanks
+					});
+				}
 				self.sent[1] = true;
 			} else if (self.level >= 15 && self.availableUpgrades[0]) {
 				tanks = [ 1, 10, 11, 12]; // removed 23
-				SOCKET_LIST[self.id].emit('newTanks', {
-					tanks : tanks
-				});
+				if(SOCKET_LIST[self.id] !== undefined){
+					SOCKET_LIST[self.id].emit('newTanks', {
+						tanks : tanks
+					});
+				}
+
 				self.sent[0] = true;
 			}
 		}
@@ -789,6 +814,10 @@ var Player = function(id, name) {
 	}
 	self.deathReset = function() {
 		removePack.player.push(self.id);
+		delete Player.list[self.id];
+		//if(self.isAI) numOfAIPlayers--;
+		/*removePack.player.push(self.id);
+
 		self.hp = self.hpMax;
 		self.x = Math.random() * GAME_DIMENSION;
 		self.y = Math.random() * GAME_DIMENSION;
@@ -802,7 +831,7 @@ var Player = function(id, name) {
 		self.reloadCount = 0;
 		self.maxSpdCount = 0;
 		self.bodyDamageCount = 0;
-		self.needToUpdate = true;
+		self.needToUpdate = true;*/
 	}
 	self.regdden = function() {
 		if (self.timer % self.regen == 0) {
@@ -816,7 +845,6 @@ var Player = function(id, name) {
 			&& self.spdY > -self.maxSpd * Math.sqrt(2) / 5){
 				self.spdX++;
 				self.spdY--;
-				console.log('hey');
 		} else if(self.pressingRight && self.pressingDown && self.x < GAME_DIMENSION && self.y < GAME_DIMENSION
 				&& self.spdX < self.maxSpd * Math.sqrt(2) / 5
 				&& self.spdY < self.maxSpd * Math.sqrt(2) / 5){
@@ -872,10 +900,16 @@ var Player = function(id, name) {
 	}
 	self.getUpdatePack = function() {
 		var pack = {
-			id : self.id,
-			x : self.x,
-			y : self.y,
+
 		};
+		if (self.updateX){
+			pack.x = self.x;
+			self.updateX = false;
+		}
+		if (self.updateY){
+			pack.y = self.y;
+			self.updateY = false;
+		}
 		if (self.updateRegen) {
 			pack.regen = self.regenCount;
 			self.updateRegen = false;
@@ -934,6 +968,12 @@ var Player = function(id, name) {
 			pack.mouseAngle = self.mouseAngle;
 			self.updateMonseAngle = false;
 		}
+<<<<<<< HEAD
+=======
+		if(Object.keys(pack).length !== 0){
+			pack.id = self.id;
+		}
+>>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 
 		return pack;
 	}
@@ -962,475 +1002,32 @@ function rotate_point(cx, cy, angle, p) {
 
 Player.list = {};
 Player.matrix = [];
-Player.tankProps = [ {
-	name : 'base tank',
-	minRegen : 8,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 200,
-	minBulletHp : 7,
-	maxBulletHp : 30,
-	minBulletSpeed : 7,
-	maxBulletSpeed : 25,
-	minReload : 11,
-	maxReload : 38,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'twin',
-	minRegen : 6,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 9,
-	minHp : 100,
-	maxHp : 160,
-	minBulletHp : 10,
-	maxBulletHp : 50,
-	minBulletSpeed : 5,
-	maxBulletSpeed : 20,
-	minReload : 3,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'triplet',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 170,
-	minBulletHp : 10,
-	maxBulletHp : 55,
-	minBulletSpeed : 5,
-	maxBulletSpeed : 23,
-	minReload : 3,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'octotank',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'triple twin',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'triangle',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 80,
-	maxBodyDamage : 280,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'booster',
-	minRegen : 2,
-	maxRegen : 17,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 130,
-	maxBodyDamage : 360,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'overseer',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 80,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'twin flank',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'decatank',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'flank guard',
-	minRegen : 3,
-	maxRegen : 18,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 60,
-	maxBodyDamage : 260,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'machine gun',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 2,
-	maxReload : 16,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'sniper',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 8,
-	maxSpeed : 12,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 100,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 25,
-	maxReload : 50,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 30,
-	maxPenetration : 80
-}, {
-	name : 'quad tank',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'triple shot',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'overlord',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 100,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'destroyer',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 150,
-	maxHp : 300,
-	minBulletHp : 70,
-	maxBulletHp : 270,
-	minBulletSpeed : 8,
-	maxBulletSpeed : 15,
-	minReload : 30,
-	maxReload : 80,
-	minBodyDamage : 150,
-	maxBodyDamage : 365,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'gunner',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 7,
-	maxBulletHp : 30,
-	minBulletSpeed : 19,
-	maxBulletSpeed : 30,
-	minReload : 3,
-	maxReload : 18,
-	minBodyDamage : 150,
-	maxBodyDamage : 365,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'hexagunner',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 7,
-	maxBulletHp : 32,
-	minBulletSpeed : 19,
-	maxBulletSpeed : 30,
-	minReload : 2,
-	maxReload : 16,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'flank destroyer',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 150,
-	maxHp : 300,
-	minBulletHp : 70,
-	maxBulletHp : 280,
-	minBulletSpeed : 8,
-	maxBulletSpeed : 15,
-	minReload : 30,
-	maxReload : 80,
-	minBodyDamage : 150,
-	maxBodyDamage : 369,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'twin destroyer',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 150,
-	maxHp : 300,
-	minBulletHp : 70,
-	maxBulletHp : 280,
-	minBulletSpeed : 8,
-	maxBulletSpeed : 15,
-	minReload : 30,
-	maxReload : 80,
-	minBodyDamage : 150,
-	maxBodyDamage : 369,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'penta shot',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 40,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'flak cannon',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 100,
-	maxHp : 180,
-	minBulletHp : 10,
-	maxBulletHp : 131,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 23,
-	minReload : 4,
-	maxReload : 21,
-	minBodyDamage : 10,
-	maxBodyDamage : 200,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'landmine',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 150,
-	maxHp : 300,
-	minBulletHp : 70,
-	maxBulletHp : 270,
-	minBulletSpeed : 8,
-	maxBulletSpeed : 15,
-	minReload : 30,
-	maxReload : 80,
-	minBodyDamage : 150,
-	maxBodyDamage : 369,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'trapper',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 150,
-	maxHp : 300,
-	minBulletHp : 70,
-	maxBulletHp : 270,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 25,
-	minReload : 5,
-	maxReload : 10,
-	minBodyDamage : 150,
-	maxBodyDamage : 369,
-	minPenetration : 10,
-	maxPenetration : 60
-}, {
-	name : 'heptashot',
-	minRegen : 4,
-	maxRegen : 21,
-	minSpeed : 6,
-	maxSpeed : 10,
-	minHp : 150,
-	maxHp : 300,
-	minBulletHp : 70,
-	maxBulletHp : 270,
-	minBulletSpeed : 15,
-	maxBulletSpeed : 25,
-	minReload : 2,
-	maxReload : 10,
-	minBodyDamage : 150,
-	maxBodyDamage : 369,
-	minPenetration : 10,
-	maxPenetration : 60
-}, ];
+Player.tankProps = [ {	name : 'base tank',	minRegen : 8,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 200,	minBulletHp : 7,	maxBulletHp : 30,	minBulletSpeed : 7,	maxBulletSpeed : 25,	minReload : 11,	maxReload : 38,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'twin',	minRegen : 6,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 9,	minHp : 100,	maxHp : 160,	minBulletHp : 10,	maxBulletHp : 50,	minBulletSpeed : 5,	maxBulletSpeed : 20,	minReload : 3,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'triplet',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 170,	minBulletHp : 10,	maxBulletHp : 55,	minBulletSpeed : 5,	maxBulletSpeed : 23,	minReload : 3,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'octotank',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'triple twin',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'triangle',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 80,	maxBodyDamage : 280,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'booster',	minRegen : 2,	maxRegen : 17,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 130,	maxBodyDamage : 360,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'overseer',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 80,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'twin flank',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'decatank',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'flank guard',	minRegen : 3,	maxRegen : 18,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 60,	maxBodyDamage : 260,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'machine gun',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 2,	maxReload : 16,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'sniper',	minRegen : 4,	maxRegen : 21,	minSpeed : 8,	maxSpeed : 12,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 100,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 25,	maxReload : 50,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 30,	maxPenetration : 80},
+                     {	name : 'quad tank',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'triple shot',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'overlord',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 100,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'destroyer',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 150,	maxHp : 300,	minBulletHp : 70,	maxBulletHp : 270,	minBulletSpeed : 8,	maxBulletSpeed : 15,	minReload : 30,	maxReload : 80,	minBodyDamage : 150,	maxBodyDamage : 365,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'gunner',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 7,	maxBulletHp : 30,	minBulletSpeed : 19,	maxBulletSpeed : 30,	minReload : 3,	maxReload : 18,	minBodyDamage : 150,	maxBodyDamage : 365,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'hexagunner',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 7,	maxBulletHp : 32,	minBulletSpeed : 19,	maxBulletSpeed : 30,	minReload : 2,	maxReload : 16,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'flank destroyer',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 150,	maxHp : 300,	minBulletHp : 70,	maxBulletHp : 280,	minBulletSpeed : 8,	maxBulletSpeed : 15,	minReload : 30,	maxReload : 80,	minBodyDamage : 150,	maxBodyDamage : 369,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'twin destroyer',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 150,	maxHp : 300,	minBulletHp : 70,	maxBulletHp : 280,	minBulletSpeed : 8,	maxBulletSpeed : 15,	minReload : 30,	maxReload : 80,	minBodyDamage : 150,	maxBodyDamage : 369,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'penta shot',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 40,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'flak cannon',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 100,	maxHp : 180,	minBulletHp : 10,	maxBulletHp : 131,	minBulletSpeed : 15,	maxBulletSpeed : 23,	minReload : 4,	maxReload : 21,	minBodyDamage : 10,	maxBodyDamage : 200,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'landmine',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 150,	maxHp : 300,	minBulletHp : 70,	maxBulletHp : 270,	minBulletSpeed : 8,	maxBulletSpeed : 15,	minReload : 30,	maxReload : 80,	minBodyDamage : 150,	maxBodyDamage : 369,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'trapper',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 150,	maxHp : 300,	minBulletHp : 70,	maxBulletHp : 270,	minBulletSpeed : 15,	maxBulletSpeed : 25,	minReload : 5,	maxReload : 10,	minBodyDamage : 150,	maxBodyDamage : 369,	minPenetration : 10,	maxPenetration : 60},
+                     {	name : 'heptashot',	minRegen : 4,	maxRegen : 21,	minSpeed : 6,	maxSpeed : 10,	minHp : 150,	maxHp : 300,	minBulletHp : 70,	maxBulletHp : 270,	minBulletSpeed : 15,	maxBulletSpeed : 25,	minReload : 2,	maxReload : 10,	minBodyDamage : 150,	maxBodyDamage : 369,	minPenetration : 10,	maxPenetration : 60}, ];
 Player.onConnect = function(socket, username) {
 	var player = new Player(socket.id, username);
 	socket.on('keyPress', function(data) {
@@ -1489,38 +1086,53 @@ Player.initSectors = function() {
 	}
 	playerFirst = false;
 }
-function mergeUpdatePacks(past,current){
-	var mergedObj = {};
-	for (var attrname in past) {
-		if(current.hasOwnProperty(attrname)){
-			mergedObj[attrname] = current[attrname];
-		} else {
-			mergedObj[attrname] = past[attrname];
-		}
-	}
-	for (var attrname in current){
-		if(!mergedObj.hasOwnProperty(attrname)){
-			mergedObj[attrname] = current[attrname];
-		}
-	}
-	return mergedObj;
-}
-Player.regUpdate = function() {
+function mergeUpdatePacks(past,current,index){
 
+}
+var chars = "档换是不了在人有我他这个们中来上大为和国地到以说时要就出会可也你对生能而子那得于着下自之年过发后作里用道行所然家种事成方多经么去法学如都同现当没动面起看定天分还进好小部";
+
+var surname = "李王张刘陈杨赵黄周吴徐孙胡朱高林何郭";
+var numOfAIPlayers = 0;
+Player.regUpdate = function() {
+<<<<<<< HEAD
+
+=======
+	if(numOfAIPlayers <= 15){
+		var surIndex = Math.floor(Math.random() * surname.length);
+		var charIndex = Math.floor(Math.random() * chars.length);
+		var name = surname.substring(surIndex, surIndex + 1) + chars.substring(charIndex, charIndex + 1);
+		var p = Player(parseFloat(Math.random().toFixed(6)), name, true);
+
+		while((p.tankType = Math.round(Math.random() * 20 + 1)) == 7 ||
+				(p.tankType = Math.round(Math.random() * 20 + 1)) == 15){
+			p.tankType = Math.round(Math.random() * 20 + 1);
+		}
+		numOfAIPlayers++;
+	}
+>>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 	for ( var i in Player.list) {
 		var player = Player.list[i];
 		if (player.hp <= 0) {
 			player.deathReset();
 		} else {
 			player.update();
-			Player.updatePack[player.id] = mergeUpdatePacks(Player.updatePack[player.id],player.getUpdatePack());
 		}
-
-		for ( var i in Player.matrix[player.xSector][player.ySector]) {
-			var p = Player.matrix[player.xSector][player.ySector][i];
+		var playerDetected = false;
+		var minDist = 500000;
+		var minX = 0;
+		var minY = 0;
+		for ( var i in Player.list) {
+			var p = Player.list[i];
 			if (p.id != player.id) {
 				if (!include(collisions, p.id + "," + player.id)) {
-					if (player.getDistance(p) < 40) {
+					var dist = player.getDistance(p);
+					if(player.isAI && dist < minDist){
+						minDist = dist;
+						minX = p.x;
+						minY = p.y;
+						if(!playerDetected) playerDetected = true;
+					}
+					if (player.getDistance(p) < 15) {
 						var angle = Math.atan2(player.y - p.y, player.x - p.x);
 						p.spdX += Math.cos(angle) * 32 / 100;
 						p.spdY -= Math.sin(angle) * 32 / 100;
@@ -1528,14 +1140,38 @@ Player.regUpdate = function() {
 						player.spdY -= Math.sin(angle) * 32 / 100;
 						p.hp -= Math.round(player.bodyDamage / 7);
 						player.hp -= Math.round(p.bodyDamage / 7);
-						if (p.hp <= 0)
+						if (p.hp <= 0){
+							messages = player.name + " 杀死了 " + p.name + "!";
 							p.deathReset();
-						else if (player.hp <= 0)
+						} else if (player.hp <= 0){
 							player.deathReset();
+							messages = p.name + " 杀死了 " + player.name + "!";
+						}
 						collisions.push(player.id + "," + p.id);
 					}
 				}
 			}
+		}
+
+		if(!playerDetected && player.isAI){
+			for(var s in Square.matrix[player.xSector][player.ySector]){
+				var dist = getDistance(s, player);
+				if(dist < minDist){
+					minDist = dist;
+					minX = s.x;
+					minY = s.y;
+				}
+			}
+		}
+		if(player.isAI){
+			minX = minX - player.x;
+			minY = minY - player.y;
+
+			player.spdX = minX * player.maxSpd / minDist;
+			player.spdY = minY * player.maxSpd / minDist;
+
+			player.mouseAngle = parseFloat((Math.atan2(minY, minX) * 180 / Math.PI).toFixed(2));
+			player.pressingAttack = true;
 		}
 		collisions = [];
 	}
@@ -1547,12 +1183,13 @@ Player.update = function(p) {
 	for ( var i in Player.list) {
 		var player = Player.list[i];
 		if (objInViewOfPlayer(player, p)) {
-			pack.push(Player.updatePack[player.id]);
+			pack.push(player.getUpdatePack());
 		}else if(p.newScore){
 			var newObj = {};
 			newObj.id = player.id;
 			newObj.score = player.score;
 			pack.push(newObj);
+			p.newScore = false;
 		}
 	}
 
@@ -1562,10 +1199,10 @@ var t = 0;
 var Shape = function() {
 	var speed = 0.1;
 	var angle = 0;
-	var myX = Math.random() * GAME_DIMENSION;
-	var myY = Math.random() * GAME_DIMENSION;
+	var myX = parseFloat((Math.random() * GAME_DIMENSION).toFixed(2));
+	var myY = parseFloat((Math.random() * GAME_DIMENSION).toFixed(2));
 	var self = {
-		id : Math.random(),
+		id : parseFloat(Math.random().toFixed(8)),
 		x : myX,
 		y : myY,
 		score : 0,
@@ -1608,6 +1245,7 @@ var Shape = function() {
 				self.hp -= p.bodyDamage + 10;
 				if (p.hp <= 0) {
 					p.deathReset();
+					messages = "A stupid NPC killed " + p.name + "!";
 				} else if (self.hp <= 0) {
 					p.score += self.score;
 					p.updateScore = true;
@@ -1656,19 +1294,18 @@ var Shape = function() {
 			id : self.id,
 			x : self.x,
 			y : self.y,
-			angle : 0,
-			hp : self.hp,
 			maxhp : self.maxhp
 		};
 	}
 	self.getUpdatePack = function() {
-		return {
+		var pack = {
 			id : self.id,
 			x : self.x,
 			y : self.y,
 			hp : self.hp,
-			attacked : self.attacked,
 		};
+		if(self.attacked) pack.attacked = true;
+		return pack;
 	}
 	return self;
 }
@@ -1717,7 +1354,6 @@ var Pentagon = function(x, y, radius) {
 			x : self.x,
 			y : self.y,
 			angle : self.angle,
-			hp : self.hp,
 			radius : self.radius,
 			maxhp : self.maxhp,
 		};
@@ -1778,7 +1414,7 @@ Pentagon.regUpdate = function() {
 			var sindex = Pentagon.matrix[pentagon.xSector][pentagon.ySector].indexOf(pentagon);
 			Pentagon.matrix[pentagon.xSector][pentagon.ySector].splice(sindex, 1);
 			removePack.pentagon.push(pentagon.id);
-		} else {
+		} else if(pentagon.needToUpdate) {
 			Pentagon.updatePack[pentagon.id] = pentagon.update();
 		}
 	}
@@ -1789,8 +1425,7 @@ Pentagon.update = function(player) {
 
 	for ( var i in Pentagon.updatePack) {
 		var pentagon = Pentagon.list[i];
-		if (pentagon !== undefined && pentagon.needToUpdate
-				&& objInViewOfPlayer(pentagon, player)) {
+		if (pentagon !== undefined && objInViewOfPlayer(pentagon, player)) {
 			pack.push(Pentagon.updatePack[pentagon.id]);
 		}
 	}
@@ -1807,7 +1442,7 @@ Pentagon.getAllInitPack = function() {
 var squareFirst = true;
 var Square = function() {
 	var self = Shape();
-	self.score = 15;
+	self.score = 5000;
 	self.hp = 10;
 	self.maxhp = 10;
 	self.type = "Square";
@@ -1978,12 +1613,16 @@ var pull = 0.7;
 var t = 0;
 var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 	var self = Entity();
-	self.id = Math.random();
-	self.x = x;
-	self.y = y;
+	self.id = parseFloat(Math.random().toFixed(6));
+	self.x = parseFloat(x.toFixed(3));
+	self.y = parseFloat(y.toFixed(3));
 	if (typeof drone == 'undefined') {
 		drone = false;
 	}
+	self.type = 0;
+	if(self.drone) self.type = 1;
+	else if(self.trap) self.type = 2;
+	else if(self.chaser) self.type = 3;
 	if (typeof chaser == 'undefined') {
 		self.chaser = false;
 	} else
@@ -1996,12 +1635,15 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 	} else {
 		self.speed = speed;
 	}
-	self.angle = angle;
+	self.angle = parseFloat(angle.toFixed(3));
 	self.spdX = Math.cos(self.angle / 180 * Math.PI) * self.speed;
 	self.spdY = Math.sin(self.angle / 180 * Math.PI) * self.speed;
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 	self.parent = parent;
 	if (Player.list[self.parent].tankType == 24)
 		self.trap = true;
@@ -2103,6 +1745,7 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 						var s = Square.matrix[self.xSector][self.ySector][i];
 						self.dealWithEntities(s);
 					}
+
 				}
 				if (Triangle.matrix[self.xSector] !== undefined) {
 					for ( var i in Triangle.matrix[self.xSector][self.ySector]) {
@@ -2139,9 +1782,9 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 
 				if(typeof s === "Player") s.updateHp = true;
 				s.attacked = true;
-				s.hp -= self.hp / 2;
+				s.hp -= self.hp / 1;
 				var penetration = Player.list[self.parent].penetration;
-				self.hp -= s.maxhp * (1 - penetration / 100) / 4;
+				self.hp -= s.maxhp * (1 - penetration / 100) / 2;
 				if (self.hp <= 0 || isNaN(self.hp)){
 					self.toRemove = true;
 				}
@@ -2153,8 +1796,10 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 						shooter.newScore = true;
 						shooter.updateScore = true;
 					}
-					if (typeof s === "Player")
+					if (s.type == "Player"){
+						messages = Player.list[self.parent].name + " 杀死了 " + s.name + "!";
 						s.deathReset();
+					}
 				}
 				if (Player.list[self.parent] !== undefined && self.hp > 0
 						&& Player.list[self.parent].tankType == 22) {
@@ -2172,20 +1817,22 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 		}
 	}
 	self.getInitPack = function() {
-		return {
+
+		var pack = {
 			id : self.id,
 			x : self.x,
 			y : self.y,
-			spdX : self.spdX,
-			spdY : self.spdY,
-			drone : self.drone,
 			angle : self.angle,
-			trap : self.trap,
 			speed : self.speed,
-			chaser : self.chaser,
-			parent : self.parent,
 		};
 
+<<<<<<< HEAD
+=======
+		if(self.type != 0) pack.type = self.type;
+
+		return pack;
+
+>>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 	}
 	self.getUpdatePack = function() {
 		var pack = {
@@ -2223,6 +1870,9 @@ Bullet.update = function(player) {
 	var pack = [];
 	for ( var i in Bullet.list) {
 		var bullet = Bullet.list[i];
+
+		// the e e "objInViewOfPlayer" method checks iff the bullet can  be seen by the player every frame
+		// if the player can, then the bullet's information will be sent to the player
 		if (bullet !== undefined && objInViewOfPlayer(bullet, player)) {
 			pack.push(Bullet.updatePack[bullet.id]);
 		}
@@ -2255,7 +1905,7 @@ var unnamed_usernames = [ '张三', '李四', '王五', '陆二', '赵六', '孙
 
 var io = require('socket.io')(serv, {});
 io.sockets.on('connection', function(socket) {
-	socket.id = Math.random();
+	socket.id = parseFloat(Math.random().toFixed(6));
 	SOCKET_LIST[socket.id] = socket;
 
 	socket.on('signIn', function(data) {
@@ -2507,7 +2157,9 @@ Object.size = function(obj) {
     }
     return size;
 };
-
+var fps = 0;
+var lastFpsTick = 0;
+var tick = 0;
 setInterval(function() {
 	Triangle.regUpdate();
 	Square.regUpdate();
@@ -2521,11 +2173,28 @@ setInterval(function() {
 	var pack = {
 
 	};
+<<<<<<< HEAD
 
 	if (!(initPack.player.length == 0 && initPack.bullet.length == 0
 			&& initPack.square.length == 0
 			&& initPack.pentagon.length == 0
 			&& initPack.triangle.length == 0)) {
+=======
+	/*if(c % 20 == 0){
+		messages = "Test " + c * Math.random() * 100;
+	} test messages notification */
+	if(messages != ""){
+		allpack["msg"] = messages;
+		messages = "";
+	}
+	for(var attrname in initPack){
+		var val = initPack[attrname];
+		if(initPack.hasOwnProperty(attrname) && Array.isArray(val) && val.length == 0){
+			delete initPack[attrname];
+		}
+	}
+	if (!(Object.keys(initPack).length === 0 && initPack.constructor === Object)) {
+>>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 		allpack["init"] = initPack;
 	}
 	if (!(removePack.player.length == 0 && removePack.bullet.length == 0
@@ -2554,8 +2223,13 @@ setInterval(function() {
 		var size = Object.size(pack);
 		if(size != 0) allpack["update"] = pack;
 
+<<<<<<< HEAD
 		if(Object.size(allpack) != 0)
+=======
+		if(Object.size(allpack) != 0){
+>>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 			socket.emit('allUpdate', allpack);
+		}
 	}
 	c++;
 
@@ -2571,4 +2245,15 @@ setInterval(function() {
 	removePack.square = [];
 	removePack.pentagon = [];
 	removePack.triangle = [];
+<<<<<<< HEAD
 }, 1000 / 45);
+=======
+
+	tick = new Date().getTime();
+    fps = tick - lastFpsTick;
+    lastFpsTick = tick;
+    console.log(fps);
+}, 1000 / 25);
+// approximately 45 times per second
+//
+>>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
