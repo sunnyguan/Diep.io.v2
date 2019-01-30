@@ -968,12 +968,10 @@ var Player = function(id, name, isAI) {
 			pack.mouseAngle = self.mouseAngle;
 			self.updateMonseAngle = false;
 		}
-<<<<<<< HEAD
-=======
+
 		if(Object.keys(pack).length !== 0){
 			pack.id = self.id;
 		}
->>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 
 		return pack;
 	}
@@ -1094,7 +1092,7 @@ var chars = "档换是不了在人有我他这个们中来上大为和国地到�
 var surname = "李王张刘陈杨赵黄周吴徐孙胡朱高林何郭";
 var numOfAIPlayers = 0;
 Player.regUpdate = function() {
-<<<<<<< HEAD
+
 
 =======
 	if(numOfAIPlayers <= 15){
@@ -1109,7 +1107,6 @@ Player.regUpdate = function() {
 		}
 		numOfAIPlayers++;
 	}
->>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 	for ( var i in Player.list) {
 		var player = Player.list[i];
 		if (player.hp <= 0) {
@@ -1639,11 +1636,7 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 	self.spdX = Math.cos(self.angle / 180 * Math.PI) * self.speed;
 	self.spdY = Math.sin(self.angle / 180 * Math.PI) * self.speed;
 
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 	self.parent = parent;
 	if (Player.list[self.parent].tankType == 24)
 		self.trap = true;
@@ -1826,13 +1819,11 @@ var Bullet = function(parent, angle, hp, speed, x, y, drone, chaser) {
 			speed : self.speed,
 		};
 
-<<<<<<< HEAD
-=======
+
 		if(self.type != 0) pack.type = self.type;
 
 		return pack;
 
->>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
 	}
 	self.getUpdatePack = function() {
 		var pack = {
@@ -2173,13 +2164,13 @@ setInterval(function() {
 	var pack = {
 
 	};
-<<<<<<< HEAD
+
 
 	if (!(initPack.player.length == 0 && initPack.bullet.length == 0
 			&& initPack.square.length == 0
 			&& initPack.pentagon.length == 0
 			&& initPack.triangle.length == 0)) {
-=======
+
 	/*if(c % 20 == 0){
 		messages = "Test " + c * Math.random() * 100;
 	} test messages notification */
@@ -2194,7 +2185,7 @@ setInterval(function() {
 		}
 	}
 	if (!(Object.keys(initPack).length === 0 && initPack.constructor === Object)) {
->>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
+
 		allpack["init"] = initPack;
 	}
 	if (!(removePack.player.length == 0 && removePack.bullet.length == 0
@@ -2223,11 +2214,11 @@ setInterval(function() {
 		var size = Object.size(pack);
 		if(size != 0) allpack["update"] = pack;
 
-<<<<<<< HEAD
+
 		if(Object.size(allpack) != 0)
 =======
 		if(Object.size(allpack) != 0){
->>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
+
 			socket.emit('allUpdate', allpack);
 		}
 	}
@@ -2245,7 +2236,7 @@ setInterval(function() {
 	removePack.square = [];
 	removePack.pentagon = [];
 	removePack.triangle = [];
-<<<<<<< HEAD
+
 }, 1000 / 45);
 =======
 
@@ -2256,4 +2247,3 @@ setInterval(function() {
 }, 1000 / 25);
 // approximately 45 times per second
 //
->>>>>>> 91fab3a9fdb1f32bcaa99edb80bfe198609314fe
