@@ -1094,7 +1094,6 @@ var numOfAIPlayers = 0;
 Player.regUpdate = function() {
 
 
-=======
 	if(numOfAIPlayers <= 15){
 		var surIndex = Math.floor(Math.random() * surname.length);
 		var charIndex = Math.floor(Math.random() * chars.length);
@@ -2216,7 +2215,7 @@ setInterval(function() {
 
 
 		if(Object.size(allpack) != 0)
-=======
+
 		if(Object.size(allpack) != 0){
 
 			socket.emit('allUpdate', allpack);
@@ -2238,7 +2237,7 @@ setInterval(function() {
 	removePack.triangle = [];
 
 }, 1000 / 45);
-=======
+
 
 	tick = new Date().getTime();
     fps = tick - lastFpsTick;
