@@ -24,4 +24,4 @@ Improvements:
 - Fix bullet collision
 - Lower package size
 
-All credits to Diep.io for inspring this project.
+All credits to Diep.io for inspiring this project.
