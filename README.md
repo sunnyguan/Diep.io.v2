@@ -23,5 +23,6 @@ Improvements:
 - Fix UI bugs
 - Fix bullet collision
 - Lower package size
+- Consistent UI positions
 
 All credits to Diep.io for inspiring this project.
